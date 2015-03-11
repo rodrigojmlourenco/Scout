@@ -1,24 +1,25 @@
-package pt.ulisboa.tecnico.cycleourcity.scout;
+package pt.ulisboa.tecnico.cycleourcity.scout.frontend;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import pt.ulisboa.tecnico.cycleourcity.scout.R;
 
-public class MainActivity extends ActionBarActivity {
+public class ConfigurationActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_config);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_configuration, menu);
         return true;
     }
 
