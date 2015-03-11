@@ -6,7 +6,9 @@ import android.util.Log;
 
 import com.ubhave.sensormanager.ESException;
 import com.ubhave.sensormanager.ESSensorManager;
+import com.ubhave.sensormanager.ESSensorManagerInterface;
 import com.ubhave.sensormanager.config.SensorConfig;
+import com.ubhave.sensormanager.config.pull.LocationConfig;
 import com.ubhave.sensormanager.config.pull.MotionSensorConfig;
 import com.ubhave.sensormanager.config.pull.PullSensorConfig;
 import com.ubhave.sensormanager.sensors.SensorUtils;
@@ -15,6 +17,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import pt.ulisboa.tecnico.cycleourcity.scout.backend.ApplicationContext;
+import pt.ulisboa.tecnico.cycleourcity.scout.sensing.config.ScoutSensorConfig;
 
 /**
  * Created by rodrigo.jm.lourenco on 11/03/2015.
@@ -38,12 +41,13 @@ public class ScoutSensorManager {
     //Sensors required by the application
     private final int[] scoutSensors = {
             //Core Sensors
-            SensorUtils.SENSOR_TYPE_LOCATION,
+            SensorUtils.SENSOR_TYPE_LOCATION
+
+            /* TODO: enable
             SensorUtils.SENSOR_TYPE_ACCELEROMETER,
             SensorUtils.SENSOR_TYPE_MICROPHONE
 
             //SupportSensors
-            /* TODO: enable
             SensorUtils.SENSOR_TYPE_LIGHT,
             SensorUtils.SENSOR_TYPE_GYROSCOPE,
             SensorUtils.SENSOR_TYPE_MAGNETIC_FIELD,
@@ -69,6 +73,7 @@ public class ScoutSensorManager {
 
         for(int sensor : scoutSensors ){
             scoutSensorListeners.put(sensor, new ScoutSensorDataListener(sensor));
+            adjustSensorConfigurationToScoutDefault(sensor);
         }
     }
 
@@ -109,7 +114,7 @@ public class ScoutSensorManager {
      * @param sensor the sensor identification @see SensorUtils
      */
     public void pauseSensorSampling(int sensor) throws ESException {
-        Log.d(LOG_TAG, "Pausing "+SensorUtils.getSensorName(sensor)+" sensing.");
+        Log.d(LOG_TAG, "Pausing " + SensorUtils.getSensorName(sensor) + " sensing.");
         scoutSensorListeners.get(sensor).pauseSensorData();
     }
 
@@ -118,7 +123,7 @@ public class ScoutSensorManager {
      * @param sensor
      */
     public void unpauseSensorSampling(int sensor) throws ESException {
-        Log.d(LOG_TAG, "Resuming "+SensorUtils.getSensorName(sensor)+" sensing.");
+        Log.d(LOG_TAG, "Resuming " + SensorUtils.getSensorName(sensor) + " sensing.");
         scoutSensorListeners.get(sensor).resumeSensorData();
     }
 
@@ -137,5 +142,43 @@ public class ScoutSensorManager {
         else
             Log.w(LOG_TAG, "Sensor sampling rates can only be adjusted for pull sensors.");
 
+    }
+
+    /**
+     * Adjusts a sensor's configuration according to the defaults specified by the application
+     * @param sensor the sensor identification
+     * @throws ESException
+     * @see pt.ulisboa.tecnico.cycleourcity.scout.sensing.config.ScoutSensorConfig
+     */
+    protected void adjustSensorConfigurationToScoutDefault(int sensor) throws ESException {
+        SensorConfig config = ScoutSensorConfig.getDefaultConfig(sensor);
+        adjustSensorConfiguration(sensor, config);
+    }
+    /**
+     * Adjusts a sensor configuration according to the sensor configuration defined by config
+     * @param sensor the sensor identification
+     * @param config the object that defines the sensor configuration
+     * @throws ESException
+     * @see com.ubhave.sensormanager.config.SensorConfig
+     * TODO: arranjar uma forma menos bruta de realizar isto, sem no entanto ter que modificar a lib
+     */
+    public void adjustSensorConfiguration(int sensor, SensorConfig config) throws ESException{
+
+        Log.d(LOG_TAG, "Adjusting the sensor configuration.");
+
+        if(SensorUtils.isPullSensor(sensor)) {
+
+            if (config.containsParameter(LocationConfig.ACCURACY_TYPE))
+                xSensorManager.setSensorConfig(sensor, LocationConfig.ACCURACY_TYPE,
+                        config.getParameter(LocationConfig.ACCURACY_TYPE));
+
+            if (config.containsParameter(PullSensorConfig.SENSE_WINDOW_LENGTH_MILLIS))
+                xSensorManager.setSensorConfig(sensor, PullSensorConfig.SENSE_WINDOW_LENGTH_MILLIS,
+                        config.getParameter(PullSensorConfig.SENSE_WINDOW_LENGTH_MILLIS));
+
+            if(config.containsParameter(PullSensorConfig.POST_SENSE_SLEEP_LENGTH_MILLIS))
+                xSensorManager.setSensorConfig(sensor,PullSensorConfig.POST_SENSE_SLEEP_LENGTH_MILLIS,
+                        config.getParameter(PullSensorConfig.POST_SENSE_SLEEP_LENGTH_MILLIS));
+        }
     }
 }

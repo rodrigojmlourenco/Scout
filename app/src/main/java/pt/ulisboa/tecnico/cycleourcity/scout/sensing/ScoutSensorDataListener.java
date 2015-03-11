@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.cycleourcity.scout.sensing;
 
 import android.content.Context;
+import android.location.Location;
 import android.util.Log;
 
 import com.ubhave.dataformatter.DataFormatter;
@@ -13,6 +14,7 @@ import com.ubhave.sensormanager.SensorDataListener;
 import com.ubhave.sensormanager.config.GlobalConfig;
 import com.ubhave.sensormanager.config.pull.LocationConfig;
 import com.ubhave.sensormanager.data.SensorData;
+import com.ubhave.sensormanager.data.pull.LocationData;
 import com.ubhave.sensormanager.sensors.SensorUtils;
 
 import pt.ulisboa.tecnico.cycleourcity.scout.backend.ApplicationContext;
@@ -71,6 +73,8 @@ public class ScoutSensorDataListener implements SensorDataListener {
     @Override
     public void onDataSensed(SensorData sensorData) {
         //TODO: do something with the data, for now log it
+
+
         try {
             String jsonValue = formatter.toJSON(sensorData).toString();
             Log.d(LOG_TAG, "[Sensor:" + SensorUtils.getSensorName(sensorType) + "] - " + jsonValue);
@@ -79,6 +83,7 @@ public class ScoutSensorDataListener implements SensorDataListener {
         } catch (DataHandlerException e) {
             e.printStackTrace();
         }
+
     }
 
     @Override
