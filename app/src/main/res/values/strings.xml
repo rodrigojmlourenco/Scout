@@ -1,7 +1,40 @@
 <resources>
-    <string name="app_name">Scout</string>
+    <string name="app_name">FunfProto</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_configuration">Settings</string>
+
+    <string name="startSession">Start Sensing</string>
+    <string name="stopSession">Stop Sensing</string>
+    <string name="archive">Save Session</string>
+
+
+
+    <string name="default_pipeline">
+        {"@type":"edu.mit.media.funf.pipeline.BasicPipeline",
+         "name":"default",
+         "version":1,
+         "data":[
+            "edu.mit.media.funf.probe.builtin.LocationProbe",
+            "edu.mit.media.funf.probe.builtin.AccelerometerSensorProbe"
+         ]
+        }
+    </string>
+    <string name="scout_pipeline">
+        {"@type":"pt.ulisboa.tecnico.cycleourcity.scout.pipeline.ScoutPipeline",
+         "name":"default",
+         "version":1,
+         "data":[
+            {
+                "@type":"edu.mit.media.funf.probe.builtin.LocationProbe",
+                "@schedule": {"interval":2, "duration":1}
+            },
+            {
+                "@type":"edu.mit.media.funf.probe.builtin.AccelerometerSensorProbe",
+                "@schedule": {"interval":1, "duration":0.05}
+            },
+            "edu.mit.media.funf.probe.builtin.GravitySensorProbe"
+         ]
+        }
+    </string>
 </resources>
