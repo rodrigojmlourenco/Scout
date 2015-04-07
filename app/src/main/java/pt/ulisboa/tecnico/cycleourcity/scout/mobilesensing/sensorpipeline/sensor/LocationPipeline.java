@@ -331,6 +331,8 @@ public class LocationPipeline implements ISensorPipeline {
      *
      * @see pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.SensorPipeLineContext
      * @see pt.ulisboa.tecnico.cycleourcity.scout.storage.ScoutStorageManager
+     *
+     * TODO: esta stage deve ser igual para todos os pipelines pelo que pode ser externa
      */
     public class PostExecuteStage implements Stage {
 

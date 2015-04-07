@@ -3,101 +3,343 @@ package pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.senso
 import android.util.Log;
 
 import com.google.gson.JsonObject;
+import com.ideaimpl.patterns.pipeline.PipelineContext;
+import com.ideaimpl.patterns.pipeline.Stage;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import edu.mit.media.funf.json.IJsonObject;
+import pt.ulisboa.tecnico.cycleourcity.scout.logging.ScoutLogger;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils;
-import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.stages.FeatureExtractionStage;
-import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.data.AccelerometerSample;
-import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.data.AccelerometerSampleWindow;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.timedomain.StatisticalMetrics;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.SensorPipeLineContext;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.SensorPipeline;
+import pt.ulisboa.tecnico.cycleourcity.scout.storage.ScoutStorageManager;
 
 /**
- * Created by rodrigo.jm.lourenco on 13/03/2015.
+ * @version 1.1 New model
+ * @author rodrigo.jm.lourenco
+ *
+ *
  */
 public class AccelerometerPipeline implements ISensorPipeline{
 
-    private static final SensorPipeline PIPELINE = new SensorPipeline();
+    private static final String TAG = "[MOTION]";
+    private static final String LOG_TAG = "AccelerometerPipeline";
+    public final static String SENSOR_TYPE = "Accelerometer";
+    public final static String SENSOR_TYPE_GRAVITY = "Gravity";
+
+
+    private static final SensorPipeline ACCELEROMETER_PIPELINE = new SensorPipeline();
 
     static{
-        PIPELINE.addFinalStage(new FeatureExtractionStage());
+        //ACCELEROMETER_PIPELINE.addStage(new AdmissionControlStage());
+        //ACCELEROMETER_PIPELINE.addStage(new TrimStage());
+        ACCELEROMETER_PIPELINE.addStage(new FeatureExtractionStage());
+        ACCELEROMETER_PIPELINE.addFinalStage(new PostExecuteStage());
     }
 
     //Queues for further processing
-    private Queue<AccelerometerSample> sampleList;
-    private Queue<AccelerometerSampleWindow> windowList;
+    private Queue<JsonObject> gravitySamples;
+    private Queue<JsonObject> accelerometerSamples;
 
-    //Tasks
-    private Timer timer;
-    private AggregateSamplesTask aggregateTask;
+    //Logging
+    private ScoutLogger logger = ScoutLogger.getInstance();
 
     public AccelerometerPipeline(){
 
         //Queues initialization
-        sampleList = new LinkedList<>();
-        windowList = new LinkedList<>();
+        gravitySamples = new LinkedList<>();
+        accelerometerSamples = new LinkedList<>();
 
-        timer = new Timer(true);
-        aggregateTask = new AggregateSamplesTask();
-        timer.scheduleAtFixedRate(aggregateTask, 0, SensingUtils.ACCELEROMETER_WINDOW_SIZE*1000);
-        aggregateTask.run();
-    }
-
-
-    /**
-     *
-     */
-    public void stopPipeline(){
-        aggregateTask.cancel();
     }
 
     @Override
     public void pushSample(IJsonObject sensorSample) {
-        sampleList.add(new AccelerometerSample(sensorSample));
+
     }
 
     @Override
-    public void pushSample(JsonObject sensorSample) {
-        //sampleList.add(new AccelerometerSample(sensorSample));
-        //TODO
+    public void pushSample(JsonObject sample) {
+
+        logger.log(ScoutLogger.VERBOSE, LOG_TAG, TAG+sample);
+
+        int sensorType = sample.get(SensingUtils.SENSOR_TYPE).getAsInt();
+
+        switch (sensorType){
+            case SensingUtils.ACCELEROMETER:
+                accelerometerSamples.add(sample);
+                break;
+            case SensingUtils.GRAVITY:
+                gravitySamples.add(sample);
+                break;
+        }
     }
 
     @Override
     public void run() {
 
+        logger.log(ScoutLogger.VERBOSE, LOG_TAG, TAG+"executing pipeline");
+
+        JsonObject[] input;
+
+        //Merge the two queues, clear them, and pass the result as input
+        synchronized (this) {
+            input = new JsonObject[accelerometerSamples.size() + gravitySamples.size()];
+            Queue<JsonObject> merged = new LinkedList<>();
+            merged.addAll(accelerometerSamples);
+            merged.addAll(gravitySamples);
+            merged.toArray(input);
+
+            gravitySamples.clear();
+            accelerometerSamples.clear();
+        }
+
+        SensorPipeLineContext context = new SensorPipeLineContext();
+        context.setInput(input);
+        ACCELEROMETER_PIPELINE.execute(context);
     }
 
-    /* Asynchronous task, that every ACCELEROMETER_WINDOW_SIZE attempts to create a new accelerometer
-     * sampling window, adding the newly created sample window to the window queue. */
-    private class AggregateSamplesTask extends TimerTask{
+    /****************************************************************************************
+     * STAGES: Stages to be used by the Accelerometer Pipeline                              *
+     ****************************************************************************************/
+
+    public static class AdmissionControlStage implements Stage {
+
         @Override
-        public void run() {
-            synchronized (sampleList){
+        public void execute(PipelineContext pipelineContext) {
+            //TODO: ainda não é claro como posso discartar amostras, talvez apenas recorrendo ao ScoutState
+        }
+    }
 
-                if(sampleList.size() >= SensingUtils.ACCELEROMETER_WINDOW_SIZE){
+    /**
+     * @version 1.0
+     * @author rodrigo.jm.lourenco
+     *
+     * Unlike the information gathered by the LocationProbe, the accelerometer and gravity probes
+     * generate simple information.
+     * <br>
+     * This stage will only replace the numeric representation of the sensor type by a string.
+     */
+    public static class TrimStage implements Stage {
 
-                    AccelerometerSampleWindow window = new AccelerometerSampleWindow();
+        @Override
+        public void execute(PipelineContext pipelineContext) {
 
-                    while (!window.isComplete() && sampleList.size() > 0)
-                        window.pushAccelerometerSample(sampleList.remove());
+            JsonObject[] input =((SensorPipeLineContext)pipelineContext).getInput();
 
-                    windowList.add(window);
+            //TODO: corrigir de forma a contemplar gravidade;
+            for(JsonObject sample : input){
+                sample.remove(SensingUtils.SENSOR_TYPE);
+                sample.remove(SensingUtils.MotionKeys.ACCURACY);
+                sample.addProperty(SensingUtils.SENSOR_TYPE, SENSOR_TYPE);
+            }
 
-                    //Pipeline Testing
-                    SensorPipeLineContext context = new SensorPipeLineContext();
-                    //context.setInput(window); //TODO: corrigir
-                    PIPELINE.execute(context);
+            ((SensorPipeLineContext)pipelineContext).setInput(input); //Next Stage
+        }
+    }
 
-                    //TODO: corrigir comentado
-                    //JsonObject output = context.getOutput();
-                    //Log.d("TASK", String.valueOf(output));
+    /**
+     *
+     */
+    public static class FeatureExtractionStage implements Stage {
+
+        private final static int X = 0;
+        private final static int Y = 1;
+        private final static int Z = 2;
+
+        public final static String MEAN = "Mean";
+        public final static String VARIANCE = "Variance";
+        public final static String STANDARD_DEVIATION = "Standard Deviation";
+        public final static String MAX_DEVIATION = "Max Deviation";
+        public final static String ABSOLUTE_CENTRAL_MOMENT = "Abs Central Moment";
+        public final static String PSD_ACROSS_FREQUENCY_BANDS = "PSD Accoss Freq Bands";
+
+        //Logging
+        private ScoutLogger logger = ScoutLogger.getInstance();
+
+        private class MotionQueues {
+
+            private List<Double> xSignals = new ArrayList<>(),
+                                    ySignals = new ArrayList<>(),
+                                    zSignals = new ArrayList<>();
+
+
+            public void addSample(double x, double y, double z){
+                xSignals.add(x);
+                ySignals.add(y);
+                zSignals.add(z);
+            }
+
+            private double[] doubleListToArray(List<Double> list){
+
+                int i=0;
+                double[] out = new double[list.size()];
+
+                for(Double l : list) {
+                    out[i] = (double) l;
+                    i++;
+                }
+
+                return out;
+            }
+
+            public double[] getXSignals() {
+                return doubleListToArray(xSignals);
+            }
+
+            public double[] getYSignals() {
+                return doubleListToArray(ySignals);
+            }
+
+            public double[] getZSignals() {
+                return doubleListToArray(zSignals);
+            }
+        }
+
+        private JsonObject calculateMean(MotionQueues motions){
+            JsonObject data = new JsonObject();
+
+            double xMean = StatisticalMetrics.calculateMean(motions.getXSignals());
+            double yMean = StatisticalMetrics.calculateMean(motions.getYSignals());
+            double zMean = StatisticalMetrics.calculateMean(motions.getZSignals());
+
+            data.addProperty(SensingUtils.MotionKeys.X, xMean);
+            data.addProperty(SensingUtils.MotionKeys.Y, yMean);
+            data.addProperty(SensingUtils.MotionKeys.Z, zMean);
+
+            return data;
+        }
+
+        private JsonObject calculateStandardDeviation(MotionQueues motions){
+            JsonObject data = new JsonObject();
+
+            double xStdDev = StatisticalMetrics.calculateStandardDeviation(motions.getXSignals());
+            double yStdDev = StatisticalMetrics.calculateStandardDeviation(motions.getYSignals());
+            double zStdDev = StatisticalMetrics.calculateStandardDeviation(motions.getZSignals());
+
+            data.addProperty(SensingUtils.MotionKeys.X, xStdDev);
+            data.addProperty(SensingUtils.MotionKeys.Y, yStdDev);
+            data.addProperty(SensingUtils.MotionKeys.Z, zStdDev);
+
+            return data;
+        }
+
+        private JsonObject calculateVariance(MotionQueues motions){
+            JsonObject data = new JsonObject();
+
+            double xVar = StatisticalMetrics.calculateVariance(motions.getXSignals());
+            double yVar = StatisticalMetrics.calculateVariance(motions.getYSignals());
+            double zVar = StatisticalMetrics.calculateVariance(motions.getZSignals());
+
+            data.addProperty(SensingUtils.MotionKeys.X, xVar);
+            data.addProperty(SensingUtils.MotionKeys.Y, yVar);
+            data.addProperty(SensingUtils.MotionKeys.Z, zVar);
+
+            return data;
+        }
+
+
+        @Override
+        public void execute(PipelineContext pipelineContext) {
+
+            JsonObject[] input =((SensorPipeLineContext)pipelineContext).getInput();
+            MotionQueues accMotionSignals = new MotionQueues(),
+                         gravityMotionSignals = new MotionQueues();
+
+            double x, y, z;
+
+            //PHASE-1 Separate the different samples, according to it's provider
+            for(JsonObject sample : input){
+                int sensorType = sample.get(SensingUtils.SENSOR_TYPE).getAsInt();
+
+                //Extract the motion Signal
+                x = sample.get(SensingUtils.MotionKeys.X).getAsDouble();
+                y = sample.get(SensingUtils.MotionKeys.Y).getAsDouble();
+                z = sample.get(SensingUtils.MotionKeys.Z).getAsDouble();
+
+                switch (sensorType){
+                    case SensingUtils.ACCELEROMETER:
+                        accMotionSignals.addSample(x,y,z);
+                        break;
+                    case SensingUtils.GRAVITY:
+                        gravityMotionSignals.addSample(x,y,z);
+                        break;
+                    default:
+                        logger.log(ScoutLogger.WARN, LOG_TAG, TAG+"Unknown sensor type '"+sensorType+"'.");
                 }
             }
+
+            //PHASE-2: Extract Features from the captured signals
+            //TODO: process samples captured by the GravityProbe
+            //Accelerometer
+            JsonObject accelerometerFeatures = new JsonObject();
+            accelerometerFeatures.addProperty(SensingUtils.SENSOR_TYPE, SENSOR_TYPE);
+            accelerometerFeatures.add(MEAN, calculateMean(accMotionSignals));
+            accelerometerFeatures.add(VARIANCE, calculateVariance(accMotionSignals));
+            accelerometerFeatures.add(STANDARD_DEVIATION, calculateStandardDeviation(accMotionSignals));
+
+            //PHASE-3: Set output
+            JsonObject[] output = new JsonObject[1];
+            output[0] = accelerometerFeatures;
+
+            //TODO: falta introduzir o timestamp, caso contrário rebenta...
+            //((SensorPipeLineContext)pipelineContext).setInput(output);
+        }
+    }
+
+    /**
+     * @version 1.0
+     * This stage operates as a callback function, it extracts the output from the PipelineContext,
+     * which is basically the extracted features, and stores it both in an extracted feature queue
+     * and on the application's storage manager.
+     *
+     * @see pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.SensorPipeLineContext
+     * @see pt.ulisboa.tecnico.cycleourcity.scout.storage.ScoutStorageManager
+     *
+     * TODO: esta stage deve ser igual para todos os pipelines pelo que pode ser externa
+     */
+    public static class PostExecuteStage implements Stage {
+
+        private ScoutLogger logger = ScoutLogger.getInstance();
+        private ScoutStorageManager storage = ScoutStorageManager.getInstance();
+
+        @Override
+        public void execute(PipelineContext pipelineContext) {
+            logger.log(ScoutLogger.VERBOSE, LOG_TAG, TAG+"pre-processing terminated.");
+
+            int storedFeatures = 0;
+            JsonObject[] output = ((SensorPipeLineContext)pipelineContext).getInput();
+
+            for(JsonObject feature : output){
+
+                //Persistent Storage
+                String key = feature.get(SensingUtils.SENSOR_TYPE).getAsString();
+                try {
+                    storage.store(key, feature);
+                    storedFeatures++;
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    logger.log(ScoutLogger.ERR, LOG_TAG, TAG+e.getMessage());
+                }
+            }
+
+            logger.log(ScoutLogger.VERBOSE, LOG_TAG, TAG+storedFeatures+" were successfully stored.");
+        }
+    }
+
+    /**
+     *
+     */
+    public static class UpdateScoutStateStage implements Stage {
+
+        @Override
+        public void execute(PipelineContext pipelineContext) {
+
         }
     }
 }

@@ -57,6 +57,7 @@ public class ScoutPipeline extends BasicPipeline {
 
     @Override
     public void onDataReceived(IJsonObject probeConfig, IJsonObject data) {
+
         try {
             mPipeline.pushSensorSample(probeConfig, data);
         } catch (MobileSensingException e) {
@@ -66,10 +67,9 @@ public class ScoutPipeline extends BasicPipeline {
 
     @Override
     public void onDataCompleted(IJsonObject probeConfig, JsonElement checkpoint) {
-        super.onDataCompleted(probeConfig, checkpoint);
+        //super.onDataCompleted(probeConfig, checkpoint);
 
         if(probeConfig!=null) Log.v(LOG_TAG, "[CONFIG]: "+probeConfig.toString());
-        if(checkpoint!=null) Log.v(LOG_TAG, "[CHECKPOINT]: "+checkpoint.toString());
     }
 
     @Override

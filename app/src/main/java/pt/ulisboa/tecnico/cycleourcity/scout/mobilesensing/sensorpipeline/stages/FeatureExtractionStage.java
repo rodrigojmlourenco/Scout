@@ -12,7 +12,6 @@ import edu.mit.media.funf.math.FFT;
 import edu.mit.media.funf.math.Window;
 import edu.mit.media.funf.probe.Probe;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils;
-import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.data.AccelerometerSampleWindow;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.SensorPipeLineContext;
 
 /**
@@ -169,9 +168,10 @@ public class FeatureExtractionStage extends Probe.Base implements Stage {
         return data;
     }
 
+
     @Override
     public void execute(PipelineContext pipelineContext) {
-
+    /*
         SensorPipeLineContext context = (SensorPipeLineContext) pipelineContext;
 
         //TODO: corrigir estas duas linhas
@@ -206,5 +206,6 @@ public class FeatureExtractionStage extends Probe.Base implements Stage {
 
         //TODO: corrigir
         //context.setOutput(output);
+        */
     }
 }

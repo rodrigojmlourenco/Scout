@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.cycleourcity.scout.math.frequencydomain.fourier;
+package pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.frequencydomain.fourier;
 
 import android.util.Log;
 

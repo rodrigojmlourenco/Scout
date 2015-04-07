@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.cycleourcity.scout.math.timedomain;
+package pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.timedomain;
 
 import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.util.FastMath;
@@ -87,6 +87,4 @@ public class StatisticalMetrics {
         stdDev = FastMath.sqrt(StatUtils.variance(samples));
         return stdDev;
     }
-
-
 }

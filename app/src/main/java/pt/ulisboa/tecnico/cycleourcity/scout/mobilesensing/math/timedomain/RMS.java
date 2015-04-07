@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.cycleourcity.scout.math.timedomain;
+package pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.timedomain;
 
 import android.util.Log;
 

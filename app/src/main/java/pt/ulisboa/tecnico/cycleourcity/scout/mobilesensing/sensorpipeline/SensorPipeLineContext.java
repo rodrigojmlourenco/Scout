@@ -6,7 +6,6 @@ import com.ideaimpl.patterns.pipeline.Error;
 
 import java.util.List;
 
-import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.data.AccelerometerSampleWindow;
 
 /**
  * Created by rodrigo.jm.lourenco on 15/03/2015.

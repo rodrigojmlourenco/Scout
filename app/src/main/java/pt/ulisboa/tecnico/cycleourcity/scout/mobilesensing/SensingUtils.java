@@ -35,13 +35,20 @@ public class SensingUtils {
     public final static String NUM_FRAME_SAMPLES = "Total Samples";
     public final static String EXTRAS = "mExtras";
 
-    //Accelerometer Specific Fields
-    public final static String ACCURACY = "accuracy";
-    public final static String X = "x";
-    public final static String Y = "y";
-    public final static String Z = "z";
+    /**
+     * Accelerometer Specific Fields */
+    public static interface MotionKeys {
 
-    //Location Specific Fields
+        public final static String X = "x";
+        public final static String Y = "y";
+        public final static String Z = "z";
+
+        public final static String ACCURACY = "accuracy";
+        public final static String TIMESTAMP   = "timestamp";
+    }
+
+    /**
+     * Location Specific Fields */
     public static interface LocationKeys {
         public final static String
             //Main Keys

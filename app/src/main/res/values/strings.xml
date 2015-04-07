@@ -11,20 +11,21 @@
     <string name="scout_pipeline">
         {"@type":"pt.ulisboa.tecnico.cycleourcity.scout.pipeline.ScoutPipeline",
          "name":"default",
-         "version":1,
+         "version":2,
          "data":[
-            {
-                "@type":"edu.mit.media.funf.probe.builtin.LocationProbe",
-                 "@schedule": {"interval": 4, "duration": 3, "offset": 0},
-                 "goodEnoughAccuracy": 80,
-                 "maxWaitTime": 5
-            }
-        <!--,
-            {
-                "@type":"edu.mit.media.funf.probe.builtin.AccelerometerSensorProbe",
-                "@schedule": {"interval":1, "duration":0.05}
-            },
-            "edu.mit.media.funf.probe.builtin.GravitySensorProbe"-->
+        <!--{
+            "@type":"edu.mit.media.funf.probe.builtin.LocationProbe",
+             "@schedule": {"interval": 12, "duration": 10, "offset": 0},
+             "goodEnoughAccuracy": 80,
+             "maxWaitTime": 5
+        },
+        {
+            "@type":"edu.mit.media.funf.probe.builtin.AccelerometerSensorProbe",
+            "@schedule": {"interval":1, "duration":0.05}
+        },-->
+            "edu.mit.media.funf.probe.builtin.LocationProbe",
+            "edu.mit.media.funf.probe.builtin.AccelerometerSensorProbe"
+            <!--"edu.mit.media.funf.probe.builtin.GravitySensorProbe"-->
          ]
         }
     </string>

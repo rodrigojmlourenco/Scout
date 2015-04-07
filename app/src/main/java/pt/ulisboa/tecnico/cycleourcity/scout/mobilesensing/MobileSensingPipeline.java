@@ -56,7 +56,7 @@ public class MobileSensingPipeline {
     //Async Work
     private Object lock = new Object();
     private Timer dispatcherSchedule;
-    private SampleDispatcher dispatcher = new SampleDispatcher();
+    private SampleDispatcherTask dispatcher;
 
     //Storage
     private NameValueDatabaseHelper databaseHelper;
@@ -87,7 +87,7 @@ public class MobileSensingPipeline {
     public void startSensingSession(){
         try {
             dispatcherSchedule = new Timer(true);
-            dispatcher = new SampleDispatcher();
+            dispatcher = new SampleDispatcherTask();
 
             dispatcherSchedule.scheduleAtFixedRate(dispatcher, 0, WINDOW_SIZE * 1000);
         }catch (IllegalStateException e){
@@ -107,29 +107,10 @@ public class MobileSensingPipeline {
         int sensorType = SensingUtils.getSensorType(sensorConfig);
 
         //Store the sensor sample in a Queue
-        //NOTE: por enquanto não tem qualquer função
         JsonObject sample = sensorSample.getAsJsonObject();
         sample.addProperty(SensingUtils.SENSOR_TYPE, sensorType);
-        //sample.addProperty(SensingUtils.CONFIG, sensorConfig.toString()); //Unnecessary
         sensorSampleQueue.add(sample);
 
-        //TODO: remover esta linha
-        //storage.add(sample);
-
-
-        switch (sensorType) {
-            case SensingUtils.ACCELEROMETER:
-                accelerometerPipeline.pushSample(sensorSample);
-                break;
-            case SensingUtils.LOCATION:
-                //locationPipeline.pushSample(sensorSample);
-                break;
-            case SensingUtils.GRAVITY:
-                //Log.d("GRAVITY", String.valueOf(sensorSample));
-                break;
-            default:
-                throw new NoSuchSensorException();
-        }
     }
 
     /**
@@ -140,21 +121,10 @@ public class MobileSensingPipeline {
         extractedFeaturesQueue.add(sensorFeature);
     }
 
-    public void setDebugLevel(int level){
-
-        if(level > 0)
-            DEBUG = true;
-        else
-            DEBUG = false;
-
-    }
-
     /****************************************************************************************
      *  Async Work                                                                          *
-     ****************************************************************************************
-     *                                                                                      *
      ****************************************************************************************/
-    private class SampleDispatcher extends TimerTask {
+    private class SampleDispatcherTask extends TimerTask {
 
         ScoutLogger logger = ScoutLogger.getInstance();
 
@@ -187,12 +157,13 @@ public class MobileSensingPipeline {
                     int sensorType = sample.get(SensingUtils.SENSOR_TYPE).getAsInt();
                     switch (sensorType) {
                         case SensingUtils.ACCELEROMETER:
-                            //accelerometerPipeline.pushSample(sample);
+                            accelerometerPipeline.pushSample(sample);
+                            break;
+                        case SensingUtils.GRAVITY:
+                            accelerometerPipeline.pushSample(sample);
                             break;
                         case SensingUtils.LOCATION:
                             locationPipeline.pushSample(sample);
-                            break;
-                        case SensingUtils.GRAVITY:
                             break;
                         default:
                             throw new NoSuchSensorException();
@@ -203,9 +174,8 @@ public class MobileSensingPipeline {
             } while (sampleClone.peek() != null);
 
             //PRE-PROCESSING PHASE
-            //Execute Pipelines
-            //TODO: executar os pipelines especificos a cada sensor
             locationPipeline.run();
+            accelerometerPipeline.run();
         }
     }
 
@@ -260,6 +230,6 @@ public class MobileSensingPipeline {
         //Clear database contents
         storage.clearStoredData();
 
-        Log.d(LOG_TAG, "[ARCHIVE]: "+"Stored samples successfully archived in the device's file system.");
+        Log.d(LOG_TAG, "[ARCHIVE]: " + "Stored samples successfully archived in the device's file system.");
     }
 }
