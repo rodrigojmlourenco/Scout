@@ -77,8 +77,6 @@ public class MobileSensingPipeline {
         Context ctx = ScoutApplication.getContext();
         databaseHelper = new NameValueDatabaseHelper(ctx, StringUtil.simpleFilesafe(NAME), DB_VERSION);
 
-
-
         archive = new DefaultArchive(ctx, ScoutPipeline.NAME);
     }
 
@@ -87,13 +85,20 @@ public class MobileSensingPipeline {
     }
 
     public void startSensingSession(){
-        dispatcherSchedule = new Timer(true);
-        dispatcherSchedule.scheduleAtFixedRate(dispatcher, 0, WINDOW_SIZE * 1000);
+        try {
+            dispatcherSchedule = new Timer(true);
+            dispatcher = new SampleDispatcher();
+
+            dispatcherSchedule.scheduleAtFixedRate(dispatcher, 0, WINDOW_SIZE * 1000);
+        }catch (IllegalStateException e){
+            e.printStackTrace();
+        }
     }
 
     public void stopSensingSession(){
         dispatcherSchedule.cancel();
         dispatcherSchedule.purge();
+        dispatcher.cancel();
     }
 
     public void pushSensorSample(IJsonObject sensorConfig, IJsonObject sensorSample)
@@ -247,34 +252,14 @@ public class MobileSensingPipeline {
 
     public void archiveData(String tag) throws SQLException {
 
-        if(storage.peek()==null) {
-            Log.w("ARCHIVE", "Skipping, nothing to archive.");
-            return;
-        }
+        StorageManager storage = ScoutStorageManager.getInstance();
 
-        int sampleCount = 0;
-        StorageManager manager = ScoutStorageManager.getInstance();
+        //TODO: check if there is information to store;
+        storage.archive(tag);
 
-        while(storage.peek()!=null){
+        //Clear database contents
+        storage.clearStoredData();
 
-            JsonObject value = storage.remove();
-            int sensorType = value.get(SensingUtils.SENSOR_TYPE).getAsInt();
-            String key = SensingUtils.getSensorTypeAsString(sensorType);
-
-            Log.d("ARCHIVE", "Key:"+key+" - "+value.toString());
-
-            try {
-                manager.store(key, storage.remove());
-            }catch (NoSuchElementException e){
-                Log.e("ARCHIVE", "Something went terribly wrong.");
-                break;
-            }
-
-
-            sampleCount++;
-        }
-
-        Log.d("ARCHIVE", "Storing " + sampleCount + " samples.");
-        manager.archive(tag);
+        Log.d(LOG_TAG, "[ARCHIVE]: "+"Stored samples successfully archived in the device's file system.");
     }
 }

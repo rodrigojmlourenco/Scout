@@ -24,6 +24,8 @@ public class SensorPipeLineContext implements PipelineContext {
         input = samples;
     }
 
+    public void clearInput(){ input = null; }
+
     public JsonObject[] getOutput(){ return output; }
 
     public void setOutput(JsonObject[] output){ this.output = output; }

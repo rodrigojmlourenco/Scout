@@ -11,6 +11,8 @@ public interface StorageManager {
 
     public final static String LOG_TAG = "Storage";
 
+    public void clearStoredData();
+
     public void store(String key, JsonObject value) throws SQLException;
 
     public void archive();

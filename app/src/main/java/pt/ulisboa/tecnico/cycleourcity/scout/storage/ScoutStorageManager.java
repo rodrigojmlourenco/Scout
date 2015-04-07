@@ -60,6 +60,11 @@ public class ScoutStorageManager implements StorageManager{
     }
 
     @Override
+    public void clearStoredData() {
+        dbHelper.getWritableDatabase().delete("data", null, null);
+    }
+
+    @Override
     public void store(String key, JsonObject values) throws SQLException {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 

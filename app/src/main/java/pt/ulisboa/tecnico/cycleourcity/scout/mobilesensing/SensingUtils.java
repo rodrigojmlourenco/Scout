@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 
 import edu.mit.media.funf.json.IJsonObject;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exception.MobileSensingException;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exception.NoSuchDataFieldException;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exception.NoSuchSensorException;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exception.SensorNotSupportedException;
 
@@ -57,6 +58,53 @@ public class SensingUtils {
             SATTELITES  = "satellites",
             //Only Network
             TRAVEL_STATE= "travelState";
+    }
+
+    public static class LocationSampleAcessor{
+
+        public static double getLatitude(JsonObject sample) throws NoSuchDataFieldException {
+            if(sample.has(LocationKeys.LATITUDE))
+                return sample.get(LocationKeys.LATITUDE).getAsDouble();
+            else
+                throw new NoSuchDataFieldException(LocationKeys.LATITUDE);
+
+        }
+
+        public static double getLongitude(JsonObject sample) throws NoSuchDataFieldException {
+            if(sample.has(LocationKeys.LONGITUDE))
+                return sample.get(LocationKeys.LONGITUDE).getAsDouble();
+            else
+                throw new NoSuchDataFieldException(LocationKeys.LONGITUDE);
+        }
+
+        public static float getAltitude(JsonObject sample) throws NoSuchDataFieldException {
+            if(sample.has(LocationKeys.ALTITUDE)){
+                return sample.get(LocationKeys.ALTITUDE).getAsFloat();
+            }else
+                throw new NoSuchDataFieldException(LocationKeys.ALTITUDE);
+        }
+
+        public static float getSpeed(JsonObject sample) throws NoSuchDataFieldException {
+            if(sample.has(LocationKeys.SPEED))
+                return sample.get(LocationKeys.SPEED).getAsFloat();
+            else
+                throw new NoSuchDataFieldException(LocationKeys.SPEED);
+        }
+
+        public static String getTravelState(JsonObject sample) throws NoSuchDataFieldException{
+            if(sample.has(LocationKeys.TRAVEL_STATE))
+                return sample.get(LocationKeys.TRAVEL_STATE).getAsString();
+            else
+                throw new NoSuchDataFieldException(LocationKeys.TRAVEL_STATE);
+        }
+
+        public static double getTimestamp(JsonObject sample) throws NoSuchDataFieldException {
+            if(sample.has(LocationKeys.TIMESTAMP))
+                return sample.get(LocationKeys.TIMESTAMP).getAsDouble();
+            else
+                throw new NoSuchDataFieldException(LocationKeys.TIMESTAMP);
+        }
+
     }
 
     //Configuration
