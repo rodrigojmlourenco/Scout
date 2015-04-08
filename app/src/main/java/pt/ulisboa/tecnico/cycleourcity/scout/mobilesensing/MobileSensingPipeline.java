@@ -13,18 +13,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import edu.mit.media.funf.json.IJsonObject;
-import edu.mit.media.funf.storage.DefaultArchive;
-import edu.mit.media.funf.storage.NameValueDatabaseHelper;
-import edu.mit.media.funf.util.StringUtil;
-
 import pt.ulisboa.tecnico.cycleourcity.scout.ScoutApplication;
 import pt.ulisboa.tecnico.cycleourcity.scout.logging.ScoutLogger;
-import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.sensor.LocationPipeline;
-import pt.ulisboa.tecnico.cycleourcity.scout.pipeline.ScoutPipeline;
-import pt.ulisboa.tecnico.cycleourcity.scout.action.WriteDataAction;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exception.MobileSensingException;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exception.NoSuchSensorException;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.sensor.AccelerometerPipeline;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.sensor.LocationPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.ScoutStorageManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.StorageManager;
 
@@ -39,11 +33,8 @@ public class MobileSensingPipeline {
 
     public final static int     WINDOW_SIZE = 5; //seconds
 
-    private boolean DEBUG = true;
-
     //Mobile Sensing Singleton
     private static MobileSensingPipeline SENSING_PIPELINE = new MobileSensingPipeline();
-
 
     //Sensor Specific Pipelines
     private final AccelerometerPipeline accelerometerPipeline;
@@ -59,8 +50,7 @@ public class MobileSensingPipeline {
     private SampleDispatcherTask dispatcher;
 
     //Storage
-    private NameValueDatabaseHelper databaseHelper;
-    private DefaultArchive archive;
+    private ScoutStorageManager storageManager = ScoutStorageManager.getInstance();
     private Queue<JsonObject> storage = new LinkedList<>();
 
     private MobileSensingPipeline() {
@@ -75,9 +65,6 @@ public class MobileSensingPipeline {
 
         //Storage
         Context ctx = ScoutApplication.getContext();
-        databaseHelper = new NameValueDatabaseHelper(ctx, StringUtil.simpleFilesafe(NAME), DB_VERSION);
-
-        archive = new DefaultArchive(ctx, ScoutPipeline.NAME);
     }
 
     public static MobileSensingPipeline getInstance(){
@@ -86,6 +73,9 @@ public class MobileSensingPipeline {
 
     public void startSensingSession(){
         try {
+
+            storageManager.clearStoredData();
+
             dispatcherSchedule = new Timer(true);
             dispatcher = new SampleDispatcherTask();
 
@@ -109,8 +99,8 @@ public class MobileSensingPipeline {
         //Store the sensor sample in a Queue
         JsonObject sample = sensorSample.getAsJsonObject();
         sample.addProperty(SensingUtils.SENSOR_TYPE, sensorType);
-        sensorSampleQueue.add(sample);
 
+        synchronized (lock){ sensorSampleQueue.add(sample); }
     }
 
     /**
@@ -190,7 +180,6 @@ public class MobileSensingPipeline {
     public void archiveData() throws SQLException {
 
         if(storage.peek()==null) {
-            Log.w("ARCHIVE", "Skipping, nothing to archive.");
             return;
         }
 
@@ -203,20 +192,15 @@ public class MobileSensingPipeline {
             int sensorType = value.get(SensingUtils.SENSOR_TYPE).getAsInt();
             String key = SensingUtils.getSensorTypeAsString(sensorType);
 
-            Log.d("ARCHIVE", "Key:"+key+" - "+value.toString());
-
             try {
                 manager.store(key, storage.remove());
             }catch (NoSuchElementException e){
-                Log.e("ARCHIVE", "Something went terribly wrong.");
                 break;
             }
-
 
             sampleCount++;
         }
 
-        Log.d("ARCHIVE", "Storing " + sampleCount + " samples.");
         manager.archive();
     }
 

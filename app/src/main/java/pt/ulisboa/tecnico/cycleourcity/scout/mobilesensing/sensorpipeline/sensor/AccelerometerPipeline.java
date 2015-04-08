@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.sensor;
 
-import android.util.Log;
 
 import com.google.gson.JsonObject;
 import com.ideaimpl.patterns.pipeline.PipelineContext;
@@ -162,44 +161,7 @@ public class AccelerometerPipeline implements ISensorPipeline{
         //Logging
         private ScoutLogger logger = ScoutLogger.getInstance();
 
-        private class MotionQueues {
 
-            private List<Double> xSignals = new ArrayList<>(),
-                                    ySignals = new ArrayList<>(),
-                                    zSignals = new ArrayList<>();
-
-
-            public void addSample(double x, double y, double z){
-                xSignals.add(x);
-                ySignals.add(y);
-                zSignals.add(z);
-            }
-
-            private double[] doubleListToArray(List<Double> list){
-
-                int i=0;
-                double[] out = new double[list.size()];
-
-                for(Double l : list) {
-                    out[i] = (double) l;
-                    i++;
-                }
-
-                return out;
-            }
-
-            public double[] getXSignals() {
-                return doubleListToArray(xSignals);
-            }
-
-            public double[] getYSignals() {
-                return doubleListToArray(ySignals);
-            }
-
-            public double[] getZSignals() {
-                return doubleListToArray(zSignals);
-            }
-        }
 
         private JsonObject calculateMean(MotionQueues motions){
             JsonObject data = new JsonObject();
@@ -253,6 +215,15 @@ public class AccelerometerPipeline implements ISensorPipeline{
 
             double x, y, z;
 
+            //Timestamping
+            double timestamp = 0;
+            TimeKeeper accTimeKeeper = new TimeKeeper();
+            TimeKeeper gravTimeKeeper = new TimeKeeper();
+
+            //Samples Counters
+            int accSamples = 0;
+            int gravSamples = 0;
+
             //PHASE-1 Separate the different samples, according to it's provider
             for(JsonObject sample : input){
                 int sensorType = sample.get(SensingUtils.SENSOR_TYPE).getAsInt();
@@ -262,12 +233,18 @@ public class AccelerometerPipeline implements ISensorPipeline{
                 y = sample.get(SensingUtils.MotionKeys.Y).getAsDouble();
                 z = sample.get(SensingUtils.MotionKeys.Z).getAsDouble();
 
+                timestamp = sample.get(SensingUtils.MotionKeys.TIMESTAMP).getAsDouble();
+
                 switch (sensorType){
                     case SensingUtils.ACCELEROMETER:
+                        accSamples++;
                         accMotionSignals.addSample(x,y,z);
+                        accTimeKeeper.addTimestamp(timestamp);
                         break;
                     case SensingUtils.GRAVITY:
+                        gravSamples++;
                         gravityMotionSignals.addSample(x,y,z);
+                        gravTimeKeeper.addTimestamp(timestamp);
                         break;
                     default:
                         logger.log(ScoutLogger.WARN, LOG_TAG, TAG+"Unknown sensor type '"+sensorType+"'.");
@@ -279,6 +256,9 @@ public class AccelerometerPipeline implements ISensorPipeline{
             //Accelerometer
             JsonObject accelerometerFeatures = new JsonObject();
             accelerometerFeatures.addProperty(SensingUtils.SENSOR_TYPE, SENSOR_TYPE);
+            accelerometerFeatures.addProperty(SensingUtils.MotionKeys.TIMESTAMP, accTimeKeeper.getAvgTime());
+            accelerometerFeatures.addProperty(SensingUtils.MotionKeys.ELAPSED_TIME, accTimeKeeper.getElapsedTime());
+            accelerometerFeatures.addProperty(SensingUtils.MotionKeys.SAMPLES, accSamples);
             accelerometerFeatures.add(MEAN, calculateMean(accMotionSignals));
             accelerometerFeatures.add(VARIANCE, calculateVariance(accMotionSignals));
             accelerometerFeatures.add(STANDARD_DEVIATION, calculateStandardDeviation(accMotionSignals));
@@ -287,8 +267,75 @@ public class AccelerometerPipeline implements ISensorPipeline{
             JsonObject[] output = new JsonObject[1];
             output[0] = accelerometerFeatures;
 
-            //TODO: falta introduzir o timestamp, caso contrário rebenta...
-            //((SensorPipeLineContext)pipelineContext).setInput(output);
+            ((SensorPipeLineContext)pipelineContext).clearInput();
+            ((SensorPipeLineContext)pipelineContext).setInput(output);
+        }
+
+        private class TimeKeeper {
+
+            private double minTime=0, maxTime=0, avgTime=0;
+            private int timeSamples = 0;
+            private boolean first = true;
+
+            public void addTimestamp(double timestamp){
+
+                timeSamples++;
+                avgTime += timestamp;
+
+                if(first) {
+                    first = false;
+                    minTime = maxTime = timestamp;
+                }else{
+
+                    minTime = (timestamp<minTime) ? timestamp : minTime;
+                    maxTime = (timestamp>maxTime) ? timestamp : maxTime;
+                }
+            }
+
+            public double getAvgTime(){
+                return avgTime/timeSamples;
+            }
+
+            public double getElapsedTime(){
+                return maxTime-minTime;
+            }
+        }
+
+        private class MotionQueues {
+
+            private List<Double> xSignals = new ArrayList<>(),
+                    ySignals = new ArrayList<>(),
+                    zSignals = new ArrayList<>();
+
+
+            public void addSample(double x, double y, double z){
+                xSignals.add(x);
+                ySignals.add(y);
+                zSignals.add(z);
+            }
+
+            private double[] doubleListToArray(List<Double> list){
+
+                int i=0;
+                double[] out = new double[list.size()];
+
+                for(Double l : list) {
+                    out[i] = (double) l;
+                    i++;
+                }
+
+                return out;
+            }
+
+            public double[] getXSignals() {
+                return doubleListToArray(xSignals);
+            }
+            public double[] getYSignals() {
+                return doubleListToArray(ySignals);
+            }
+            public double[] getZSignals() {
+                return doubleListToArray(zSignals);
+            }
         }
     }
 

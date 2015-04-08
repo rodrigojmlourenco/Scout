@@ -43,8 +43,12 @@ public class SensingUtils {
         public final static String Y = "y";
         public final static String Z = "z";
 
-        public final static String ACCURACY = "accuracy";
-        public final static String TIMESTAMP   = "timestamp";
+        public final static String ACCURACY     = "accuracy";
+        public final static String TIMESTAMP    = "timestamp";
+
+        public final static String ELAPSED_TIME = "elapsedTimeMillis";
+
+        public final static String SAMPLES      = "numSamples";
     }
 
     /**

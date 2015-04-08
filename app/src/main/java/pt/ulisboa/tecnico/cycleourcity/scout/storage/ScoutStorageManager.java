@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
-import android.util.Log;
 
 import com.google.gson.JsonObject;
 
@@ -12,7 +11,6 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import edu.mit.media.funf.storage.DefaultArchive;
 import edu.mit.media.funf.storage.NameValueDatabaseHelper;
 import pt.ulisboa.tecnico.cycleourcity.scout.ScoutApplication;
 import pt.ulisboa.tecnico.cycleourcity.scout.logging.ScoutLogger;
@@ -33,7 +31,6 @@ public class ScoutStorageManager implements StorageManager{
     private ScoutLogger logger = ScoutLogger.getInstance();
 
     private NameValueDatabaseHelper dbHelper;
-    //private DefaultArchive archive;
     private ScoutArchive archive;
 
     private ScoutStorageManager(){
