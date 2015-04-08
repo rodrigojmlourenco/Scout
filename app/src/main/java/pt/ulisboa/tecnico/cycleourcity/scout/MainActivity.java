@@ -125,7 +125,7 @@ public class MainActivity extends ActionBarActivity {
 
 
                 String tag = tagText.getText().toString();
-                Pattern pattern = Pattern.compile("[a-zA-Z]+");
+                Pattern pattern = Pattern.compile("[a-zA-Z0-9]+");
                 Matcher m = pattern.matcher(tag);
 
                 if(tag.length()<=10 && m.matches()) {

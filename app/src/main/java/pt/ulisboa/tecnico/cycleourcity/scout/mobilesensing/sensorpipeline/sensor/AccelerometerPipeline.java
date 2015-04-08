@@ -1,6 +1,8 @@
 package pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.sensor;
 
 
+import android.util.Log;
+
 import com.google.gson.JsonObject;
 import com.ideaimpl.patterns.pipeline.PipelineContext;
 import com.ideaimpl.patterns.pipeline.Stage;
@@ -143,7 +145,8 @@ public class AccelerometerPipeline implements ISensorPipeline{
     }
 
     /**
-     *
+     * @version 1.0 Time-Domain Statistical Features Only
+     * @author rodrigo.jm.lourenco
      */
     public static class FeatureExtractionStage implements Stage {
 
@@ -161,9 +164,7 @@ public class AccelerometerPipeline implements ISensorPipeline{
         //Logging
         private ScoutLogger logger = ScoutLogger.getInstance();
 
-
-
-        private JsonObject calculateMean(MotionQueues motions){
+        private JsonObject calculateMean(MotionSignals motions){
             JsonObject data = new JsonObject();
 
             double xMean = StatisticalMetrics.calculateMean(motions.getXSignals());
@@ -177,7 +178,7 @@ public class AccelerometerPipeline implements ISensorPipeline{
             return data;
         }
 
-        private JsonObject calculateStandardDeviation(MotionQueues motions){
+        private JsonObject calculateStandardDeviation(MotionSignals motions){
             JsonObject data = new JsonObject();
 
             double xStdDev = StatisticalMetrics.calculateStandardDeviation(motions.getXSignals());
@@ -191,7 +192,7 @@ public class AccelerometerPipeline implements ISensorPipeline{
             return data;
         }
 
-        private JsonObject calculateVariance(MotionQueues motions){
+        private JsonObject calculateVariance(MotionSignals motions){
             JsonObject data = new JsonObject();
 
             double xVar = StatisticalMetrics.calculateVariance(motions.getXSignals());
@@ -205,13 +206,32 @@ public class AccelerometerPipeline implements ISensorPipeline{
             return data;
         }
 
+        private void setExtractedFeatured(JsonObject data, MotionSignals motionSignals){
+
+            data.add(MEAN, calculateMean(motionSignals));
+            data.add(VARIANCE, calculateVariance(motionSignals));
+            data.add(STANDARD_DEVIATION, calculateStandardDeviation(motionSignals));
+        }
+
+        private JsonObject getExtractedFeaturesAsJson(String sensor, MotionSignals signals, TimeKeeper time){
+
+            JsonObject extractedFeatures = new JsonObject();
+
+            extractedFeatures.addProperty(SensingUtils.SENSOR_TYPE, sensor);
+            extractedFeatures.addProperty(SensingUtils.MotionKeys.TIMESTAMP, time.getAvgTime());
+            extractedFeatures.addProperty(SensingUtils.MotionKeys.ELAPSED_TIME, time.getElapsedTime());
+            extractedFeatures.addProperty(SensingUtils.MotionKeys.SAMPLES, signals.getTotalSamples());
+            setExtractedFeatured(extractedFeatures, signals);
+
+            return extractedFeatures;
+        }
 
         @Override
         public void execute(PipelineContext pipelineContext) {
 
             JsonObject[] input =((SensorPipeLineContext)pipelineContext).getInput();
-            MotionQueues accMotionSignals = new MotionQueues(),
-                         gravityMotionSignals = new MotionQueues();
+            MotionSignals accMotionSignals = new MotionSignals(),
+                         gravityMotionSignals = new MotionSignals();
 
             double x, y, z;
 
@@ -252,22 +272,20 @@ public class AccelerometerPipeline implements ISensorPipeline{
             }
 
             //PHASE-2: Extract Features from the captured signals
-            //TODO: process samples captured by the GravityProbe
-            //Accelerometer
-            JsonObject accelerometerFeatures = new JsonObject();
-            accelerometerFeatures.addProperty(SensingUtils.SENSOR_TYPE, SENSOR_TYPE);
-            accelerometerFeatures.addProperty(SensingUtils.MotionKeys.TIMESTAMP, accTimeKeeper.getAvgTime());
-            accelerometerFeatures.addProperty(SensingUtils.MotionKeys.ELAPSED_TIME, accTimeKeeper.getElapsedTime());
-            accelerometerFeatures.addProperty(SensingUtils.MotionKeys.SAMPLES, accSamples);
-            accelerometerFeatures.add(MEAN, calculateMean(accMotionSignals));
-            accelerometerFeatures.add(VARIANCE, calculateVariance(accMotionSignals));
-            accelerometerFeatures.add(STANDARD_DEVIATION, calculateStandardDeviation(accMotionSignals));
+            //TODO: Linear Acceleration
+            JsonObject
+                accelerometerFeatures = getExtractedFeaturesAsJson(SENSOR_TYPE, accMotionSignals, accTimeKeeper),
+                gravityFeatures = getExtractedFeaturesAsJson(SENSOR_TYPE_GRAVITY, gravityMotionSignals, gravTimeKeeper);
 
             //PHASE-3: Set output
-            JsonObject[] output = new JsonObject[1];
+            JsonObject[] output = new JsonObject[2];
             output[0] = accelerometerFeatures;
+            output[1] = gravityFeatures;
 
-            ((SensorPipeLineContext)pipelineContext).clearInput();
+            //TODO: remover
+            Log.w("[ACCELEROMETER]", String.valueOf(accelerometerFeatures));
+            Log.w("[GRAVITY]", String.valueOf(gravityFeatures));
+
             ((SensorPipeLineContext)pipelineContext).setInput(output);
         }
 
@@ -286,22 +304,16 @@ public class AccelerometerPipeline implements ISensorPipeline{
                     first = false;
                     minTime = maxTime = timestamp;
                 }else{
-
                     minTime = (timestamp<minTime) ? timestamp : minTime;
                     maxTime = (timestamp>maxTime) ? timestamp : maxTime;
                 }
             }
 
-            public double getAvgTime(){
-                return avgTime/timeSamples;
-            }
-
-            public double getElapsedTime(){
-                return maxTime-minTime;
-            }
+            public double getAvgTime(){ return avgTime/timeSamples; }
+            public double getElapsedTime(){ return maxTime-minTime; }
         }
 
-        private class MotionQueues {
+        private class MotionSignals {
 
             private List<Double> xSignals = new ArrayList<>(),
                     ySignals = new ArrayList<>(),
@@ -320,7 +332,7 @@ public class AccelerometerPipeline implements ISensorPipeline{
                 double[] out = new double[list.size()];
 
                 for(Double l : list) {
-                    out[i] = (double) l;
+                    out[i] = l;
                     i++;
                 }
 
@@ -336,6 +348,7 @@ public class AccelerometerPipeline implements ISensorPipeline{
             public double[] getZSignals() {
                 return doubleListToArray(zSignals);
             }
+            public int getTotalSamples()  { return xSignals.size(); }
         }
     }
 

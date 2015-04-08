@@ -30,6 +30,8 @@ public class ScoutStorageManager implements StorageManager{
     //Logging
     private ScoutLogger logger = ScoutLogger.getInstance();
 
+    private boolean empty = true;
+
     private NameValueDatabaseHelper dbHelper;
     private ScoutArchive archive;
 
@@ -59,6 +61,7 @@ public class ScoutStorageManager implements StorageManager{
     @Override
     public void clearStoredData() {
         dbHelper.getWritableDatabase().delete("data", null, null);
+        empty = true;
     }
 
     @Override
@@ -78,6 +81,8 @@ public class ScoutStorageManager implements StorageManager{
         cv.put(NameValueDatabaseHelper.COLUMN_VALUE, value);
         cv.put(NameValueDatabaseHelper.COLUMN_TIMESTAMP, timestamp);
         db.insertOrThrow(NameValueDatabaseHelper.DATA_TABLE.name, "", cv);
+
+        empty = false;
     }
 
     @Override

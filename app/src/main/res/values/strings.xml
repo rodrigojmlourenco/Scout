@@ -24,8 +24,8 @@
             "@schedule": {"interval":1, "duration":0.05}
         },-->
             "edu.mit.media.funf.probe.builtin.LocationProbe",
-            "edu.mit.media.funf.probe.builtin.AccelerometerSensorProbe"
-            <!--"edu.mit.media.funf.probe.builtin.GravitySensorProbe"-->
+            "edu.mit.media.funf.probe.builtin.AccelerometerSensorProbe",
+            "edu.mit.media.funf.probe.builtin.GravitySensorProbe"
          ]
         }
     </string>
