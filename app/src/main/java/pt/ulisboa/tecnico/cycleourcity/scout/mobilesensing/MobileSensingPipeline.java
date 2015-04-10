@@ -21,6 +21,7 @@ import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.sensor
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.sensor.LocationPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.ScoutStorageManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.StorageManager;
+import pt.ulisboa.tecnico.cycleourcity.scout.storage.exceptions.NothingToArchiveException;
 
 
 /**
@@ -177,7 +178,7 @@ public class MobileSensingPipeline {
      ****************************************************************************************
      * TODO: make async
      ****************************************************************************************/
-    public void archiveData() throws SQLException {
+    public void archiveData() throws SQLException, NothingToArchiveException {
 
         if(storage.peek()==null) {
             return;
@@ -204,7 +205,7 @@ public class MobileSensingPipeline {
         manager.archive();
     }
 
-    public void archiveData(String tag) throws SQLException {
+    public void archiveData(String tag) throws SQLException, NothingToArchiveException {
 
         StorageManager storage = ScoutStorageManager.getInstance();
 

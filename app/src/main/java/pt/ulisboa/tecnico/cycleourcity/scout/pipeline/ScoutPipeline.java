@@ -10,10 +10,12 @@ import edu.mit.media.funf.FunfManager;
 import edu.mit.media.funf.json.IJsonObject;
 import edu.mit.media.funf.pipeline.BasicPipeline;
 
+import pt.ulisboa.tecnico.cycleourcity.scout.MainActivity;
 import pt.ulisboa.tecnico.cycleourcity.scout.ScoutApplication;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.MobileSensingPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exception.MobileSensingException;
+import pt.ulisboa.tecnico.cycleourcity.scout.storage.exceptions.NothingToArchiveException;
 
 /**
  *
@@ -48,6 +50,9 @@ public class ScoutPipeline extends BasicPipeline {
                     mPipeline.archiveData(samplingTag);
                 } catch (SQLException e) {
                     e.printStackTrace();
+                } catch (NothingToArchiveException e) {
+                    e.printStackTrace();
+                    //TODO: TOAST na main Activity
                 }
                 break;
             default:

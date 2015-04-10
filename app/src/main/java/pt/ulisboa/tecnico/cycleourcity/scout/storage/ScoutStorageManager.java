@@ -16,6 +16,7 @@ import pt.ulisboa.tecnico.cycleourcity.scout.ScoutApplication;
 import pt.ulisboa.tecnico.cycleourcity.scout.logging.ScoutLogger;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.archive.ScoutArchive;
+import pt.ulisboa.tecnico.cycleourcity.scout.storage.exceptions.NothingToArchiveException;
 
 /**
  * Created by rodrigo.jm.lourenco on 30/03/2015.
@@ -26,6 +27,8 @@ public class ScoutStorageManager implements StorageManager{
     private final static String NAME = "Scout";
     private final static String LOG_TAG = "ScoutStorageManager";
     private final static int DB_VERSION = 1;
+
+
 
     //Logging
     private ScoutLogger logger = ScoutLogger.getInstance();
@@ -60,8 +63,12 @@ public class ScoutStorageManager implements StorageManager{
 
     @Override
     public void clearStoredData() {
-        dbHelper.getWritableDatabase().delete("data", null, null);
-        empty = true;
+
+        if(!empty){
+            dbHelper.getWritableDatabase().delete("data", null, null);
+            empty = true;
+        }
+
     }
 
     @Override
@@ -86,7 +93,9 @@ public class ScoutStorageManager implements StorageManager{
     }
 
     @Override
-    public void archive() {
+    public void archive() throws NothingToArchiveException{
+
+        if(empty) throw new NothingToArchiveException();
 
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         File dbFile = new File(db.getPath());
@@ -109,7 +118,10 @@ public class ScoutStorageManager implements StorageManager{
     }
 
     @Override
-    public void archive(String tag) {
+    public void archive(String tag) throws NothingToArchiveException{
+
+        if(empty) throw new NothingToArchiveException();
+
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         File dbFile = new File(db.getPath());
         db.close();

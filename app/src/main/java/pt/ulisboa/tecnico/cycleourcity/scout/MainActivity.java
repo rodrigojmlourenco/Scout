@@ -3,6 +3,9 @@ package pt.ulisboa.tecnico.cycleourcity.scout;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.location.Address;
+import android.location.Geocoder;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -13,31 +16,47 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import edu.mit.media.funf.FunfManager;
 import edu.mit.media.funf.pipeline.BasicPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.logging.ScoutLogger;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.MobileSensingPipeline;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.state.ScoutState;
 import pt.ulisboa.tecnico.cycleourcity.scout.pipeline.ScoutPipeline;
-import pt.ulisboa.tecnico.cycleourcity.scout.storage.ScoutStorageManager;
 
 public class MainActivity extends ActionBarActivity {
 
-    private final String LOG_TAG = "MainAct";
+    private final String LOG_TAG = "MainActivity";
 
-    private Handler handler;
 
     //UI
     private Button startSession, stopSession, saveSession;
     private EditText tagText;
 
+    private TextView
+            locationView,
+            speedView,
+            altitudeView,
+            travelStateView;
+
     //Funf
     public static final String PIPELINE_NAME = "default";
     private FunfManager funfManager;
     private ScoutPipeline pipeline;
+
+    //Backgound UI updating
+    private Timer timer;
+    private TimerTask uiUpdater;
+    private ScoutStateUpdaterTask updateStateTask;
 
     //Logging
     private ScoutLogger logger = ScoutLogger.getInstance();
@@ -89,7 +108,6 @@ public class MainActivity extends ActionBarActivity {
                         }else
                             Toast.makeText(MainActivity.this, "Unable to stop sensing pipeline.", Toast.LENGTH_SHORT).show();
 
-
                     }else
                         Toast.makeText(MainActivity.this, "Pipeline is not enabled", Toast.LENGTH_SHORT).show();
                 }
@@ -113,16 +131,12 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Used to make interface changes on main thread
-        handler = new Handler();
-
         // Runs a save action if pipeline is enabled
         saveSession = (Button) findViewById(R.id.archive);
         saveSession.setEnabled(false);
         saveSession.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
 
                 String tag = tagText.getText().toString();
                 Pattern pattern = Pattern.compile("[a-zA-Z0-9]+");
@@ -137,13 +151,6 @@ public class MainActivity extends ActionBarActivity {
                             "Only characters are acceptable\n(max length 10 chars).",
                             Toast.LENGTH_SHORT).show();
                 }
-
-
-
-
-
-
-
             }
         });
 
@@ -155,6 +162,22 @@ public class MainActivity extends ActionBarActivity {
         stopSession.setEnabled(false);
 
         tagText = (EditText) findViewById(R.id.tag);
+
+        //Background UI updating
+        locationView = (TextView) findViewById(R.id.locationValue);
+        speedView = (TextView) findViewById(R.id.speedValue);
+        altitudeView = (TextView) findViewById(R.id.altitudeValue);
+        travelStateView = (TextView) findViewById(R.id.travelStateValue);
+
+        timer = new Timer();
+        uiUpdater = new TimerTask() {
+            @Override
+            public void run() {
+                new ScoutStateUpdaterTask().execute();
+            }
+        };
+        timer.scheduleAtFixedRate(uiUpdater, 17000, MobileSensingPipeline.WINDOW_SIZE);
+
 
         // Bind to the service, to create the connection with FunfManager
         bindService(new Intent(this, FunfManager.class), funfManagerConn, BIND_AUTO_CREATE);
@@ -189,5 +212,43 @@ public class MainActivity extends ActionBarActivity {
         Log.d("MAIN", "Disabling pipeline, and unbinding service connection.");
         funfManager.disablePipeline(PIPELINE_NAME);
         unbindService(funfManagerConn);
+
+        //TODO//Cancel UI Threads
+    }
+
+    private void publishScoutState(String travelState){
+        ScoutState state = ScoutState.getInstance();
+        travelStateView.setText(state.getMotionState().getTravelState());
+    }
+
+
+    /*********************************************************************************
+     *
+     *********************************************************************************/
+    private class ScoutStateUpdaterTask extends AsyncTask{
+
+        private ScoutState scoutState = ScoutState.getInstance();
+        private Geocoder geocoder = new Geocoder(ScoutApplication.getContext());
+
+        @Override
+        protected Object doInBackground(Object[] params) {
+
+            travelStateView.post(new Runnable() {
+                @Override
+                public void run() {
+
+                    double lat, lon;
+                    lat = scoutState.getLocationState().getLatitude();
+                    lon = scoutState.getLocationState().getLongitude();
+
+                    locationView.setText("Lat:"+lat+"; Lon:"+lon);
+                    travelStateView.setText(scoutState.getMotionState().getTravelState());
+                    speedView.setText(String.valueOf(scoutState.getMotionState().getSpeed()));
+                    altitudeView.setText(String.valueOf(scoutState.getLocationState().getAltitude()));
+                }
+            });
+
+            return null;
+        }
     }
 }

@@ -50,6 +50,8 @@ public class LocationPipeline implements ISensorPipeline {
         //Pre-processing pipeline stages
         LOCATION_PIPELINE.addStage(new AdmissionControlStage());
         LOCATION_PIPELINE.addStage(new TrimStage());
+        LOCATION_PIPELINE.addStage(new FeatureExtractionStage());
+        LOCATION_PIPELINE.addStage(new UpdateScoutStateStage());
         LOCATION_PIPELINE.addFinalStage(new PostExecuteStage());
     }
 
@@ -86,26 +88,7 @@ public class LocationPipeline implements ISensorPipeline {
         LOCATION_PIPELINE.execute(context);
     }
 
-    /**
-     * Given the location sample, as a JSON object, this method returns the location provider, which
-     * may be either GPS or Network-based.
-     * @param locationSample
-     * @return Location provider represented by an integer.
-     */
-    public int getLocationProvider(JsonObject locationSample){
 
-        if(locationSample.has(SensingUtils.LocationKeys.PROVIDER)){
-            String provider = locationSample.get(SensingUtils.LocationKeys.PROVIDER).getAsString();
-            switch (provider) {
-                case "gps":
-                    return GPS_PROVIDER;
-                case "network":
-                    return NETWORK_PROVIDER;
-            }
-        }
-
-        return UNKNOWN_PROVIDER;
-    }
 
     /****************************************************************************************
      * STAGES: Private stages to be used by the Location Pipeline                           *
@@ -117,7 +100,30 @@ public class LocationPipeline implements ISensorPipeline {
      *
      * @see com.ideaimpl.patterns.pipeline.Stage
      */
-    public class TrimStage implements Stage {
+    public static class TrimStage implements Stage {
+
+        private ScoutLogger logger = ScoutLogger.getInstance();
+
+        /**
+         * Given the location sample, as a JSON object, this method returns the location provider, which
+         * may be either GPS or Network-based.
+         * @param locationSample
+         * @return Location provider represented by an integer.
+         */
+        public int getLocationProvider(JsonObject locationSample){
+
+            if(locationSample.has(SensingUtils.LocationKeys.PROVIDER)){
+                String provider = locationSample.get(SensingUtils.LocationKeys.PROVIDER).getAsString();
+                switch (provider) {
+                    case "gps":
+                        return GPS_PROVIDER;
+                    case "network":
+                        return NETWORK_PROVIDER;
+                }
+            }
+
+            return UNKNOWN_PROVIDER;
+        }
 
         @Override
         public void execute(PipelineContext pipelineContext) {
@@ -159,7 +165,7 @@ public class LocationPipeline implements ISensorPipeline {
                 altitude = sample.get(SensingUtils.LocationKeys.ALTITUDE).getAsFloat();
                 speed = sample.get(SensingUtils.LocationKeys.SPEED).getAsFloat();
 
-                trimmedSample.addProperty(SensingUtils.SENSOR_TYPE, SENSOR_TYPE); //TODO: descobrir como inserir isto sem quotes
+                trimmedSample.addProperty(SensingUtils.SENSOR_TYPE, SENSOR_TYPE);
                 trimmedSample.addProperty(SensingUtils.LocationKeys.PROVIDER, provider);
                 trimmedSample.addProperty(SensingUtils.LocationKeys.TIMESTAMP, timestamp);
                 trimmedSample.addProperty(SensingUtils.LocationKeys.ACCURACY, accuracy);
@@ -203,7 +209,9 @@ public class LocationPipeline implements ISensorPipeline {
      * @see com.ideaimpl.patterns.pipeline.Stage
      * @version 1.0
      */
-    public class AdmissionControlStage implements Stage {
+    public static class AdmissionControlStage implements Stage {
+
+        private ScoutLogger logger = ScoutLogger.getInstance();
 
         @Override
         public void execute(PipelineContext pipelineContext) {
@@ -241,13 +249,27 @@ public class LocationPipeline implements ISensorPipeline {
     }
 
     /**
+     * @version 1.0 Merges Location from different providers
+     * @author rodrigo.jm.lourenco
+     *
      *
      */
-    public class FeatureExtraction implements Stage {
+    public static class FeatureExtractionStage implements Stage {
+
+        private final static String LOG_TAG = TAG+"_FeatureExtraction";
+
+        //Logging
+        private ScoutLogger logger = ScoutLogger.getInstance();
 
         @Override
         public void execute(PipelineContext pipelineContext) {
-            //TODO: definir quais as features a extrair
+
+            JsonObject[] input = ((SensorPipeLineContext)pipelineContext).getInput();
+
+            for(JsonObject sample : input)
+                logger.log(ScoutLogger.WARN, LOG_TAG, String.valueOf(sample));
+
+
         }
     }
 
@@ -259,7 +281,7 @@ public class LocationPipeline implements ISensorPipeline {
      * Given the results of the previous stages, this stage updates the application's internal
      * state.
      */
-    public class UpdateScoutStateStage implements Stage {
+    public static class UpdateScoutStateStage implements Stage {
 
         private ScoutState state = ScoutState.getInstance();
 
