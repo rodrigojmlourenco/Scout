@@ -19,6 +19,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Timer;
@@ -28,6 +31,8 @@ import java.util.regex.Pattern;
 
 import edu.mit.media.funf.FunfManager;
 import edu.mit.media.funf.pipeline.BasicPipeline;
+import pt.ulisboa.tecnico.cycleourcity.scout.config.ScoutConfigManager;
+import pt.ulisboa.tecnico.cycleourcity.scout.config.exceptions.NotInitializedException;
 import pt.ulisboa.tecnico.cycleourcity.scout.logging.ScoutLogger;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.MobileSensingPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.state.ScoutState;
@@ -58,6 +63,9 @@ public class MainActivity extends ActionBarActivity {
     private TimerTask uiUpdater;
     private ScoutStateUpdaterTask updateStateTask;
 
+    //Configuration Management
+    private ScoutConfigManager configManager = ScoutConfigManager.getInstance();
+
     //Logging
     private ScoutLogger logger = ScoutLogger.getInstance();
 
@@ -67,6 +75,17 @@ public class MainActivity extends ActionBarActivity {
 
             funfManager = ((FunfManager.LocalBinder)service).getManager();
             pipeline = (ScoutPipeline) funfManager.getRegisteredPipeline(PIPELINE_NAME);
+
+            //Initialize Configuration Manager
+            // & reload default configuration
+            configManager.init(MainActivity.this, funfManager);
+            try {
+                configManager.reloadDefaultConfig();
+                //configManager.loadConfig(ScoutConfigManager.ONLY_LOCATION_CONFIG); //TESTING
+                Log.w("CONFIG", String.valueOf(configManager.getCurrentConfig()));
+            } catch (NotInitializedException e) {
+                e.printStackTrace();
+            }
 
             //Pipeline starts as disabled
             funfManager.disablePipeline(PIPELINE_NAME);

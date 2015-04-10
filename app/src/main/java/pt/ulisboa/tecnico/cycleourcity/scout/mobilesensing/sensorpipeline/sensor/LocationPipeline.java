@@ -298,7 +298,7 @@ public class LocationPipeline implements ISensorPipeline {
                 try {
 
                     auxTimestamp =
-                            SensingUtils.LocationSampleAcessor.getTimestamp(sample);
+                            SensingUtils.LocationSampleAccessor.getTimestamp(sample);
                 } catch (NoSuchDataFieldException e) {
                     e.printStackTrace();
                 }
@@ -310,18 +310,18 @@ public class LocationPipeline implements ISensorPipeline {
 
                     //Update Location State
                     try {
-                        auxLocationState.setLatitude(SensingUtils.LocationSampleAcessor.getLatitude(sample));
+                        auxLocationState.setLatitude(SensingUtils.LocationSampleAccessor.getLatitude(sample));
                     } catch (NoSuchDataFieldException e) {
                         e.printStackTrace();
                     }
 
                     try {
-                        auxLocationState.setLongitude(SensingUtils.LocationSampleAcessor.getLongitude(sample));
+                        auxLocationState.setLongitude(SensingUtils.LocationSampleAccessor.getLongitude(sample));
                     } catch (NoSuchDataFieldException e) {
                         e.printStackTrace();
                     }
                     try {
-                        auxLocationState.setAltitude(SensingUtils.LocationSampleAcessor.getAltitude(sample));
+                        auxLocationState.setAltitude(SensingUtils.LocationSampleAccessor.getAltitude(sample));
                     } catch (NoSuchDataFieldException e) {
                         e.printStackTrace();
                     }
@@ -330,13 +330,13 @@ public class LocationPipeline implements ISensorPipeline {
 
                     //Update Motion State
                     try {
-                        auxMotionState.setSpeed(SensingUtils.LocationSampleAcessor.getSpeed(sample));
+                        auxMotionState.setSpeed(SensingUtils.LocationSampleAccessor.getSpeed(sample));
                     } catch (NoSuchDataFieldException e) {
                         e.printStackTrace();
                     }
 
                     try {
-                        auxMotionState.setTravelState(SensingUtils.LocationSampleAcessor.getTravelState(sample));
+                        auxMotionState.setTravelState(SensingUtils.LocationSampleAccessor.getTravelState(sample));
                     } catch (NoSuchDataFieldException e) {
                         e.printStackTrace();
                     }

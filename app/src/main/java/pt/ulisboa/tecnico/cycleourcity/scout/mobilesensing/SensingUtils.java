@@ -20,6 +20,7 @@ public class SensingUtils {
     public final static String GRAVITY_PROBE = "\"edu.mit.media.funf.probe.builtin.GravitySensorProbe\"";
     public final static String LOCATION_PROBE = "\"edu.mit.media.funf.probe.builtin.LocationProbe\"";
     public final static String BATTERY_PROBE = "\"edu.mit.media.funf.probe.builtin.BatteryProbe\"";
+    public final static String SIMPLE_LOCATION_PROBE = "\"edu.mit.media.funf.probe.builtin.SimpleLocationProbe\"";
 
     //Sensor Types
     public final static int BATTERY         = 0;
@@ -45,6 +46,7 @@ public class SensingUtils {
 
         public final static String ACCURACY     = "accuracy";
         public final static String TIMESTAMP    = "timestamp";
+        public final static String VERBOSE_TIMESTAMP = "dateTimestamp";
 
         public final static String ELAPSED_TIME = "elapsedTimeMillis";
 
@@ -71,7 +73,7 @@ public class SensingUtils {
             TRAVEL_STATE= "travelState";
     }
 
-    public static class LocationSampleAcessor{
+    public static class LocationSampleAccessor{
 
         public static double getLatitude(JsonObject sample) throws NoSuchDataFieldException {
             if(sample.has(LocationKeys.LATITUDE))
@@ -149,6 +151,7 @@ public class SensingUtils {
 
         switch (sensor){
             case LOCATION_PROBE :
+            case SIMPLE_LOCATION_PROBE:
                 return LOCATION;
             case ACCELEROMETER_PROBE :
                 return ACCELEROMETER;

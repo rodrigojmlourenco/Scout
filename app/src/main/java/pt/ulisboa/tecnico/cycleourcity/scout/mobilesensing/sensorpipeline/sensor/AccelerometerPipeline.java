@@ -8,7 +8,10 @@ import com.ideaimpl.patterns.pipeline.PipelineContext;
 import com.ideaimpl.patterns.pipeline.Stage;
 
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -67,8 +70,6 @@ public class AccelerometerPipeline implements ISensorPipeline{
     @Override
     public void pushSample(JsonObject sample) {
 
-        logger.log(ScoutLogger.VERBOSE, LOG_TAG, TAG+sample);
-
         int sensorType = sample.get(SensingUtils.SENSOR_TYPE).getAsInt();
 
         switch (sensorType){
@@ -84,8 +85,6 @@ public class AccelerometerPipeline implements ISensorPipeline{
     @Override
     public void run() {
 
-        logger.log(ScoutLogger.VERBOSE, LOG_TAG, TAG+"executing pipeline");
-
         JsonObject[] input;
 
         //Merge the two queues, clear them, and pass the result as input
@@ -99,6 +98,8 @@ public class AccelerometerPipeline implements ISensorPipeline{
             gravitySamples.clear();
             accelerometerSamples.clear();
         }
+
+        logger.log(ScoutLogger.VERBOSE, LOG_TAG, TAG+"executing pipeline for "+input.length+" motion samples.");
 
         SensorPipeLineContext context = new SensorPipeLineContext();
         context.setInput(input);
@@ -273,18 +274,14 @@ public class AccelerometerPipeline implements ISensorPipeline{
 
             //PHASE-2: Extract Features from the captured signals
             //TODO: Linear Acceleration
-            JsonObject
-                accelerometerFeatures = getExtractedFeaturesAsJson(SENSOR_TYPE, accMotionSignals, accTimeKeeper),
-                gravityFeatures = getExtractedFeaturesAsJson(SENSOR_TYPE_GRAVITY, gravityMotionSignals, gravTimeKeeper);
+            JsonObject[] output;
+            if(gravityMotionSignals.getTotalSamples() >= 0){
+                output = new JsonObject[2];
+                output[1] = getExtractedFeaturesAsJson(SENSOR_TYPE_GRAVITY, gravityMotionSignals, gravTimeKeeper);
+            }else
+                output = new JsonObject[1];
 
-            //PHASE-3: Set output
-            JsonObject[] output = new JsonObject[2];
-            output[0] = accelerometerFeatures;
-            output[1] = gravityFeatures;
-
-            //TODO: remover
-            Log.w("[ACCELEROMETER]", String.valueOf(accelerometerFeatures));
-            Log.w("[GRAVITY]", String.valueOf(gravityFeatures));
+            output[0] = getExtractedFeaturesAsJson(SENSOR_TYPE, accMotionSignals, accTimeKeeper);
 
             ((SensorPipeLineContext)pipelineContext).setInput(output);
         }
