@@ -32,7 +32,7 @@ public class MobileSensingPipeline {
     public final static int     DB_VERSION = 1;
     private final static String LOG_TAG = "MobileSensingPipeline";
 
-    public final static int     WINDOW_SIZE = 5; //seconds
+    public final static int     WINDOW_SIZE = 1; //seconds
 
     //Mobile Sensing Singleton
     private static MobileSensingPipeline SENSING_PIPELINE = new MobileSensingPipeline();

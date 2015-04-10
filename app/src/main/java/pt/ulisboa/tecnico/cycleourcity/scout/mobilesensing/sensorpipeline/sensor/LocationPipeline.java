@@ -50,7 +50,7 @@ public class LocationPipeline implements ISensorPipeline {
         //Pre-processing pipeline stages
         LOCATION_PIPELINE.addStage(new AdmissionControlStage());
         LOCATION_PIPELINE.addStage(new TrimStage());
-        LOCATION_PIPELINE.addStage(new FeatureExtractionStage());
+        //LOCATION_PIPELINE.addStage(new FeatureExtractionStage());
         LOCATION_PIPELINE.addStage(new UpdateScoutStateStage());
         LOCATION_PIPELINE.addFinalStage(new PostExecuteStage());
     }
@@ -172,21 +172,25 @@ public class LocationPipeline implements ISensorPipeline {
                 trimmedSample.addProperty(SensingUtils.LocationKeys.LATITUDE, latitude);
                 trimmedSample.addProperty(SensingUtils.LocationKeys.LONGITUDE, longitude);
                 trimmedSample.addProperty(SensingUtils.LocationKeys.ELAPSED_TIME, elapsedRealtimeNanos);
-                trimmedSample.addProperty(SensingUtils.LocationKeys.BEARING, bearing);
-                trimmedSample.addProperty(SensingUtils.LocationKeys.ALTITUDE, altitude);
-                trimmedSample.addProperty(SensingUtils.LocationKeys.SPEED, speed);
 
                 //Provider dependent data fields
                 int providerType = getLocationProvider(sample);
                 JsonObject extras = sample.get(SensingUtils.EXTRAS).getAsJsonObject();
                 switch (providerType){
                     case GPS_PROVIDER:
-                        satellites = extras.get(SensingUtils.LocationKeys.SATTELITES).getAsInt();
-                        trimmedSample.addProperty(SensingUtils.LocationKeys.SATTELITES, satellites);
+                        trimmedSample.addProperty(SensingUtils.LocationKeys.BEARING, bearing);
+                        trimmedSample.addProperty(SensingUtils.LocationKeys.ALTITUDE, altitude);
+                        trimmedSample.addProperty(SensingUtils.LocationKeys.SPEED, speed);
+                        if(extras != null){
+                            satellites = extras.get(SensingUtils.LocationKeys.SATTELITES).getAsInt();
+                            trimmedSample.addProperty(SensingUtils.LocationKeys.SATTELITES, satellites);
+                        }
                         break;
                     case NETWORK_PROVIDER:
-                        travelState = extras.get(SensingUtils.LocationKeys.TRAVEL_STATE).getAsString();
-                        trimmedSample.addProperty(SensingUtils.LocationKeys.TRAVEL_STATE, travelState);
+                        if(extras != null) {
+                            travelState = extras.get(SensingUtils.LocationKeys.TRAVEL_STATE).getAsString();
+                            trimmedSample.addProperty(SensingUtils.LocationKeys.TRAVEL_STATE, travelState);
+                        }
                         break;
                     case UNKNOWN_PROVIDER:
                         logger.log(ScoutLogger.ERR, LOG_TAG, TAG+"Unknown location provider '"+provider+"'");
@@ -238,7 +242,7 @@ public class LocationPipeline implements ISensorPipeline {
                 }
             }
 
-            logger.log(ScoutLogger.INFO, LOG_TAG, TAG+discarded+" samples were discarded.");
+            logger.log(ScoutLogger.INFO, LOG_TAG, TAG+discarded+" samples out of "+input.length+" were discarded.");
 
             JsonObject[] output = new JsonObject[aux.size()];
             aux.toArray(output);
@@ -252,22 +256,60 @@ public class LocationPipeline implements ISensorPipeline {
      * @version 1.0 Merges Location from different providers
      * @author rodrigo.jm.lourenco
      *
-     *
+     * This stage of the LocationPipeline merges samples that belong inside the same temporal interval.
      */
     public static class FeatureExtractionStage implements Stage {
 
         private final static String LOG_TAG = TAG+"_FeatureExtraction";
 
+        public final long MAX_TIME_INTERVAL = 1000; //millis
+
         //Logging
         private ScoutLogger logger = ScoutLogger.getInstance();
+
+
+        private boolean closelyRelated(JsonObject sample1, JsonObject sample2){
+            double t1=0, t2=0, elapsed=0;
+
+            try {
+                t1 = SensingUtils.LocationSampleAccessor.getTimestamp(sample1);
+                t2 = SensingUtils.LocationSampleAccessor.getTimestamp(sample2);
+            } catch (NoSuchDataFieldException e) {
+                e.printStackTrace();
+                return false;
+            }
+
+            elapsed = Math.abs(t2-t1);
+
+            return elapsed < MAX_TIME_INTERVAL;
+        }
+
+        private JsonObject mergeSamples(JsonObject sample1, JsonObject sample2){
+            return null;
+        }
 
         @Override
         public void execute(PipelineContext pipelineContext) {
 
             JsonObject[] input = ((SensorPipeLineContext)pipelineContext).getInput();
 
-            for(JsonObject sample : input)
+            if(input.length <= 0) return;
+
+            JsonObject pacientZero = input[0];
+
+            for(JsonObject sample : input){
                 logger.log(ScoutLogger.WARN, LOG_TAG, String.valueOf(sample));
+
+                if(closelyRelated(pacientZero, sample))
+                    pacientZero = mergeSamples(pacientZero, sample);
+                else{
+                    //Store pacient zero
+
+                }
+
+
+            }
+
 
 
         }
@@ -311,35 +353,25 @@ public class LocationPipeline implements ISensorPipeline {
                     //Update Location State
                     try {
                         auxLocationState.setLatitude(SensingUtils.LocationSampleAccessor.getLatitude(sample));
-                    } catch (NoSuchDataFieldException e) {
-                        e.printStackTrace();
-                    }
+                    } catch (NoSuchDataFieldException e) {}
 
                     try {
                         auxLocationState.setLongitude(SensingUtils.LocationSampleAccessor.getLongitude(sample));
-                    } catch (NoSuchDataFieldException e) {
-                        e.printStackTrace();
-                    }
+                    } catch (NoSuchDataFieldException e) {}
                     try {
                         auxLocationState.setAltitude(SensingUtils.LocationSampleAccessor.getAltitude(sample));
-                    } catch (NoSuchDataFieldException e) {
-                        e.printStackTrace();
-                    }
+                    } catch (NoSuchDataFieldException e) {}
 
                     //TODO: setSlope
 
                     //Update Motion State
                     try {
                         auxMotionState.setSpeed(SensingUtils.LocationSampleAccessor.getSpeed(sample));
-                    } catch (NoSuchDataFieldException e) {
-                        e.printStackTrace();
-                    }
+                    } catch (NoSuchDataFieldException e) {}
 
                     try {
                         auxMotionState.setTravelState(SensingUtils.LocationSampleAccessor.getTravelState(sample));
-                    } catch (NoSuchDataFieldException e) {
-                        e.printStackTrace();
-                    }
+                    } catch (NoSuchDataFieldException e) {}
                 }
             }
         }

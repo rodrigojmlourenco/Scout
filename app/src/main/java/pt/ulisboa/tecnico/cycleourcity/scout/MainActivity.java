@@ -188,6 +188,7 @@ public class MainActivity extends ActionBarActivity {
         altitudeView = (TextView) findViewById(R.id.altitudeValue);
         travelStateView = (TextView) findViewById(R.id.travelStateValue);
 
+        //TODO: optimizar
         timer = new Timer();
         uiUpdater = new TimerTask() {
             @Override
