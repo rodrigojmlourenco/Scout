@@ -4,16 +4,16 @@ CycleOurCity goes Mobile - Scout
 
 ## TODO
 
-- [] Tornar assíncrono o processo de arquivação
-- [] Estudar melhor como pode ser realizada a extracção da aceleração linear.
-	- [] Low-pass Filter vs High-pass Filter vs No-Filter
-- [] Estudar se compensa fazer merge das amostras de localição durante o processo de extracção de features.
-	- [] Obter declive
-	- [] Estudar qual a mais precisa a velocidade obtida pelo GPS ou calculada a partir das coordenadas
-- [] Criação de um classificador capaz de distinguir entre dispositivo estacionario e em movimento.
-	- [] Criar|Procurar script que transforme amostras `.json` em formato `.arff`
-	- [] Criar uma base de dados classificada, para treino do classificador
-- [] Documentar as classes criadas
+- [ ] Tornar assíncrono o processo de arquivação
+- [ ] Estudar melhor como pode ser realizada a extracção da aceleração linear.
+	- [ ] Low-pass Filter vs High-pass Filter vs No-Filter
+- [ ] Estudar se compensa fazer merge das amostras de localição durante o processo de extracção de features.
+	- [ ] Obter declive
+	- [ ] Estudar qual a mais precisa a velocidade obtida pelo GPS ou calculada a partir das coordenadas
+- [ ] Criação de um classificador capaz de distinguir entre dispositivo estacionario e em movimento.
+	- [ ] Criar|Procurar script que transforme amostras `.json` em formato `.arff`
+	- [ ] Criar uma base de dados classificada, para treino do classificador
+- [ ] Documentar as classes criadas
 
 ## Funf-OpenSensing Schedueling CheatSheet
 
