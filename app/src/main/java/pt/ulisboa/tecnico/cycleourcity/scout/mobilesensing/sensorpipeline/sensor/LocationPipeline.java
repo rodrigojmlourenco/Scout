@@ -544,7 +544,7 @@ public class LocationPipeline implements ISensorPipeline {
                         auxLocationState.setAltitude(SensingUtils.LocationSampleAccessor.getAltitude(sample));
                     } catch (NoSuchDataFieldException e) {}
 
-                    //TODO: setSlope
+                    auxLocationState.setSlope(SensingUtils.LocationSampleAccessor.getSlope(sample));
 
                     //Update Motion State
                     try {

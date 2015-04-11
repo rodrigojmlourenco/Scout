@@ -50,6 +50,7 @@ public class MainActivity extends ActionBarActivity {
     private TextView
             locationView,
             speedView,
+            slopeView,
             altitudeView,
             travelStateView;
 
@@ -185,6 +186,7 @@ public class MainActivity extends ActionBarActivity {
         //Background UI updating
         locationView = (TextView) findViewById(R.id.locationValue);
         speedView = (TextView) findViewById(R.id.speedValue);
+        slopeView = (TextView) findViewById(R.id.slopeValue);
         altitudeView = (TextView) findViewById(R.id.altitudeValue);
         travelStateView = (TextView) findViewById(R.id.travelStateValue);
 
@@ -264,6 +266,7 @@ public class MainActivity extends ActionBarActivity {
                     locationView.setText("Lat:"+lat+"; Lon:"+lon);
                     travelStateView.setText(scoutState.getMotionState().getTravelState());
                     speedView.setText(String.valueOf(scoutState.getMotionState().getSpeed()));
+                    slopeView.setText(String.valueOf(scoutState.getLocationState().getSlope()));
                     altitudeView.setText(String.valueOf(scoutState.getLocationState().getAltitude()));
                 }
             });

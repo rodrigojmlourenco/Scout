@@ -21,7 +21,6 @@
     </layouts>
   </component>
   <component name="AndroidLogFilters">
-    <option name="TOOL_WINDOW_LOG_LEVEL" value="ERROR" />
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="app: pt.ulisboa.tecnico.cycleourcity.scout" />
   </component>
   <component name="ChangeListManager">
@@ -50,8 +49,8 @@
       <file leaf-file-name="LocationPipeline.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/sensorpipeline/sensor/LocationPipeline.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.84794277" vertical-offset="7686" max-vertical-offset="9962">
-              <caret line="502" column="0" selection-start-line="502" selection-start-column="0" selection-end-line="502" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.5474061" vertical-offset="9146" max-vertical-offset="9962">
+              <caret line="578" column="62" selection-start-line="578" selection-start-column="62" selection-end-line="578" selection-end-column="62" />
               <folding />
             </state>
           </provider>
@@ -70,8 +69,18 @@
       <file leaf-file-name="SensingUtils.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/SensingUtils.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="647" max-vertical-offset="3247">
-              <caret line="75" column="29" selection-start-line="75" selection-start-column="29" selection-end-line="75" selection-end-column="29" />
+            <state vertical-scroll-proportion="-17.75" vertical-offset="1390" max-vertical-offset="3315">
+              <caret line="119" column="63" selection-start-line="119" selection-start-column="63" selection-end-line="119" selection-end-column="63" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MainActivity.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/MainActivity.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-11.071428" vertical-offset="3328" max-vertical-offset="3876">
+              <caret line="268" column="93" selection-start-line="268" selection-start-column="93" selection-end-line="268" selection-end-column="93" />
               <folding />
             </state>
           </provider>
@@ -1312,10 +1321,10 @@
         <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/config/ConfigurationFactory.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/config/ScoutConfigManager.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/sensorpipeline/sensor/ISensorPipeline.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/MainActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/MobileSensingPipeline.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/math/location/LocationUtils.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/MainActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/SensingUtils.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/sensorpipeline/sensor/LocationPipeline.java" />
       </list>
@@ -1822,7 +1831,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
+    <frame x="-8" y="-8" width="1382" height="744" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="15" side_tool="false" content_ui="tabs" />
@@ -2209,14 +2218,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/MainActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="3043" max-vertical-offset="4437">
-          <caret line="206" column="13" selection-start-line="206" selection-start-column="13" selection-end-line="206" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$PROJECT_DIR$/app/libs/gson-2.1.funf.jar!/com/google/gson/JsonObject.class">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-5.88" vertical-offset="465" max-vertical-offset="765">
@@ -2249,18 +2250,26 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/MainActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-11.071428" vertical-offset="3328" max-vertical-offset="3876">
+          <caret line="268" column="93" selection-start-line="268" selection-start-column="93" selection-end-line="268" selection-end-column="93" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/SensingUtils.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="647" max-vertical-offset="3247">
-          <caret line="75" column="29" selection-start-line="75" selection-start-column="29" selection-end-line="75" selection-end-column="29" />
+        <state vertical-scroll-proportion="-17.75" vertical-offset="1390" max-vertical-offset="3315">
+          <caret line="119" column="63" selection-start-line="119" selection-start-column="63" selection-end-line="119" selection-end-column="63" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/sensorpipeline/sensor/LocationPipeline.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.84794277" vertical-offset="7686" max-vertical-offset="9962">
-          <caret line="502" column="0" selection-start-line="502" selection-start-column="0" selection-end-line="502" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.5474061" vertical-offset="9146" max-vertical-offset="9962">
+          <caret line="578" column="62" selection-start-line="578" selection-start-column="62" selection-end-line="578" selection-end-column="62" />
           <folding />
         </state>
       </provider>

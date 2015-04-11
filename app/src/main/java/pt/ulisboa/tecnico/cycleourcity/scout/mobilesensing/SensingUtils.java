@@ -116,6 +116,10 @@ public class SensingUtils {
             return sample.get(LocationKeys.TIMESTAMP).getAsLong();
         }
 
+        public static float getSlope(JsonObject sample) {
+            return sample.get(LocationKeys.SLOPE).getAsFloat();
+        }
+
     }
 
     //Configuration
