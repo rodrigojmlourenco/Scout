@@ -166,7 +166,7 @@ public class MobileSensingPipeline {
 
             //PRE-PROCESSING PHASE
             locationPipeline.run();
-            accelerometerPipeline.run();
+            //accelerometerPipeline.run(); //TODO: uncomment
         }
     }
 

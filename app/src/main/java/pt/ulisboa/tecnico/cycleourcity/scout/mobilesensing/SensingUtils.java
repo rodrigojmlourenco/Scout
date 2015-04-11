@@ -75,6 +75,10 @@ public class SensingUtils {
 
     public static class LocationSampleAccessor{
 
+        public static float getAccuracy(JsonObject sample){
+            return sample.get(LocationKeys.ACCURACY).getAsFloat();
+        }
+
         public static double getLatitude(JsonObject sample) throws NoSuchDataFieldException {
             if(sample.has(LocationKeys.LATITUDE))
                 return sample.get(LocationKeys.LATITUDE).getAsDouble();
@@ -111,11 +115,8 @@ public class SensingUtils {
                 throw new NoSuchDataFieldException(LocationKeys.TRAVEL_STATE);
         }
 
-        public static double getTimestamp(JsonObject sample) throws NoSuchDataFieldException {
-            if(sample.has(LocationKeys.TIMESTAMP))
-                return sample.get(LocationKeys.TIMESTAMP).getAsDouble();
-            else
-                throw new NoSuchDataFieldException(LocationKeys.TIMESTAMP);
+        public static long getTimestamp(JsonObject sample) {
+            return sample.get(LocationKeys.TIMESTAMP).getAsLong();
         }
 
     }
