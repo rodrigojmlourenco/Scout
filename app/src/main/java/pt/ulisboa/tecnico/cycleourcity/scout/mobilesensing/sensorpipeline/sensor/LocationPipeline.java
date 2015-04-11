@@ -13,6 +13,7 @@ import java.util.Queue;
 import edu.mit.media.funf.json.IJsonObject;
 import pt.ulisboa.tecnico.cycleourcity.scout.logging.ScoutLogger;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exception.NoSuchDataFieldException;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.location.LocationUtils;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.state.LocationState;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.state.MotionState;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.state.ScoutState;
@@ -31,36 +32,32 @@ public class LocationPipeline implements ISensorPipeline {
     public final static int NETWORK_PROVIDER    = 1;
     public final static int UNKNOWN_PROVIDER    = 2;
 
-    private static float MIN_ACCURACY = (float) 90.0;
+    public static final float MIN_ACCURACY = (float) 45.0;
 
     private static final SensorPipeline LOCATION_PIPELINE = new SensorPipeline();
 
     //Location Information Queues
     private Queue<JsonObject> sampleQueue;
-    private Queue<JsonObject> extractedFeatures;
+
+    //Pipeline State
+    private LocationState pipelineState;
 
     //Logging
     private ScoutLogger logger = ScoutLogger.getInstance();
 
-    public LocationPipeline(){
-
-        this.sampleQueue = new LinkedList<>();
-        this.extractedFeatures = new LinkedList<>();
-
+    static {
         //Pre-processing pipeline stages
         LOCATION_PIPELINE.addStage(new AdmissionControlStage());
         LOCATION_PIPELINE.addStage(new TrimStage());
         LOCATION_PIPELINE.addStage(new MergeSamplesStage());
+        LOCATION_PIPELINE.addStage(new FeatureExtractionStage());
         LOCATION_PIPELINE.addStage(new UpdateScoutStateStage());
         LOCATION_PIPELINE.addFinalStage(new PostExecuteStage());
     }
 
-    public static void setMinimumAccuracy(float minAccuracy){
-        MIN_ACCURACY = minAccuracy;
-    }
-
-    public static float getMinimumAccuracy(){
-        return MIN_ACCURACY;
+    public LocationPipeline(){
+        this.sampleQueue = new LinkedList<>();
+        this.pipelineState = new LocationState();
     }
 
     @Override
@@ -454,14 +451,20 @@ public class LocationPipeline implements ISensorPipeline {
     }
 
     /**
-     * @version 1.0 Merges Location from different providers
+     * @version 1.1 Slope
      * @author rodrigo.jm.lourenco
      *
-     * This stage of the LocationPipeline merges samples that belong inside the same temporal interval.
+     *
+     * Given the application's current state (given by the ScoutState singleton), this Stage calculates
+     * calculates and adds the current slope value to the location samples.
+     *
      */
     public static class FeatureExtractionStage implements Stage {
 
         private final static String LOG_TAG = "LOCATION_FeatureExtraction";
+
+        //Application's Internal State
+        private LocationState appState = ScoutState.getInstance().getLocationState();
 
         //Logging
         private ScoutLogger logger = ScoutLogger.getInstance();
@@ -471,7 +474,35 @@ public class LocationPipeline implements ISensorPipeline {
 
             JsonObject[] input = ((SensorPipeLineContext)pipelineContext).getInput();
 
-            logger.log(ScoutLogger.WARN, LOG_TAG, "Processing "+input.length+" location samples.");
+            double pastLat, pastLon, pastAlt;
+            double currLat, currLon, currAlt=0;
+            pastLat = appState.getLatitude();
+            pastLon = appState.getLongitude();
+            pastAlt = appState.getAltitude();
+
+            for(JsonObject sample : input) {
+
+                double distance, slope = 0;
+                currLat = SensingUtils.LocationSampleAccessor.getLatitude(input[0]);
+                currLon = SensingUtils.LocationSampleAccessor.getLongitude(input[0]);
+
+                try {
+                    currAlt = SensingUtils.LocationSampleAccessor.getAltitude(input[0]);
+                } catch (NoSuchDataFieldException e) {
+                    e.printStackTrace();
+                }
+
+                //Calculate Travelled Distance and Slope
+                distance = LocationUtils.calculateDistance(pastLat, pastLon, currLat, currLon);
+
+                if (distance > 0) {
+                    slope = Math.abs(LocationUtils.calculateSlope(distance, pastAlt, currAlt));
+                    sample.addProperty(SensingUtils.LocationKeys.SLOPE, slope);
+                }else
+                    sample.addProperty(SensingUtils.LocationKeys.SLOPE, 0);
+            }
+
+            ((SensorPipeLineContext)pipelineContext).setInput(input);
 
         }
     }
@@ -506,13 +537,9 @@ public class LocationPipeline implements ISensorPipeline {
                     state.setTimestamp(auxTimestamp);
 
                     //Update Location State
-                    try {
-                        auxLocationState.setLatitude(SensingUtils.LocationSampleAccessor.getLatitude(sample));
-                    } catch (NoSuchDataFieldException e) {}
+                    auxLocationState.setLatitude(SensingUtils.LocationSampleAccessor.getLatitude(sample));
+                    auxLocationState.setLongitude(SensingUtils.LocationSampleAccessor.getLongitude(sample));
 
-                    try {
-                        auxLocationState.setLongitude(SensingUtils.LocationSampleAccessor.getLongitude(sample));
-                    } catch (NoSuchDataFieldException e) {}
                     try {
                         auxLocationState.setAltitude(SensingUtils.LocationSampleAccessor.getAltitude(sample));
                     } catch (NoSuchDataFieldException e) {}
@@ -543,8 +570,9 @@ public class LocationPipeline implements ISensorPipeline {
      *
      * TODO: esta stage deve ser igual para todos os pipelines pelo que pode ser externa
      */
-    public class PostExecuteStage implements Stage {
+    public static class PostExecuteStage implements Stage {
 
+        private ScoutLogger logger = ScoutLogger.getInstance();
         private ScoutStorageManager storage = ScoutStorageManager.getInstance();
 
         @Override
@@ -556,8 +584,6 @@ public class LocationPipeline implements ISensorPipeline {
             JsonObject[] output = ((SensorPipeLineContext)pipelineContext).getInput();
 
             for(JsonObject feature : output){
-
-                extractedFeatures.add(feature);
 
                 //Persistent Storage
                 String key = feature.get(SensingUtils.SENSOR_TYPE).getAsString();

@@ -70,7 +70,10 @@ public class SensingUtils {
             SPEED       = "mSpeed",
             SATTELITES  = "satellites",
             //Only Network
-            TRAVEL_STATE= "travelState";
+            TRAVEL_STATE= "travelState",
+
+            //Scout-specific Keys
+            SLOPE       = "mSlope";
     }
 
     public static class LocationSampleAccessor{
@@ -79,19 +82,13 @@ public class SensingUtils {
             return sample.get(LocationKeys.ACCURACY).getAsFloat();
         }
 
-        public static double getLatitude(JsonObject sample) throws NoSuchDataFieldException {
-            if(sample.has(LocationKeys.LATITUDE))
-                return sample.get(LocationKeys.LATITUDE).getAsDouble();
-            else
-                throw new NoSuchDataFieldException(LocationKeys.LATITUDE);
+        public static double getLatitude(JsonObject sample) {
+            return sample.get(LocationKeys.LATITUDE).getAsDouble();
 
         }
 
-        public static double getLongitude(JsonObject sample) throws NoSuchDataFieldException {
-            if(sample.has(LocationKeys.LONGITUDE))
-                return sample.get(LocationKeys.LONGITUDE).getAsDouble();
-            else
-                throw new NoSuchDataFieldException(LocationKeys.LONGITUDE);
+        public static double getLongitude(JsonObject sample) {
+            return sample.get(LocationKeys.LONGITUDE).getAsDouble();
         }
 
         public static float getAltitude(JsonObject sample) throws NoSuchDataFieldException {

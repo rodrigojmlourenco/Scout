@@ -30,7 +30,7 @@ public class LocationUtils {
      * @param fromLon Longitude from point 1
      * @param toLat Latitude from point 2
      * @param toLon Longitude from point 2
-     * @return Distante between point 1 and 2
+     * @return Distance between point 1 and 2
      */
     public static double haversineFormula(double fromLat, double fromLon, double toLat, double toLon) {
         double dLat = Math.toRadians(toLat - fromLat);
@@ -84,7 +84,7 @@ public class LocationUtils {
      * @param toLon Longitude from point 2
      * @return Distance between point 1 and 2
      */
-    public static double getDistance(DistanceStrategies strategy, double fromLat, double fromLon, double toLat, double toLon ){
+    public static double calculateDistance(DistanceStrategies strategy, double fromLat, double fromLon, double toLat, double toLon ){
 
         switch (strategy){
             case Haversine:
@@ -106,9 +106,44 @@ public class LocationUtils {
      * @param toLon Longitude from point 2
      * @return Distance between point 1 and 2
      */
-    public static double getDistance(double fromLat, double fromLon, double toLat, double toLon ){
-        return getDistance(DistanceStrategies.SphericalLawOfCosines,
+    public static double calculateDistance(double fromLat, double fromLon, double toLat, double toLon ){
+        return calculateDistance(DistanceStrategies.SphericalLawOfCosines,
                 fromLat, fromLon,
                 toLat, toLon);
     }
+
+    /**
+     *
+     * @param distance
+     * @param fromAlt
+     * @param toAlt
+     * @return
+     */
+    public static float calculateSlope(double distance, double fromAlt, double toAlt){
+
+        double deltaAlt = toAlt -fromAlt;
+
+        //If no distance was travelled then there is no slope
+        return distance == 0 ? 0 : (float) ((float)deltaAlt/distance);
+
+    }
+
+    /**
+     *
+     * @param fromLat
+     * @param fromLon
+     * @param fromAlt
+     * @param toLat
+     * @param toLon
+     * @param toAlt
+     * @return
+     */
+    public static float calculateSlope(double fromLat, double fromLon, double fromAlt,
+                                       double toLat, double toLon, double toAlt){
+
+        double distance = calculateDistance(fromLat, fromLon, toLat, toLon);
+        return calculateSlope(distance, fromAlt, toAlt);
+
+    }
+
 }
