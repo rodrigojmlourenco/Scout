@@ -165,7 +165,8 @@ public class MobileSensingPipeline {
             } while (sampleClone.peek() != null);
 
             //PRE-PROCESSING PHASE
-            locationPipeline.run();
+            //locationPipeline.run();
+            new Thread(locationPipeline).start();
             //accelerometerPipeline.run(); //TODO: uncomment
         }
     }
@@ -175,8 +176,6 @@ public class MobileSensingPipeline {
 
     /****************************************************************************************
      *                                          STORAGE                                     *
-     ****************************************************************************************
-     * TODO: make async
      ****************************************************************************************/
     public void archiveData(String tag) throws SQLException, NothingToArchiveException {
 

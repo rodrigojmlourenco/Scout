@@ -1,7 +1,9 @@
 package pt.ulisboa.tecnico.cycleourcity.scout;
 
+import android.app.IntentService;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.ServiceConnection;
 import android.location.Address;
 import android.location.Geocoder;
@@ -60,9 +62,6 @@ public class MainActivity extends ActionBarActivity {
     private ScoutPipeline pipeline;
 
     //Backgound UI updating
-    private Timer timer;
-    private TimerTask uiUpdater;
-    private ScoutStateUpdaterTask updateStateTask;
 
     //Configuration Management
     private ScoutConfigManager configManager = ScoutConfigManager.getInstance();
@@ -104,6 +103,7 @@ public class MainActivity extends ActionBarActivity {
                         if(pipeline.isEnabled()) {
                             startSession.setEnabled(false);
                             stopSession.setEnabled(true);
+                            startRepeatingTask();
                         }else
                             Toast.makeText(MainActivity.this, "Unable to start sensing pipeline.", Toast.LENGTH_SHORT).show();
 
@@ -125,6 +125,7 @@ public class MainActivity extends ActionBarActivity {
                         if(!pipeline.isEnabled()) {
                             startSession.setEnabled(true);
                             stopSession.setEnabled(false);
+                            stopRepeatingTask();
                         }else
                             Toast.makeText(MainActivity.this, "Unable to stop sensing pipeline.", Toast.LENGTH_SHORT).show();
 
@@ -190,16 +191,9 @@ public class MainActivity extends ActionBarActivity {
         altitudeView = (TextView) findViewById(R.id.altitudeValue);
         travelStateView = (TextView) findViewById(R.id.travelStateValue);
 
-        //TODO: optimizar
-        timer = new Timer();
-        uiUpdater = new TimerTask() {
-            @Override
-            public void run() {
-                new ScoutStateUpdaterTask().execute();
-            }
-        };
-        timer.scheduleAtFixedRate(uiUpdater, 17000, MobileSensingPipeline.WINDOW_SIZE);
 
+        //TESTING
+        mHandler = new Handler();
 
         // Bind to the service, to create the connection with FunfManager
         bindService(new Intent(this, FunfManager.class), funfManagerConn, BIND_AUTO_CREATE);
@@ -235,7 +229,8 @@ public class MainActivity extends ActionBarActivity {
         funfManager.disablePipeline(PIPELINE_NAME);
         unbindService(funfManagerConn);
 
-        //TODO//Cancel UI Threads
+        stopRepeatingTask();
+
     }
 
     private void publishScoutState(String travelState){
@@ -273,5 +268,58 @@ public class MainActivity extends ActionBarActivity {
 
             return null;
         }
+    }
+
+
+    /**********************************************************************************************
+     * TESTING: UI update
+     **********************************************************************************************/
+    private int mInterval = 1000; //millis
+    private Handler mHandler;
+
+
+    Runnable uiUpdate = new Runnable() {
+
+        private ScoutState scoutState = ScoutState.getInstance();
+        private Geocoder geoDecoder = new Geocoder(ScoutApplication.getContext());
+
+        @Override
+        public void run() {
+
+            String address = "Unknown Location";
+            double lat, lon;
+            lat = scoutState.getLocationState().getLatitude();
+            lon = scoutState.getLocationState().getLongitude();
+
+
+            try {
+                List<Address> addresses = geoDecoder.getFromLocation(lat, lon, 1);
+
+                if(!addresses.isEmpty())
+
+                    address = addresses.get(0).getThoroughfare();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+            locationView.setText(address);
+            travelStateView.setText(scoutState.getMotionState().getTravelState());
+            speedView.setText(String.valueOf(scoutState.getMotionState().getSpeed()));
+            slopeView.setText(String.valueOf(scoutState.getLocationState().getSlope()));
+            altitudeView.setText(String.valueOf(scoutState.getLocationState().getAltitude()));
+
+            mHandler.postDelayed(this, mInterval);
+
+        }
+    };
+
+    void startRepeatingTask(){
+        mHandler.postDelayed(uiUpdate,mInterval);
+    }
+
+    void stopRepeatingTask() {
+        mHandler.removeCallbacks(uiUpdate);
     }
 }
