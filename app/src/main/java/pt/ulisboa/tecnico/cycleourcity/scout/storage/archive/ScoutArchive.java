@@ -68,7 +68,7 @@ public class ScoutArchive implements FileArchive {
                 }
             }
 
-        return null;
+        return delegateArchive;
     }
 
     private File getScoutDefaultArchive(){

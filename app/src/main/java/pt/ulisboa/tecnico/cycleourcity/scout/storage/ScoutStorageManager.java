@@ -28,8 +28,6 @@ public class ScoutStorageManager implements StorageManager{
     private final static String LOG_TAG = "ScoutStorageManager";
     private final static int DB_VERSION = 1;
 
-
-
     //Logging
     private ScoutLogger logger = ScoutLogger.getInstance();
 
@@ -40,7 +38,6 @@ public class ScoutStorageManager implements StorageManager{
 
     private ScoutStorageManager(){
         Context ctx = ScoutApplication.getContext();
-        //archive = new DefaultArchive(ctx, NAME);
         archive = new ScoutArchive(ctx, NAME);
         dbHelper = new NameValueDatabaseHelper(ctx, NAME, DB_VERSION);
     }
@@ -73,6 +70,7 @@ public class ScoutStorageManager implements StorageManager{
 
     @Override
     public void store(String key, JsonObject values) throws SQLException {
+
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         final double timestamp = values.get(SensingUtils.TIMESTAMP).getAsDouble();
@@ -88,8 +86,9 @@ public class ScoutStorageManager implements StorageManager{
         cv.put(NameValueDatabaseHelper.COLUMN_VALUE, value);
         cv.put(NameValueDatabaseHelper.COLUMN_TIMESTAMP, timestamp);
         db.insertOrThrow(NameValueDatabaseHelper.DATA_TABLE.name, "", cv);
-
         empty = false;
+
+
     }
 
     @Override
@@ -148,6 +147,7 @@ public class ScoutStorageManager implements StorageManager{
         if (Environment.MEDIA_MOUNTED.equals(state)) {
             return true;
         }
+
         return false;
     }
 

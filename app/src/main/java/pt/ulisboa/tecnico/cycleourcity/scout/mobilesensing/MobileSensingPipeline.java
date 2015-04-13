@@ -178,33 +178,6 @@ public class MobileSensingPipeline {
      ****************************************************************************************
      * TODO: make async
      ****************************************************************************************/
-    public void archiveData() throws SQLException, NothingToArchiveException {
-
-        if(storage.peek()==null) {
-            return;
-        }
-
-        int sampleCount = 0;
-        StorageManager manager = ScoutStorageManager.getInstance();
-
-        while(storage.peek()!=null){
-
-            JsonObject value = storage.remove();
-            int sensorType = value.get(SensingUtils.SENSOR_TYPE).getAsInt();
-            String key = SensingUtils.getSensorTypeAsString(sensorType);
-
-            try {
-                manager.store(key, storage.remove());
-            }catch (NoSuchElementException e){
-                break;
-            }
-
-            sampleCount++;
-        }
-
-        manager.archive();
-    }
-
     public void archiveData(String tag) throws SQLException, NothingToArchiveException {
 
         StorageManager storage = ScoutStorageManager.getInstance();

@@ -24,19 +24,6 @@ CycleOurCity goes Mobile - Scout
 
 ## Open Issues
 
-### ISSUE 07043:EmptyDB
-Quando iniciada a acção de arquivação, caso a DB não se encontre populada a aplicação crasha. Apesar da correcção realizada a aplicação crasha esporadicamente quando iniciada uma acção de arquivação. Tanto quanto consigo perceber este problema pode ocorrer devido a condições de corrida violadas.
-A excepção lançada é a seguinte:
-```
-java.lang.NullPointerException: Attempt to invoke interface method 'boolean edu.mit.media.funf.storage.FileArchive.add(java.io.File)' on a null object reference
-            at pt.ulisboa.tecnico.cycleourcity.scout.storage.archive.ScoutArchive.add(ScoutArchive.java:89)
-            at pt.ulisboa.tecnico.cycleourcity.scout.storage.archive.ScoutArchive.add(ScoutArchive.java:94)
-            at pt.ulisboa.tecnico.cycleourcity.scout.storage.ScoutStorageManager.archive(ScoutStorageManager.java:131)
-            at pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.MobileSensingPipeline.archiveData(MobileSensingPipeline.java:213)
-            at pt.ulisboa.tecnico.cycleourcity.scout.pipeline.ScoutPipeline.onRun(ScoutPipeline.java:50)
-            at pt.ulisboa.tecnico.cycleourcity.scout.MainActivity$2.onClick(MainActivity.java:167)
-```
-
 ### ISSUE 04102:VoidMotionSignals
 Estão a ser armazenadas amostras de sensores de movimento vazios no `AccelerometerPipeline`. Este problema deve-se a um bug na executação da `FeatureExtractionStage` onde as features estão a ser construídas independentemente da existência ou não de amostras.
 
@@ -55,4 +42,5 @@ Por vezes, ao iniciar pela primeira vez uma sessão de sensing, a aplicação cr
 
 A solução para este problema passa assim por verificar se o campo "extras" existe ou não e apenas caso este exista são adicionados os campos especiais à nova amostra.
 
-### ~~ISSUE 07043:EmptyDB~~
+### ISSUE 07043:EmptyDB
+Havia um bug no método `ScoutArchive.getDelegateArchive()`, em que caso o `delegateArchive` já existisse `null` era retornado.
