@@ -185,8 +185,12 @@ public class LocationPipeline implements ISensorPipeline {
                         break;
                     case NETWORK_PROVIDER:
                         if(extras != null) {
-                            travelState = extras.get(SensingUtils.LocationKeys.TRAVEL_STATE).getAsString();
-                            trimmedSample.addProperty(SensingUtils.LocationKeys.TRAVEL_STATE, travelState);
+                            try {
+                                travelState = extras.get(SensingUtils.LocationKeys.TRAVEL_STATE).getAsString();
+                                trimmedSample.addProperty(SensingUtils.LocationKeys.TRAVEL_STATE, travelState);
+                            }catch (NullPointerException e){
+                                logger.log(ScoutLogger.DEBUG, LOG_TAG, "Network location sample has no travel state.");
+                            }
                         }
                         break;
                     case UNKNOWN_PROVIDER:
