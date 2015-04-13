@@ -1,20 +1,25 @@
 # Scout
 CycleOurCity goes Mobile - Scout
 
+<img src="./img/scout_screenshot.png"/>
 
 ## TODO
 
-- [ ] Tornar assíncrono o processo de arquivação
+- [ ] Estudar o problema da segmentação de sequências contínuas de sinais.
+- [ ] Estudar como optimizar a precisão da elevação capturada pelo GPS.
 - [ ] Estudar melhor como pode ser realizada a extracção da aceleração linear.
-	- [ ] Low-pass Filter vs High-pass Filter vs No-Filter
-- [x] Estudar se compensa fazer merge das amostras de localição durante o processo de extracção de features.
+      - [ ] Low-pass Filter vs High-pass Filter vs No-Filter
+- [ ] Criação de um classificador capaz de distinguir entre dispositivo estacionario e em movimento.
+      - [ ] Criar|Procurar script que transforme amostras `.json` em formato `.arff`
+      - [ ] Criar uma base de dados classificada, para treino do classificador
+- [ ] Documentar as classes criadas
+- [x] Tornar assíncrono o processo de arquivação (Desnecessário)
+- [x] Extracção de features no `LocationPipeline`
       - [x] Fazer merge de amostras de localização "relacionadas"
       - [x] Obter distância viajada
-	- [x] Obter declive
-- [ ] Criação de um classificador capaz de distinguir entre dispositivo estacionario e em movimento.
-	- [ ] Criar|Procurar script que transforme amostras `.json` em formato `.arff`
-	- [ ] Criar uma base de dados classificada, para treino do classificador
-- [ ] Documentar as classes criadas
+	- [x] Obter declive (*Nota:* muito impreciso)
+
+
 
 ## Funf-OpenSensing Schedueling CheatSheet
 
@@ -27,7 +32,7 @@ CycleOurCity goes Mobile - Scout
 ### ISSUE 04102:VoidMotionSignals
 Estão a ser armazenadas amostras de sensores de movimento vazios no `AccelerometerPipeline`. Este problema deve-se a um bug na executação da `FeatureExtractionStage` onde as features estão a ser construídas independentemente da existência ou não de amostras.
 
-### ISSUE 04104:LazyApp
+
 Com o passar do tempo a aplicação vai perdendo performance. Mesmo sem uma sessão de sensing iniciada a aplicação está a consumir muitos recursos (GC constantemente a ser chamado). É assim necessário realizar um estudo de quais os possíveis pontos de optimização.
 
 ### ISSUE 04111:Haversine
@@ -44,3 +49,6 @@ A solução para este problema passa assim por verificar se o campo "extras" exi
 
 ### ISSUE 07043:EmptyDB
 Havia um bug no método `ScoutArchive.getDelegateArchive()`, em que caso o `delegateArchive` já existisse `null` era retornado.
+
+### ISSUE 04104:LazyApp
+O problema estava na forma como o consumo do estado e posterior actualização estavam a ser realizados. A TimerTask foi assim substituída por um `Runnable` invocado por um `Handler` (`handler.postDelayed(runnable, interval)`). 

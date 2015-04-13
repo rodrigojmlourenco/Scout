@@ -1,13 +1,10 @@
 package pt.ulisboa.tecnico.cycleourcity.scout;
 
-import android.app.IntentService;
 import android.content.ComponentName;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.content.ServiceConnection;
 import android.location.Address;
 import android.location.Geocoder;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -21,13 +18,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
 import java.io.IOException;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,7 +28,6 @@ import edu.mit.media.funf.pipeline.BasicPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.config.ScoutConfigManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.config.exceptions.NotInitializedException;
 import pt.ulisboa.tecnico.cycleourcity.scout.logging.ScoutLogger;
-import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.MobileSensingPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.state.ScoutState;
 import pt.ulisboa.tecnico.cycleourcity.scout.pipeline.ScoutPipeline;
 
@@ -81,7 +72,6 @@ public class MainActivity extends ActionBarActivity {
             configManager.init(MainActivity.this, funfManager);
             try {
                 configManager.reloadDefaultConfig();
-                //configManager.loadConfig(ScoutConfigManager.ONLY_LOCATION_CONFIG); //TESTING
                 Log.w("CONFIG", String.valueOf(configManager.getCurrentConfig()));
             } catch (NotInitializedException e) {
                 e.printStackTrace();
@@ -185,15 +175,12 @@ public class MainActivity extends ActionBarActivity {
         tagText = (EditText) findViewById(R.id.tag);
 
         //Background UI updating
+        mHandler = new Handler();
         locationView = (TextView) findViewById(R.id.locationValue);
         speedView = (TextView) findViewById(R.id.speedValue);
         slopeView = (TextView) findViewById(R.id.slopeValue);
         altitudeView = (TextView) findViewById(R.id.altitudeValue);
         travelStateView = (TextView) findViewById(R.id.travelStateValue);
-
-
-        //TESTING
-        mHandler = new Handler();
 
         // Bind to the service, to create the connection with FunfManager
         bindService(new Intent(this, FunfManager.class), funfManagerConn, BIND_AUTO_CREATE);
@@ -233,50 +220,11 @@ public class MainActivity extends ActionBarActivity {
 
     }
 
-    private void publishScoutState(String travelState){
-        ScoutState state = ScoutState.getInstance();
-        travelStateView.setText(state.getMotionState().getTravelState());
-    }
-
-
-    /*********************************************************************************
-     *
-     *********************************************************************************/
-    private class ScoutStateUpdaterTask extends AsyncTask{
-
-        private ScoutState scoutState = ScoutState.getInstance();
-        private Geocoder geocoder = new Geocoder(ScoutApplication.getContext());
-
-        @Override
-        protected Object doInBackground(Object[] params) {
-
-            travelStateView.post(new Runnable() {
-                @Override
-                public void run() {
-
-                    double lat, lon;
-                    lat = scoutState.getLocationState().getLatitude();
-                    lon = scoutState.getLocationState().getLongitude();
-
-                    locationView.setText("Lat:"+lat+"; Lon:"+lon);
-                    travelStateView.setText(scoutState.getMotionState().getTravelState());
-                    speedView.setText(String.valueOf(scoutState.getMotionState().getSpeed()));
-                    slopeView.setText(String.valueOf(scoutState.getLocationState().getSlope()));
-                    altitudeView.setText(String.valueOf(scoutState.getLocationState().getAltitude()));
-                }
-            });
-
-            return null;
-        }
-    }
-
-
     /**********************************************************************************************
-     * TESTING: UI update
+     * UI update Async
      **********************************************************************************************/
     private int mInterval = 1000; //millis
     private Handler mHandler;
-
 
     Runnable uiUpdate = new Runnable() {
 
