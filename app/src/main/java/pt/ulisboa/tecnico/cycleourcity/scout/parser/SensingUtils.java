@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing;
+package pt.ulisboa.tecnico.cycleourcity.scout.parser;
 
 import android.util.Log;
 

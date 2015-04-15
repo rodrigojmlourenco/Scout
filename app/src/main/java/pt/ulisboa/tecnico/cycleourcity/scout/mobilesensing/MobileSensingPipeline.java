@@ -7,7 +7,6 @@ import com.google.gson.JsonObject;
 
 import java.sql.SQLException;
 import java.util.LinkedList;
-import java.util.NoSuchElementException;
 import java.util.Queue;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -19,6 +18,7 @@ import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exception.MobileSensi
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exception.NoSuchSensorException;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.sensor.AccelerometerPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.sensor.LocationPipeline;
+import pt.ulisboa.tecnico.cycleourcity.scout.parser.SensingUtils;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.ScoutStorageManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.StorageManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.exceptions.NothingToArchiveException;
@@ -183,6 +183,7 @@ public class MobileSensingPipeline {
 
         //TODO: check if there is information to store;
         storage.archive(tag);
+        storage.archiveGPXTrack(tag);
 
         //Clear database contents
         storage.clearStoredData();

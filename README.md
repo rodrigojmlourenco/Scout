@@ -5,7 +5,7 @@ CycleOurCity goes Mobile - Scout
 
 ## TODO
 
-- [ ] Estudar o problema da segmentação de sequências contínuas de sinais.
+
 - [ ] Estudar como optimizar a precisão da elevação capturada pelo GPS.
 - [ ] Estudar melhor como pode ser realizada a extracção da aceleração linear.
       - [ ] Low-pass Filter vs High-pass Filter vs No-Filter
@@ -13,6 +13,8 @@ CycleOurCity goes Mobile - Scout
       - [ ] Criar|Procurar script que transforme amostras `.json` em formato `.arff`
       - [ ] Criar uma base de dados classificada, para treino do classificador
 - [ ] Documentar as classes criadas
+- [x] Criar módulo para criação de ficheiros GPX
+- [x] Estudar o problema da segmentação de sequências contínuas de sinais.
 - [x] Tornar assíncrono o processo de arquivação (Desnecessário)
 - [x] Extracção de features no `LocationPipeline`
       - [x] Fazer merge de amostras de localização "relacionadas"

@@ -14,7 +14,8 @@ import java.sql.SQLException;
 import edu.mit.media.funf.storage.NameValueDatabaseHelper;
 import pt.ulisboa.tecnico.cycleourcity.scout.ScoutApplication;
 import pt.ulisboa.tecnico.cycleourcity.scout.logging.ScoutLogger;
-import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils;
+import pt.ulisboa.tecnico.cycleourcity.scout.parser.SensingUtils;
+import pt.ulisboa.tecnico.cycleourcity.scout.parser.gpx.GPXBuilder;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.archive.ScoutArchive;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.exceptions.NothingToArchiveException;
 
@@ -136,9 +137,23 @@ public class ScoutStorageManager implements StorageManager{
             }
         }
 
+
+
         dbHelper.getWritableDatabase(); // Build new database
         logger.log(ScoutLogger.INFO, LOG_TAG, "Samples were successfully archived");
         //setHandler(null); // free system resources
+    }
+
+    public void archiveGPXTrack(String tag){
+
+        GPXBuilder builder = GPXBuilder.getInstance();
+
+        try {
+            builder.storeGPXTrack(archive.getPathOnSDCard(), tag);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     /* Checks if external storage is available for read and write */

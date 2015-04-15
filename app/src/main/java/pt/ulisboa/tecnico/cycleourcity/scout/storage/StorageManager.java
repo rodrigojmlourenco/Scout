@@ -20,4 +20,6 @@ public interface StorageManager {
     public void archive() throws NothingToArchiveException;
 
     public void archive(String tag) throws NothingToArchiveException;
+
+    public void archiveGPXTrack(String tag);
 }

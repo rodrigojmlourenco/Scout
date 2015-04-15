@@ -17,9 +17,10 @@ import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.location.Locatio
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.state.LocationState;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.state.MotionState;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.state.ScoutState;
-import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils;
+import pt.ulisboa.tecnico.cycleourcity.scout.parser.SensingUtils;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.SensorPipeLineContext;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.SensorPipeline;
+import pt.ulisboa.tecnico.cycleourcity.scout.parser.gpx.GPXBuilder;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.ScoutStorageManager;
 
 public class LocationPipeline implements ISensorPipeline {
@@ -52,6 +53,7 @@ public class LocationPipeline implements ISensorPipeline {
         LOCATION_PIPELINE.addStage(new MergeSamplesStage());
         LOCATION_PIPELINE.addStage(new FeatureExtractionStage());
         LOCATION_PIPELINE.addStage(new UpdateScoutStateStage());
+        LOCATION_PIPELINE.addStage(new GPXBuildStage());
         LOCATION_PIPELINE.addFinalStage(new PostExecuteStage());
     }
 
@@ -601,6 +603,21 @@ public class LocationPipeline implements ISensorPipeline {
             }
 
             logger.log(ScoutLogger.VERBOSE, LOG_TAG, TAG+storedFeatures+" were successfully stored.");
+        }
+    }
+
+    public static class GPXBuildStage implements Stage {
+
+        private GPXBuilder parser = GPXBuilder.getInstance();
+
+        @Override
+        public void execute(PipelineContext pipelineContext) {
+
+            JsonObject[] input = ((SensorPipeLineContext)pipelineContext).getInput();
+
+            for(JsonObject location : input)
+                parser.addTrackPoint(location);
+
         }
     }
 }

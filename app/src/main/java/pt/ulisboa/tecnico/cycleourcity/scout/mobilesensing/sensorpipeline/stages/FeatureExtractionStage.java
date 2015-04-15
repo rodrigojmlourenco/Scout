@@ -11,8 +11,6 @@ import com.google.gson.JsonObject;
 import edu.mit.media.funf.math.FFT;
 import edu.mit.media.funf.math.Window;
 import edu.mit.media.funf.probe.Probe;
-import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils;
-import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.SensorPipeLineContext;
 
 /**
  * Created by rodrigo.jm.lourenco on 15/03/2015.
