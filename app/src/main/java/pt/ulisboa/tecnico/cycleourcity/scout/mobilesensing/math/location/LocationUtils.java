@@ -146,4 +146,8 @@ public class LocationUtils {
 
     }
 
+    public static double convertToKilometersPerHour(float speedMetersPerSecond){
+        return speedMetersPerSecond * 3.6;
+    }
+
 }

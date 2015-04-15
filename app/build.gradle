@@ -34,4 +34,5 @@ dependencies {
     compile files('libs/pipeline.jar')
     compile files('libs/gpxparser-20130603.jar')
     compile files('libs/log4j-1.2.17.jar')
+    compile files('libs/commons-collections4-4.0.jar')
 }

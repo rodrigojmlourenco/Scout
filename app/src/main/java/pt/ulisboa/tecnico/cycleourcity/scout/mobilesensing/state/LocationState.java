@@ -1,14 +1,28 @@
 package pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.state;
 
+import com.google.gson.JsonObject;
+
+import org.apache.commons.collections4.queue.CircularFifoQueue;
+
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exception.NoSuchDataFieldException;
+import pt.ulisboa.tecnico.cycleourcity.scout.parser.SensingUtils;
+
 /**
  * @version 1.0 Location-Only
  * @author rodrigo.jm.lourenco
  */
 public class LocationState {
 
-    private double  latitude, longitude;
-    private float   altitude, slope;
+    public final static int MIN_FIXED_SATELLITES = 3;
+    public final static float MAX_SPEED = (float) 12.5; // 12.5m = 45Km/h.
+    public final static float MIN_ACCURACY = (float) 40.0;//Error margin of +/- 40m.
 
+    public final static int LAST_LOCATIONS_SIZE = 3;
+
+    private double  latitude, longitude;
+    private float   altitude, slope, speed;
+
+    private CircularFifoQueue<JsonObject> lastKnownLocations = new CircularFifoQueue<>(LAST_LOCATIONS_SIZE);
 
     synchronized public double getLatitude() {
         return latitude;
@@ -40,5 +54,30 @@ public class LocationState {
 
     synchronized public void setSlope(float slope) {
         this.slope = slope;
+    }
+
+    synchronized public void updateLocationState(JsonObject location){
+
+        this.latitude = SensingUtils.LocationSampleAccessor.getLatitude(location);
+        this.longitude = SensingUtils.LocationSampleAccessor.getLongitude(location);
+
+        try {
+            this.altitude = SensingUtils.LocationSampleAccessor.getAltitude(location);
+        } catch (NoSuchDataFieldException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            this.speed = SensingUtils.LocationSampleAccessor.getSpeed(location);
+        } catch (NoSuchDataFieldException e) {
+            e.printStackTrace();
+        }
+
+        lastKnownLocations.add(location);
+    }
+
+
+    synchronized public float getSpeed() {
+        return speed;
     }
 }

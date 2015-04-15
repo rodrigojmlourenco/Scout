@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.cycleourcity.scout.parser;
 
 import android.util.Log;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import edu.mit.media.funf.json.IJsonObject;
@@ -64,6 +65,7 @@ public class SensingUtils {
             LONGITUDE   = "mLongitude",
             ELAPSED_TIME= "mElapsedRealtimeNanos",
             TIMESTAMP   = "timestamp",
+            TIME        = "mTime",
             //Only GPS
             BEARING     = "mBearing",
             ALTITUDE    = "mAltitude",
@@ -118,6 +120,27 @@ public class SensingUtils {
 
         public static float getSlope(JsonObject sample) {
             return sample.get(LocationKeys.SLOPE).getAsFloat();
+        }
+
+        public static int getNumSatellites(JsonObject sample) throws NoSuchDataFieldException {
+
+            /*JsonObject extras;
+
+            if(sample.has(SensingUtils.EXTRAS))
+                extras = sample.get(SensingUtils.EXTRAS).getAsJsonObject();
+            else
+                throw new NoSuchDataFieldException(LocationKeys.SATTELITES);
+
+            if(extras != null && extras.has(LocationKeys.SATTELITES))
+                return extras.get(LocationKeys.SATTELITES).getAsInt();
+            else
+                throw new NoSuchDataFieldException(LocationKeys.SATTELITES);
+            */
+
+            if(sample != null && sample.has(LocationKeys.SATTELITES))
+                return sample.get(LocationKeys.SATTELITES).getAsInt();
+            else
+                throw new NoSuchDataFieldException(LocationKeys.SATTELITES);
         }
 
     }

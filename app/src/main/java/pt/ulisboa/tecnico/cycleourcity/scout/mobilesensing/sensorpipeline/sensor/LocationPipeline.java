@@ -33,8 +33,6 @@ public class LocationPipeline implements ISensorPipeline {
     public final static int NETWORK_PROVIDER    = 1;
     public final static int UNKNOWN_PROVIDER    = 2;
 
-    public static final float MIN_ACCURACY = (float) 45.0;
-
     private static final SensorPipeline LOCATION_PIPELINE = new SensorPipeline();
 
     //Location Information Queues
@@ -48,9 +46,9 @@ public class LocationPipeline implements ISensorPipeline {
 
     static {
         //Pre-processing pipeline stages
-        LOCATION_PIPELINE.addStage(new AdmissionControlStage());
         LOCATION_PIPELINE.addStage(new TrimStage());
         LOCATION_PIPELINE.addStage(new MergeSamplesStage());
+        LOCATION_PIPELINE.addStage(new AdmissionControlStage());
         LOCATION_PIPELINE.addStage(new FeatureExtractionStage());
         LOCATION_PIPELINE.addStage(new UpdateScoutStateStage());
         LOCATION_PIPELINE.addStage(new GPXBuildStage());
@@ -144,6 +142,8 @@ public class LocationPipeline implements ISensorPipeline {
                     altitude,
                     speed;
 
+            long time;
+
             int satellites;
 
             String travelState;
@@ -158,15 +158,17 @@ public class LocationPipeline implements ISensorPipeline {
                 latitude = sample.get(SensingUtils.LocationKeys.LATITUDE).getAsDouble();
                 longitude = sample.get(SensingUtils.LocationKeys.LONGITUDE).getAsDouble();
                 timestamp = sample.get(SensingUtils.LocationKeys.TIMESTAMP).getAsDouble();
+                time      = sample.get(SensingUtils.LocationKeys.TIME).getAsLong();
                 elapsedRealtimeNanos = sample.get(SensingUtils.LocationKeys.ELAPSED_TIME).getAsDouble();
 
                 bearing = sample.get(SensingUtils.LocationKeys.BEARING).getAsFloat();
                 altitude = sample.get(SensingUtils.LocationKeys.ALTITUDE).getAsFloat();
                 speed = sample.get(SensingUtils.LocationKeys.SPEED).getAsFloat();
 
+                //TODO: timestamp trocado por time, ver se isto poderá ter implicações
                 trimmedSample.addProperty(SensingUtils.SENSOR_TYPE, SENSOR_TYPE);
                 trimmedSample.addProperty(SensingUtils.LocationKeys.PROVIDER, provider);
-                trimmedSample.addProperty(SensingUtils.LocationKeys.TIMESTAMP, timestamp);
+                trimmedSample.addProperty(SensingUtils.LocationKeys.TIMESTAMP, time); //AQUI
                 trimmedSample.addProperty(SensingUtils.LocationKeys.ACCURACY, accuracy);
                 trimmedSample.addProperty(SensingUtils.LocationKeys.LATITUDE, latitude);
                 trimmedSample.addProperty(SensingUtils.LocationKeys.LONGITUDE, longitude);
@@ -230,19 +232,69 @@ public class LocationPipeline implements ISensorPipeline {
             JsonObject[] input = ((SensorPipeLineContext)pipelineContext).getInput();
             Queue<JsonObject> aux = new LinkedList<>();
 
+            //Aux
+            boolean acceptable = true;
+            float errorMargin, speed, altitude;
+            int numSatellites;
+
             for(JsonObject sample : input){
 
-                float accuracy = sample.get(SensingUtils.LocationKeys.ACCURACY).getAsFloat();
+                //Assuming the location is acceptable...
+                acceptable = true;
 
-                if(accuracy <= LocationPipeline.MIN_ACCURACY){
-                    aux.add(sample);
-                }else {
-                    discarded++;
-                    logger.log(
-                            ScoutLogger.INFO,
-                            LOG_TAG,
-                            TAG + "Sample's accuracy bellow "+MIN_ACCURACY+". - (" + sample + ").");
+                //PHASE 1
+                //Get the necessary values
+                errorMargin = SensingUtils.LocationSampleAccessor.getAccuracy(sample);
+
+                try {
+                    speed = SensingUtils.LocationSampleAccessor.getSpeed(sample);
+                } catch (NoSuchDataFieldException e) {
+                    speed = 0;
                 }
+
+                try {
+                    altitude = SensingUtils.LocationSampleAccessor.getAltitude(sample);
+                } catch (NoSuchDataFieldException e) {
+                    altitude = -1;
+                }
+
+                try { //TODO: na MergeStage este valor não está a ser adicionado às amostras
+                    numSatellites = SensingUtils.LocationSampleAccessor.getNumSatellites(sample);
+                } catch (NoSuchDataFieldException e) {
+                    numSatellites = 0;
+                }
+
+
+                if(errorMargin > LocationState.MIN_ACCURACY) //Not enough accuracy
+                    acceptable = false;
+                else if (speed >= LocationState.MAX_SPEED) //Too much speed
+                    acceptable = false;
+                else if (numSatellites < 3) //Not fixed to enough satellites
+                    acceptable = false;
+                else switch (numSatellites){
+                        case 3:
+                            //Minimum acceptable for lat and lon
+                            acceptable = true;
+                            break;
+                        case 4:
+                            //Minimum acceptable for lat, lon and altitude
+                            acceptable = true;
+                            break;
+                        default:
+                            acceptable = true;
+                    }
+
+
+                //TODO: aplicar as heuristicas usadas no tripzoom
+                //TODO: discartar amostras com grandes variações na orientação
+                //TODO: discartar amostras com altitudes irrealisticas.
+
+                //If none of the heuristics has failed then the sample is accepted.
+                if(acceptable)
+                    aux.add(sample);
+                else
+                    discarded++;
+
             }
 
             logger.log(ScoutLogger.INFO, LOG_TAG, TAG+discarded+" samples out of "+input.length+" were discarded.");
@@ -285,6 +337,7 @@ public class LocationPipeline implements ISensorPipeline {
      *             <li><i>speed</i></li>
      *             <li><i>bearing</i></li>
      *             <li><i>altitude</i></li>
+     *             <li><i>satellites</i></li>
      *         </ul>
      *     </li>
      * </ul>
@@ -313,8 +366,11 @@ public class LocationPipeline implements ISensorPipeline {
         }
 
         public void addGPSFields(JsonObject merged, JsonObject sample1, JsonObject sample2){
-            float acc1, acc2;
-            float speed=0, bearing=0, altitude=0;
+
+            int satellites=0;
+            float acc1, acc2,
+                  speed=0, bearing=0, altitude=0;
+
 
             String provider1, provider2;
             acc1 = SensingUtils.LocationSampleAccessor.getAccuracy(sample1);
@@ -332,27 +388,46 @@ public class LocationPipeline implements ISensorPipeline {
                 speed = aux.get(SensingUtils.LocationKeys.SPEED).getAsFloat();
                 bearing = aux.get(SensingUtils.LocationKeys.BEARING).getAsFloat();
                 altitude = aux.get(SensingUtils.LocationKeys.ALTITUDE).getAsFloat();
-            }else{
 
+                try {
+                    satellites = SensingUtils.LocationSampleAccessor.getNumSatellites(aux);
+                } catch (NoSuchDataFieldException e) {
+                    satellites = 0;
+                }
+
+            }else{
                 //Just one of the samples is from a GPS provider
                 if(provider1.equals("gps")){ //Sample1 is from a GPS
                     speed = sample1.get(SensingUtils.LocationKeys.SPEED).getAsFloat();
                     bearing = sample1.get(SensingUtils.LocationKeys.BEARING).getAsFloat();
                     altitude = sample1.get(SensingUtils.LocationKeys.ALTITUDE).getAsFloat();
+
+                    try {
+                        satellites = SensingUtils.LocationSampleAccessor.getNumSatellites(sample1);
+                    } catch (NoSuchDataFieldException e) {
+                        satellites = 0;
+                    }
+
                 }else if (provider2.equals("gps")){ //Sample2 is from a GPS
                     speed = sample2.get(SensingUtils.LocationKeys.SPEED).getAsFloat();
                     bearing = sample2.get(SensingUtils.LocationKeys.BEARING).getAsFloat();
                     altitude = sample2.get(SensingUtils.LocationKeys.ALTITUDE).getAsFloat();
+
+                    try {
+                        satellites = SensingUtils.LocationSampleAccessor.getNumSatellites(sample2);
+                    } catch (NoSuchDataFieldException e) {
+                        satellites = 0;
+                    }
                 }
             }
 
             merged.addProperty(SensingUtils.LocationKeys.SPEED, speed);
             merged.addProperty(SensingUtils.LocationKeys.BEARING, bearing);
             merged.addProperty(SensingUtils.LocationKeys.ALTITUDE, altitude);
+            merged.addProperty(SensingUtils.LocationKeys.SATTELITES, satellites);
 
             return;
         }
-
 
 
         private JsonObject mergeSamples(JsonObject sample1, JsonObject sample2){
@@ -528,8 +603,7 @@ public class LocationPipeline implements ISensorPipeline {
         @Override
         public void execute(PipelineContext pipelineContext) {
 
-            MotionState auxMotionState = state.getMotionState();
-            LocationState auxLocationState = state.getLocationState();
+            LocationState locationState = state.getLocationState();
 
             double currTimestamp = 0, auxTimestamp = 0;
             JsonObject[] input = ((SensorPipeLineContext)pipelineContext).getInput();
@@ -541,25 +615,7 @@ public class LocationPipeline implements ISensorPipeline {
                 //Check if sample is the most recent
                 if (currTimestamp < auxTimestamp) {
                     state.setTimestamp(auxTimestamp);
-
-                    //Update Location State
-                    auxLocationState.setLatitude(SensingUtils.LocationSampleAccessor.getLatitude(sample));
-                    auxLocationState.setLongitude(SensingUtils.LocationSampleAccessor.getLongitude(sample));
-
-                    try {
-                        auxLocationState.setAltitude(SensingUtils.LocationSampleAccessor.getAltitude(sample));
-                    } catch (NoSuchDataFieldException e) {}
-
-                    auxLocationState.setSlope(SensingUtils.LocationSampleAccessor.getSlope(sample));
-
-                    //Update Motion State
-                    try {
-                        auxMotionState.setSpeed(SensingUtils.LocationSampleAccessor.getSpeed(sample));
-                    } catch (NoSuchDataFieldException e) {}
-
-                    try {
-                        auxMotionState.setTravelState(SensingUtils.LocationSampleAccessor.getTravelState(sample));
-                    } catch (NoSuchDataFieldException e) {}
+                    locationState.updateLocationState(sample);
                 }
             }
         }
