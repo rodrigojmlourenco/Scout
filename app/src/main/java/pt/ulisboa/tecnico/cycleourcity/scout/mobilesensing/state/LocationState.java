@@ -106,6 +106,6 @@ public class LocationState {
     }
 
     synchronized public boolean isReadyState(){
-        return this.lastLocations.isFull();
+        return lastLocations.size() >= LAST_LOCATIONS_SIZE;
     }
 }

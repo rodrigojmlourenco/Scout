@@ -3,6 +3,9 @@ package pt.ulisboa.tecnico.cycleourcity.scout;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
+import android.graphics.DashPathEffect;
+import android.graphics.Paint;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
@@ -18,8 +21,21 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.androidplot.Plot;
+import com.androidplot.util.PixelUtils;
+import com.androidplot.xy.BoundaryMode;
+import com.androidplot.xy.LineAndPointFormatter;
+import com.androidplot.xy.SimpleXYSeries;
+import com.androidplot.xy.XYPlot;
+import com.androidplot.xy.XYSeries;
+import com.androidplot.xy.XYStepMode;
+
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,6 +45,7 @@ import pt.ulisboa.tecnico.cycleourcity.scout.config.ScoutConfigManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.config.exceptions.NotInitializedException;
 import pt.ulisboa.tecnico.cycleourcity.scout.logging.ScoutLogger;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.state.ScoutState;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.state.data.Location;
 import pt.ulisboa.tecnico.cycleourcity.scout.pipeline.ScoutPipeline;
 
 public class MainActivity extends ActionBarActivity {
@@ -42,10 +59,15 @@ public class MainActivity extends ActionBarActivity {
 
     private TextView
             locationView,
-            speedView,
-            slopeView,
-            altitudeView,
-            travelStateView;
+            speedView;
+            //slopeView,
+            //altitudeView,
+            //travelStateView;
+
+    //Plotting
+    private XYPlot elevationPlot;
+    private SimpleXYSeries gpsElevationSeries = null, meanElevationSeries;
+
 
     //Funf
     public static final String PIPELINE_NAME = "default";
@@ -178,9 +200,26 @@ public class MainActivity extends ActionBarActivity {
         mHandler = new Handler();
         locationView = (TextView) findViewById(R.id.locationValue);
         speedView = (TextView) findViewById(R.id.speedValue);
-        slopeView = (TextView) findViewById(R.id.slopeValue);
-        altitudeView = (TextView) findViewById(R.id.altitudeValue);
-        travelStateView = (TextView) findViewById(R.id.travelStateValue);
+        //slopeView = (TextView) findViewById(R.id.slopeValue);
+        //altitudeView = (TextView) findViewById(R.id.altitudeValue);
+        //travelStateView = (TextView) findViewById(R.id.travelStateValue);
+
+        //Plotting
+        elevationPlot = (XYPlot) findViewById(R.id.elevationPlot);
+
+        gpsElevationSeries = new SimpleXYSeries("GPS Altitude");
+        gpsElevationSeries.useImplicitXVals(); //Maybe not (Use index value as xVal, instead of explicit, user provided xVals.)
+        meanElevationSeries = new SimpleXYSeries("Scout Mean Altitude");
+        meanElevationSeries.useImplicitXVals();
+
+        elevationPlot.setRangeBoundaries(100, 300, BoundaryMode.AUTO);
+        elevationPlot.setDomainBoundaries(0, 60, BoundaryMode.FIXED);
+
+        elevationPlot.addSeries(gpsElevationSeries, new LineAndPointFormatter(Color.BLUE, Color.TRANSPARENT, Color.TRANSPARENT, null));
+        elevationPlot.addSeries(meanElevationSeries, new LineAndPointFormatter(Color.RED, Color.TRANSPARENT, Color.TRANSPARENT, null));
+
+
+
 
         // Bind to the service, to create the connection with FunfManager
         bindService(new Intent(this, FunfManager.class), funfManagerConn, BIND_AUTO_CREATE);
@@ -253,13 +292,30 @@ public class MainActivity extends ActionBarActivity {
 
 
             locationView.setText(address);
-            travelStateView.setText(scoutState.getMotionState().getTravelState());
             speedView.setText(String.valueOf(scoutState.getMotionState().getSpeed()));
-            slopeView.setText(String.valueOf(scoutState.getLocationState().getSlope()));
-            altitudeView.setText(String.valueOf(scoutState.getLocationState().getAltitude()));
+
+            //travelStateView.setText(scoutState.getMotionState().getTravelState());
+            //slopeView.setText(String.valueOf(scoutState.getLocationState().getSlope()));
+            //altitudeView.setText(String.valueOf(scoutState.getLocationState().getAltitude()));
+
+            Location last = scoutState.getLocationState().getLastLocation();
+            if(scoutState.getLocationState().isReadyState()) {
+                Date date = new Date(last.getTimestamp());
+
+                Log.w("PLOT", date.toGMTString()+" : "+last.getAltitude());
+                Log.e("PLOT", date.toGMTString()+" : "+scoutState.getLocationState().getAverageAltitude());
+
+                if(gpsElevationSeries.size() > 60){
+                    gpsElevationSeries.removeFirst();
+                    meanElevationSeries.removeFirst();
+                }
+
+                gpsElevationSeries.addLast(null, last.getAltitude());
+                meanElevationSeries.addLast(null, scoutState.getLocationState().getAverageAltitude());
+                elevationPlot.redraw();
+            }
 
             mHandler.postDelayed(this, mInterval);
-
         }
     };
 

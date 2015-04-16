@@ -61,7 +61,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_below="@+id/tag"
-        android:layout_marginTop="52dp"
+        android:layout_marginTop="20dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:id="@+id/scoutStateLayout">
@@ -93,6 +93,7 @@
 
         </LinearLayout>
 
+
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="fill_parent"
@@ -118,6 +119,7 @@
                 android:layout_marginLeft="15dip" />
         </LinearLayout>
 
+        <!--
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -196,6 +198,17 @@
                 android:layout_marginLeft="15dip" />
 
         </LinearLayout>
+        -->
+
+        <com.androidplot.xy.XYPlot
+            android:id="@+id/elevationPlot"
+            android:layout_width="fill_parent"
+            android:layout_height="150dip"
+            androidPlot.title="Altitude"
+            androidPlot.domainLabel="Time"
+            androidPlot.rangeLabel="Altitude"/>
+
+
     </LinearLayout>
 
 </RelativeLayout>

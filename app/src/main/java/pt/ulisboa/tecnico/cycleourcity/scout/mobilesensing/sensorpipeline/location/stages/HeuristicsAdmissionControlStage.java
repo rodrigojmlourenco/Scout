@@ -86,7 +86,6 @@ import pt.ulisboa.tecnico.cycleourcity.scout.parser.SensingUtils;
  *             Given two consecutive locations A and B, if their uncertainty areas overlap and
  *             B's accuracy is lower than A's, then B is discarded.
  *         </p>
- *         TODO: Tenho que descobrir uma forma de ver se duas localizações se sobrepõem.
  *     </li>
  * </ul>
  *
@@ -143,7 +142,7 @@ public class HeuristicsAdmissionControlStage implements Stage{
                 altitude = -1;
             }
 
-            try { //TODO: na MergeStage este valor não está a ser adicionado às amostras
+            try {
                 numSatellites = SensingUtils.LocationSampleAccessor.getNumSatellites(sample);
             } catch (NoSuchDataFieldException e) {
                 numSatellites = 0;
