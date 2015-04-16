@@ -1,7 +1,7 @@
 # Scout
 CycleOurCity goes Mobile - Scout
 
-<img src="./img/scout_screenshot.png"  width="200" height="200"/>
+<img src="./img/scout_screenshot.png"  width="300" height="auto"/>
 
 
 ## TODO
@@ -107,6 +107,10 @@ Assim e de forma a permitir a identificação e remoção de possíveis outliers
 
    Dadas duas posições consecutivas A e B e as duas margens de erro a e b (+/- x m), se as áreas das localizações se sobrepõem e a precisão de B é inferior que a de A, i.e. o raio de incerteza é maior em B, então B é considerado um outlier e discartado.
 
+<div>
+   <img src="./img/walk_inesc.jpg"  width="400" height="auto"/>
+   <p><emph>Track capturada pela aplicação com controlo de admissão por heurísticas.</emph></p>
+</div>
 
 
 
