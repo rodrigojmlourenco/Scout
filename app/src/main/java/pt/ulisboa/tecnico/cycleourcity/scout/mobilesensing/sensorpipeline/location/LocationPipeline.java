@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.sensor;
+package pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.location;
 
 import com.google.gson.JsonObject;
 
@@ -14,9 +14,11 @@ import edu.mit.media.funf.json.IJsonObject;
 import pt.ulisboa.tecnico.cycleourcity.scout.logging.ScoutLogger;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exception.NoSuchDataFieldException;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.location.LocationUtils;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.location.stages.HeuristicsAdmissionControlStage;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.sensor.ISensorPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.state.LocationState;
-import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.state.MotionState;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.state.ScoutState;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.state.data.Location;
 import pt.ulisboa.tecnico.cycleourcity.scout.parser.SensingUtils;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.SensorPipeLineContext;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.SensorPipeline;
@@ -48,7 +50,7 @@ public class LocationPipeline implements ISensorPipeline {
         //Pre-processing pipeline stages
         LOCATION_PIPELINE.addStage(new TrimStage());
         LOCATION_PIPELINE.addStage(new MergeSamplesStage());
-        LOCATION_PIPELINE.addStage(new AdmissionControlStage());
+        LOCATION_PIPELINE.addStage(new HeuristicsAdmissionControlStage());
         LOCATION_PIPELINE.addStage(new FeatureExtractionStage());
         LOCATION_PIPELINE.addStage(new UpdateScoutStateStage());
         LOCATION_PIPELINE.addStage(new GPXBuildStage());
@@ -62,7 +64,6 @@ public class LocationPipeline implements ISensorPipeline {
 
     @Override
     public void pushSample(JsonObject sensorSample) {
-        logger.log(ScoutLogger.VERBOSE, LOG_TAG, TAG+sensorSample);
         this.sampleQueue.add(sensorSample);
     }
 
@@ -210,102 +211,7 @@ public class LocationPipeline implements ISensorPipeline {
         }
     }
 
-    /**
-     * The information captured by the location sensors varies in quality. In order to assure the
-     * application's robustness the AdmissionControl stage removes samples that may undermine the
-     * quality of the system, for example samples with lower quality.
-     *
-     * @see com.ideaimpl.patterns.pipeline.Stage
-     * @version 1.0
-     */
-    public static class AdmissionControlStage implements Stage {
 
-        private ScoutLogger logger = ScoutLogger.getInstance();
-
-        @Override
-        public void execute(PipelineContext pipelineContext) {
-
-            //Logging
-            logger.log(ScoutLogger.VERBOSE, LOG_TAG, TAG+"admission control.");
-
-            int discarded = 0;
-            JsonObject[] input = ((SensorPipeLineContext)pipelineContext).getInput();
-            Queue<JsonObject> aux = new LinkedList<>();
-
-            //Aux
-            boolean acceptable = true;
-            float errorMargin, speed, altitude;
-            int numSatellites;
-
-            for(JsonObject sample : input){
-
-                //Assuming the location is acceptable...
-                acceptable = true;
-
-                //PHASE 1
-                //Get the necessary values
-                errorMargin = SensingUtils.LocationSampleAccessor.getAccuracy(sample);
-
-                try {
-                    speed = SensingUtils.LocationSampleAccessor.getSpeed(sample);
-                } catch (NoSuchDataFieldException e) {
-                    speed = 0;
-                }
-
-                try {
-                    altitude = SensingUtils.LocationSampleAccessor.getAltitude(sample);
-                } catch (NoSuchDataFieldException e) {
-                    altitude = -1;
-                }
-
-                try { //TODO: na MergeStage este valor não está a ser adicionado às amostras
-                    numSatellites = SensingUtils.LocationSampleAccessor.getNumSatellites(sample);
-                } catch (NoSuchDataFieldException e) {
-                    numSatellites = 0;
-                }
-
-
-                if(errorMargin > LocationState.MIN_ACCURACY) //Not enough accuracy
-                    acceptable = false;
-                else if (speed >= LocationState.MAX_SPEED) //Too much speed
-                    acceptable = false;
-                else if (numSatellites < 3) //Not fixed to enough satellites
-                    acceptable = false;
-                else switch (numSatellites){
-                        case 3:
-                            //Minimum acceptable for lat and lon
-                            acceptable = true;
-                            break;
-                        case 4:
-                            //Minimum acceptable for lat, lon and altitude
-                            acceptable = true;
-                            break;
-                        default:
-                            acceptable = true;
-                    }
-
-
-                //TODO: aplicar as heuristicas usadas no tripzoom
-                //TODO: discartar amostras com grandes variações na orientação
-                //TODO: discartar amostras com altitudes irrealisticas.
-
-                //If none of the heuristics has failed then the sample is accepted.
-                if(acceptable)
-                    aux.add(sample);
-                else
-                    discarded++;
-
-            }
-
-            logger.log(ScoutLogger.INFO, LOG_TAG, TAG+discarded+" samples out of "+input.length+" were discarded.");
-
-            JsonObject[] output = new JsonObject[aux.size()];
-            aux.toArray(output);
-
-            //Pass results onto the next stage
-            ((SensorPipeLineContext) pipelineContext).setInput(output); //For the next Stage
-        }
-    }
 
     /**
      * TODO: esta stage precisa urgentemente de ser optimizada, demasiado código martelado.

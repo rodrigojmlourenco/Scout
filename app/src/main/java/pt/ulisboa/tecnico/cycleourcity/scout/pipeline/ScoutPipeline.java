@@ -62,8 +62,6 @@ public class ScoutPipeline extends BasicPipeline {
     @Override
     public void onDataReceived(IJsonObject probeConfig, IJsonObject data) {
 
-        Log.v("DATA", String.valueOf(data));
-
         try {
             mPipeline.pushSensorSample(probeConfig, data);
         } catch (MobileSensingException e) {
