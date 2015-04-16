@@ -1,9 +1,8 @@
 # Scout
 CycleOurCity goes Mobile - Scout
 
-<img src="./img/scout_screenshot.png"/>
+<img src="./img/scout_screenshot.png"  width="200" height="200"/>
 
-![](./img/scout_screenshot.png =200x)
 
 ## TODO
 
