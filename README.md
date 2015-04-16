@@ -3,7 +3,7 @@ CycleOurCity goes Mobile - Scout
 
 <img src="./img/scout_screenshot.png"/>
 
-![](./img/scout_screenshot.png=100)
+![](./img/scout_screenshot.png=100x)
 
 ## TODO
 
