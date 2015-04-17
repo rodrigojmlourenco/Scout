@@ -1,8 +1,10 @@
 # Scout
 CycleOurCity goes Mobile - Scout
 
-<img src="./img/scout_screenshot.png"  width="300" height="auto"/>
+<img src="./img/screenshot_plotting.png"  width="300" height="auto"/>
 
+## Index
+* [Mobile Sensing](#mobile-sensing)
 
 ## TODO
 
@@ -73,15 +75,15 @@ a pre-defined value where discarded. The accuracy provided by the location senso
 De forma a aumentar a robustez das localizações capturadas pelo `LocationPipeline`, houve a necessidade de melhorar o processo de controlo de admissões. Com isto em mente foi criada a `HeuristicsAdmissionControlStage` onde um conjunto de heuristicas são aplicadas de forma a remover localizações, capturadas pelo receptor GPS, que possam comprometer a precisão do mesmo.
 
 Assim e de forma a permitir a identificação e remoção de possíveis outliers são aplicadas as seguiintes heurísticas:
-* Heurística 1 : Margem de erro demasiado elevada
+* __Heurística 1 :__ Margem de erro demasiado elevada
 
    A localização deve ter uma margem de erro inferor a um determinado limite pré-definido (`LocationState.MIN_ACCURACY`).
 
-* Heurística 2 : Velocidade irrealística
+* __Heurística 2 :__ Velocidade irrealística
 
    A velocidade registada pelo receptor GPS, para uma dada localização, não deve ultrapassar um valor pré-definido (`LocationState.MAX_SPEED`).
 
-* Heurística 3 : Fixado a três satélites
+* __Heurística 3 :__ Fixado a três satélites
 
    De forma a que seja possível realizar triângulação, e consequentemente identificar a posição do dispositivo, o receptor de GPS deve estar fixado com pelo menos 3 satélites, caso contrário a localização deverá ser discartada.
 
@@ -89,21 +91,21 @@ Assim e de forma a permitir a identificação e remoção de possíveis outliers
    * Com 3 satélites embora seja possível identificar a posição (lat & lon), não é recomendado assumir como correcto os valores da altitude e da velocidade, e como tal estes tomam como valor a média registada pelo `ScoutState`.
    * Com 4 satélites a altitude já pode ser aceite, no entanto a velocidade toma como valor a média registada pelo `ScoutState`. 
 
-* Heurística 4 : Grande variância na altitude
+* __Heurística 4 :__ Grande variância na altitude
 
    Caso exista uma grande diferença entre a altitude registada pelo receptor GPS e da média das altitudes (valor definido pelo `ScoutState`), nomeadamente caso essa diferença ultrapasse um valor pré-definido (`LocationState.ALTITUDE_VARIANCE_THRESHOLD`) então a localização deve ser discartada.
 
    Esta heurística levanta um problema, caso a média de altitudes definida pelo `ScoutState` esteja "envenenada" existe a possibilidade de localizações correctas serem discartadas. Assim e de forma a resolver este problema, caso um número elevado de localizações sejam discartadas devido a esta heurística, a média das altitudes é reiniciada permitindo ao sistema corrigir-se a si próprio.
 
-* Heurística 5 : Velocidade calculada demasiado elevada
+* __Heurística 5 :__ Velocidade calculada demasiado elevada
 
    Dadas duas posições consecutivas A e B, se o tempo necessário para chegar de A a B é muito baixo, i.e. a velocidade é muito elevada então B é considerado um outlier e discartado.
 
-* Heurística 6 : Velocidade calculada avançada demasiado elevada [Tripzoom] [TODO]
+* __Heurística 6 :__ Velocidade calculada avançada demasiado elevada [Tripzoom] [TODO]
    
    Dadas três posições consecutivas A, B e C, se o tempo necessária para chegar de A a C através de B é muito baixo, i.e. a velocidade é muito elevada então B é considerado um outlier.
 
-* Heurística 7 : Sobreposição de áreas de incerteza [Tripzoom]
+* __Heurística 7 :__ Sobreposição de áreas de incerteza [Tripzoom]
 
    Dadas duas posições consecutivas A e B e as duas margens de erro a e b (+/- x m), se as áreas das localizações se sobrepõem e a precisão de B é inferior que a de A, i.e. o raio de incerteza é maior em B, então B é considerado um outlier e discartado.
 
