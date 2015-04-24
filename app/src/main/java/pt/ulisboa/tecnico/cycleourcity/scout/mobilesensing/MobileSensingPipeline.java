@@ -16,9 +16,10 @@ import pt.ulisboa.tecnico.cycleourcity.scout.ScoutApplication;
 import pt.ulisboa.tecnico.cycleourcity.scout.logging.ScoutLogger;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exception.MobileSensingException;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exception.NoSuchSensorException;
-import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.sensor.AccelerometerPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.location.LocationPipeline;
-import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.sensor.PressurePipeline;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.sensor.AccelerometerPipeline;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.location.LocationSensorPipeline;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.location.PressureSensorPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.parser.SensingUtils;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.ScoutStorageManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.StorageManager;
@@ -40,8 +41,9 @@ public class MobileSensingPipeline {
 
     //Sensor Specific Pipelines
     private final AccelerometerPipeline accelerometerPipeline;
+    //private final LocationSensorPipeline locationPipeline;
     private final LocationPipeline locationPipeline;
-    private final PressurePipeline pressurePipeline;
+    private final PressureSensorPipeline pressurePipeline;
 
     //Sensing Data Queues
     private Queue<JsonObject> sensorSampleQueue = null;
@@ -61,7 +63,7 @@ public class MobileSensingPipeline {
         //Sensor Pre-processing Pipelines
         this.accelerometerPipeline = new AccelerometerPipeline();
         this.locationPipeline = new LocationPipeline();
-        this.pressurePipeline = new PressurePipeline();
+        this.pressurePipeline = new PressureSensorPipeline();
 
         //Sensing Data Queues
         this.sensorSampleQueue = new LinkedList<>();
@@ -176,7 +178,7 @@ public class MobileSensingPipeline {
             //PRE-PROCESSING PHASE
             //locationPipeline.run();
             //accelerometerPipeline.run(); //TODO: uncomment
-            new Thread(pressurePipeline).start();
+            //new Thread(pressurePipeline).start();
             new Thread(locationPipeline).start();
         }
     }

@@ -5,6 +5,8 @@ import android.util.Log;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.util.concurrent.TimeUnit;
+
 import edu.mit.media.funf.json.IJsonObject;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exception.MobileSensingException;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exception.NoSuchDataFieldException;
@@ -44,6 +46,7 @@ public class SensingUtils {
     public final static String TIMESTAMP = "timestamp";
     public final static String NUM_FRAME_SAMPLES = "Total Samples";
     public final static String EXTRAS = "mExtras";
+    public final static String ACCURACY     = "accuracy";
 
     /**
      * Accelerometer Specific Fields */
@@ -67,23 +70,31 @@ public class SensingUtils {
     public static interface LocationKeys {
         public final static String
             //Main Keys
-            PROVIDER    = "mProvider",
-            ACCURACY    = "mAccuracy",
-            LATITUDE    = "mLatitude",
-            LONGITUDE   = "mLongitude",
-            ELAPSED_TIME= "mElapsedRealtimeNanos",
-            TIMESTAMP   = "timestamp",
-            TIME        = "mTime",
+            PROVIDER                = "mProvider",
+            ACCURACY                = "mAccuracy",
+            LATITUDE                = "mLatitude",
+            LONGITUDE               = "mLongitude",
+            ELAPSED_TIME_NANOS      = "mElapsedRealtimeNanos",
+            TIMESTAMP               = "timestamp",
+            TIME                    = "mTime",
+
             //Only GPS
-            BEARING     = "mBearing",
-            ALTITUDE    = "mAltitude",
-            SPEED       = "mSpeed",
-            SATTELITES  = "satellites",
+            BEARING                 = "mBearing",
+            ALTITUDE                = "mAltitude",
+            SPEED                   = "mSpeed",
+            SATTELITES              = "satellites",
+
             //Only Network
-            TRAVEL_STATE= "travelState",
+            TRAVEL_STATE            = "travelState",
+
+            //Pressure Sensor
+            PRESSURE                = "pressure",
+            BAROMETRIC_ALTITUDE     = "pAltitude",
 
             //Scout-specific Keys
-            SLOPE       = "mSlope";
+            ELAPSED_TIME= "elapsedTime",
+            SLOPE       = "mSlope",
+            SAMPLES      = "numSamples";
     }
 
     public static class LocationSampleAccessor{
@@ -150,6 +161,20 @@ public class SensingUtils {
             else
                 throw new NoSuchDataFieldException(LocationKeys.SATTELITES);
         }
+
+        public static long getElapsedRealTimeNanos(JsonObject sample){
+            return sample.get(LocationKeys.ELAPSED_TIME_NANOS).getAsLong();
+        }
+
+        public static long getElapsedRealTimeMillis(JsonObject sample){
+            long elapsedNanos = sample.get(LocationKeys.ELAPSED_TIME_NANOS).getAsLong();
+            return TimeUnit.NANOSECONDS.convert(elapsedNanos, TimeUnit.MILLISECONDS);
+        }
+
+        public static long getTime(JsonObject sample){
+            return sample.get(LocationKeys.TIME).getAsLong();
+        }
+
 
     }
 

@@ -7,6 +7,7 @@ import com.ideaimpl.patterns.pipeline.Stage;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -74,6 +75,13 @@ public class AccelerometerPipeline implements ISensorPipeline{
             case SensingUtils.GRAVITY:
                 gravitySamples.add(sample);
                 break;
+        }
+    }
+
+    @Override
+    public void pushSampleCollection(Collection<JsonObject> sampleCollection) {
+        for(JsonObject sample : sampleCollection){
+            pushSample(sample);
         }
     }
 
