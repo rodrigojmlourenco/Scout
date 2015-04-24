@@ -16,18 +16,26 @@ import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exception.SensorNotSu
  */
 public class SensingUtils {
 
-    //FUNF PROBES
-    public final static String ACCELEROMETER_PROBE = "\"edu.mit.media.funf.probe.builtin.AccelerometerSensorProbe\"";
-    public final static String GRAVITY_PROBE = "\"edu.mit.media.funf.probe.builtin.GravitySensorProbe\"";
-    public final static String LOCATION_PROBE = "\"edu.mit.media.funf.probe.builtin.LocationProbe\"";
+    //FUNF BUILTIN PROBES
     public final static String BATTERY_PROBE = "\"edu.mit.media.funf.probe.builtin.BatteryProbe\"";
+    public final static String LOCATION_PROBE = "\"edu.mit.media.funf.probe.builtin.LocationProbe\"";
+    public final static String GRAVITY_PROBE = "\"edu.mit.media.funf.probe.builtin.GravitySensorProbe\"";
+    public final static String ORIENTATION_PROBE = "\"edu.mit.media.funf.probe.builtin.OrientationSensorProbe\"";
     public final static String SIMPLE_LOCATION_PROBE = "\"edu.mit.media.funf.probe.builtin.SimpleLocationProbe\"";
+    public final static String ACCELEROMETER_PROBE = "\"edu.mit.media.funf.probe.builtin.AccelerometerSensorProbe\"";
+    public final static String ROTATION_VECTOR_PROBE = "\"edu.mit.media.funf.probe.builtin.RotationVectorSensorProbe\"";
+    public final static String PRESSURE_PROBE = "\"edu.mit.media.funf.probe.builtin.PressureSensorProbe\"";
+
+
 
     //Sensor Types
     public final static int BATTERY         = 0;
     public final static int ACCELEROMETER   = 1;
     public final static int GRAVITY         = 2;
     public final static int LOCATION        = 3;
+    public final static int ORIENTATION     = 4;
+    public final static int ROTATION_VECTOR = 5;
+    public final static int PRESSURE        = 6;
 
 
     //General Data Fields
@@ -157,9 +165,6 @@ public class SensingUtils {
         return config.has(SENSOR_TYPE) && config.get(SENSOR_TYPE).toString().equals(ACCELEROMETER_PROBE);
     }
 
-
-
-
     /**
      * Given the sensor configuration, as an immutable JSON object, returns the sensor type.
      * @param sensorConfig the sensor's configuration
@@ -184,6 +189,12 @@ public class SensingUtils {
                 return GRAVITY;
             case BATTERY_PROBE:
                 return BATTERY;
+            case ORIENTATION_PROBE:
+                return ORIENTATION;
+            case ROTATION_VECTOR_PROBE:
+                return ROTATION_VECTOR;
+            case PRESSURE_PROBE:
+                return PRESSURE;
             default:
                 Log.e(sensor, String.valueOf(sensorConfig));
                 throw new SensorNotSupportedException(sensor);
@@ -212,6 +223,12 @@ public class SensingUtils {
                 return "Gravity";
             case BATTERY:
                 return "Battery";
+            case ORIENTATION:
+                return "Orientation";
+            case ROTATION_VECTOR:
+                return "RotationVector";
+            case PRESSURE:
+                return "Pressure";
             default:
                 return "Unknown Sensor";
         }

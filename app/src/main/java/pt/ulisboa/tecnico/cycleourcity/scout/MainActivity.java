@@ -66,15 +66,14 @@ public class MainActivity extends ActionBarActivity {
 
     //Plotting
     private XYPlot elevationPlot;
-    private SimpleXYSeries gpsElevationSeries = null, meanElevationSeries;
+    private SimpleXYSeries gpsElevationSeries = null, meanElevationSeries, pressureElevationSeries;
+
 
 
     //Funf
     public static final String PIPELINE_NAME = "default";
     private FunfManager funfManager;
     private ScoutPipeline pipeline;
-
-    //Backgound UI updating
 
     //Configuration Management
     private ScoutConfigManager configManager = ScoutConfigManager.getInstance();
@@ -88,6 +87,8 @@ public class MainActivity extends ActionBarActivity {
 
             funfManager = ((FunfManager.LocalBinder)service).getManager();
             pipeline = (ScoutPipeline) funfManager.getRegisteredPipeline(PIPELINE_NAME);
+
+            ((ScoutPipeline)pipeline).setDisplay(getWindowManager().getDefaultDisplay());
 
             //Initialize Configuration Manager
             // & reload default configuration
@@ -211,12 +212,16 @@ public class MainActivity extends ActionBarActivity {
         gpsElevationSeries.useImplicitXVals(); //Maybe not (Use index value as xVal, instead of explicit, user provided xVals.)
         meanElevationSeries = new SimpleXYSeries("Scout Mean Altitude");
         meanElevationSeries.useImplicitXVals();
+        pressureElevationSeries = new SimpleXYSeries("Scout Pressure Altitude");
+        pressureElevationSeries.useImplicitXVals();
 
         elevationPlot.setRangeBoundaries(100, 300, BoundaryMode.AUTO);
         elevationPlot.setDomainBoundaries(0, 60, BoundaryMode.FIXED);
 
         elevationPlot.addSeries(gpsElevationSeries, new LineAndPointFormatter(Color.BLUE, Color.TRANSPARENT, Color.TRANSPARENT, null));
         elevationPlot.addSeries(meanElevationSeries, new LineAndPointFormatter(Color.RED, Color.TRANSPARENT, Color.TRANSPARENT, null));
+        elevationPlot.addSeries(pressureElevationSeries, new LineAndPointFormatter(Color.YELLOW, Color.TRANSPARENT, Color.TRANSPARENT, null));
+
 
 
 
@@ -292,7 +297,7 @@ public class MainActivity extends ActionBarActivity {
 
 
             locationView.setText(address);
-            speedView.setText(String.valueOf(scoutState.getMotionState().getSpeed()));
+            speedView.setText(String.valueOf(scoutState.getLocationState().getPressureAltitude()));
 
             //travelStateView.setText(scoutState.getMotionState().getTravelState());
             //slopeView.setText(String.valueOf(scoutState.getLocationState().getSlope()));
@@ -305,13 +310,24 @@ public class MainActivity extends ActionBarActivity {
                 Log.w("PLOT", date.toGMTString()+" : "+last.getAltitude());
                 Log.e("PLOT", date.toGMTString()+" : "+scoutState.getLocationState().getAverageAltitude());
 
-                if(gpsElevationSeries.size() > 60){
+                if(pressureElevationSeries.size() > 60){
                     gpsElevationSeries.removeFirst();
                     meanElevationSeries.removeFirst();
+                    pressureElevationSeries.removeFirst();
                 }
 
                 gpsElevationSeries.addLast(null, last.getAltitude());
                 meanElevationSeries.addLast(null, scoutState.getLocationState().getAverageAltitude());
+                pressureElevationSeries.addLast(null, scoutState.getLocationState().getPressureAltitude());
+
+                elevationPlot.redraw();
+            }else{
+                if(pressureElevationSeries.size() > 60){
+                    pressureElevationSeries.removeFirst();
+                }
+
+                pressureElevationSeries.addLast(null, scoutState.getLocationState().getPressureAltitude());
+
                 elevationPlot.redraw();
             }
 

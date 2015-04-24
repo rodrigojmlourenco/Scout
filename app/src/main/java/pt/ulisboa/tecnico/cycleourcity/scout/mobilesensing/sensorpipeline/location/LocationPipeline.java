@@ -37,6 +37,9 @@ public class LocationPipeline implements ISensorPipeline {
 
     private static final SensorPipeline LOCATION_PIPELINE = new SensorPipeline();
 
+    private static final SensorPipeline PRESSURE_SENSOR_PIPELINE = new SensorPipeline();
+    private static final SensorPipeline LOCATION_SENSOR_PIPELINE= new SensorPipeline();
+
     //Location Information Queues
     private Queue<JsonObject> sampleQueue;
 

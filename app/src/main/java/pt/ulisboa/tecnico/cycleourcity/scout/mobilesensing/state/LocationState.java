@@ -28,6 +28,8 @@ public class LocationState {
     private double  latitude, longitude;
     private float   altitude, slope, speed;
 
+    private float pressureAltitude;
+
     private CircularFifoQueue<Location> lastLocations = new CircularFifoQueue<>(LAST_LOCATIONS_SIZE);
 
     synchronized public double getLatitude() {
@@ -107,5 +109,13 @@ public class LocationState {
 
     synchronized public boolean isReadyState(){
         return lastLocations.size() >= LAST_LOCATIONS_SIZE;
+    }
+
+    public float getPressureAltitude() {
+        return pressureAltitude;
+    }
+
+    public void setPressureAltitude(float pressureAltitude) {
+        this.pressureAltitude = pressureAltitude;
     }
 }

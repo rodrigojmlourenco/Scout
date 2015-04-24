@@ -18,6 +18,7 @@ import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exception.MobileSensi
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exception.NoSuchSensorException;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.sensor.AccelerometerPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.location.LocationPipeline;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.sensor.PressurePipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.parser.SensingUtils;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.ScoutStorageManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.StorageManager;
@@ -40,6 +41,7 @@ public class MobileSensingPipeline {
     //Sensor Specific Pipelines
     private final AccelerometerPipeline accelerometerPipeline;
     private final LocationPipeline locationPipeline;
+    private final PressurePipeline pressurePipeline;
 
     //Sensing Data Queues
     private Queue<JsonObject> sensorSampleQueue = null;
@@ -59,6 +61,7 @@ public class MobileSensingPipeline {
         //Sensor Pre-processing Pipelines
         this.accelerometerPipeline = new AccelerometerPipeline();
         this.locationPipeline = new LocationPipeline();
+        this.pressurePipeline = new PressurePipeline();
 
         //Sensing Data Queues
         this.sensorSampleQueue = new LinkedList<>();
@@ -154,6 +157,12 @@ public class MobileSensingPipeline {
                             accelerometerPipeline.pushSample(sample);
                             break;
                         case SensingUtils.LOCATION:
+                        case SensingUtils.ORIENTATION:
+                        case SensingUtils.ROTATION_VECTOR:
+                            locationPipeline.pushSample(sample);
+                            break;
+                        case SensingUtils.PRESSURE:
+                            pressurePipeline.pushSample(sample);
                             locationPipeline.pushSample(sample);
                             break;
                         default:
@@ -166,8 +175,9 @@ public class MobileSensingPipeline {
 
             //PRE-PROCESSING PHASE
             //locationPipeline.run();
-            new Thread(locationPipeline).start();
             //accelerometerPipeline.run(); //TODO: uncomment
+            new Thread(pressurePipeline).start();
+            new Thread(locationPipeline).start();
         }
     }
 
