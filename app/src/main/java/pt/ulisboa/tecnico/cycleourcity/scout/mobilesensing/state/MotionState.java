@@ -24,4 +24,8 @@ public class MotionState {
     synchronized public void setTravelState(String travelState) {
         this.travelState = travelState;
     }
+
+    public boolean isReadyState(){
+        return true;
+    }
 }

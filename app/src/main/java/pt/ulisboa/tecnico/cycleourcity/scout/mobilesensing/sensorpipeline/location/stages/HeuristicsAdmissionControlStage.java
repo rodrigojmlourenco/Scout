@@ -189,6 +189,7 @@ public class HeuristicsAdmissionControlStage implements Stage{
                 }
             }
 
+            /* TODO: dados que até mais ver a altitude usada passa a ser a do barometro esta heurística é desnecessária.
             //Heuristic4 : Huge variance in height
             float deltaAltitude = Math.abs(meanAlt - altitude);
             if(meanAlt > 0 && Math.abs(deltaAltitude) > LocationState.ALTITUDE_VARIANCE_THRESHOLD){
@@ -208,10 +209,12 @@ public class HeuristicsAdmissionControlStage implements Stage{
 
                 continue;
             }
+            */
 
             //The following heuristics depend on the LocationState
             if(locationState.isReadyState()){
                 Location location = new Location(sample);
+
 
                 //Heuristic5 : Traveled speed to high
                 float calculatedSpeed = previousLocation.getTraveledSpeed(location);
@@ -220,6 +223,7 @@ public class HeuristicsAdmissionControlStage implements Stage{
                     discarded++;
                     continue;
                 }
+
 
                 //Heuristic6:
                 // TODO: esta heuristica não vai funcionar para o pipeline a executar-se de segundo a segundo.

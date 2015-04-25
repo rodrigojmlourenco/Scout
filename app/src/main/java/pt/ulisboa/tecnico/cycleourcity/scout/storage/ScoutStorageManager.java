@@ -149,7 +149,7 @@ public class ScoutStorageManager implements StorageManager{
         GPXBuilder builder = GPXBuilder.getInstance();
 
         try {
-            builder.storeGPXTrack(archive.getPathOnSDCard(), tag);
+            builder.storeAllGPXTracks(archive.getPathOnSDCard(), tag);
         } catch (IOException e) {
             e.printStackTrace();
         }

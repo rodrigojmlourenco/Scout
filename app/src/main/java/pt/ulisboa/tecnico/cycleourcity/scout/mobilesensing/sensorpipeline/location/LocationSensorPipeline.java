@@ -26,11 +26,16 @@ import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.Sensor
 import pt.ulisboa.tecnico.cycleourcity.scout.parser.gpx.GPXBuilder;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.ScoutStorageManager;
 
+/**
+ * @version 1.3
+ * @author rodrigo.jm.lourenco
+ *
+ *
+ */
 public class LocationSensorPipeline implements ISensorPipeline, FeatureExtractor {
 
     private final static String TAG         = "[LOCATION]: ";
     private final static String LOG_TAG     = "LocationPipeline";
-    private final static String SENSOR_TYPE = "Location";
 
     public final static int GPS_PROVIDER        = 0;
     public final static int NETWORK_PROVIDER    = 1;
@@ -416,7 +421,7 @@ public class LocationSensorPipeline implements ISensorPipeline, FeatureExtractor
             }
 
             //Add all the remaining fields
-            merged.addProperty(SensingUtils.SENSOR_TYPE, SENSOR_TYPE);
+            merged.addProperty(SensingUtils.SENSOR_TYPE, SensingUtils.LOCATION);
             merged.addProperty(SensingUtils.LocationKeys.PROVIDER, newProvider);
             merged.addProperty(SensingUtils.TIMESTAMP, newTimestamp);
             merged.addProperty(SensingUtils.LocationKeys.TIME, newTime);
@@ -493,91 +498,9 @@ public class LocationSensorPipeline implements ISensorPipeline, FeatureExtractor
     }
 
 
-    /**
-     * @version 1.0
-     * @author rodrigo.jm.lourenco
-     *
-     * Given the results of the previous stages, this stage updates the application's internal
-     * state.
-     */
-    public static class UpdateScoutStateStage implements Stage {
-
-        private ScoutState state = ScoutState.getInstance();
-
-        @Override
-        public void execute(PipelineContext pipelineContext) {
-
-            LocationState locationState = state.getLocationState();
-
-            double currTimestamp = 0, auxTimestamp;
-            JsonObject[] input = ((SensorPipeLineContext)pipelineContext).getInput();
-
-            for(JsonObject sample : input) {
-                auxTimestamp = SensingUtils.LocationSampleAccessor.getTimestamp(sample);
 
 
-                //Check if sample is the most recent
-                if (currTimestamp < auxTimestamp) {
-                    state.setTimestamp(auxTimestamp);
-                    locationState.updateLocationState(sample);
-                }
-            }
-        }
-    }
 
-    /**
-     * @version 1.0
-     * This stage operates as a callback function, it extracts the output from the PipelineContext,
-     * which is basically the extracted features, and stores it both in an extracted feature queue
-     * and on the application's storage manager.
-     *
-     * @see pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.SensorPipeLineContext
-     * @see pt.ulisboa.tecnico.cycleourcity.scout.storage.ScoutStorageManager
-     *
-     * TODO: esta stage deve ser igual para todos os pipelines pelo que pode ser externa
-     */
-    public static class PostExecuteStage implements Stage {
 
-        private ScoutLogger logger = ScoutLogger.getInstance();
-        private ScoutStorageManager storage = ScoutStorageManager.getInstance();
 
-        @Override
-        public void execute(PipelineContext pipelineContext) {
-
-            logger.log(ScoutLogger.VERBOSE, LOG_TAG, TAG+"pre-processing terminated.");
-
-            int storedFeatures = 0;
-            JsonObject[] output = ((SensorPipeLineContext)pipelineContext).getInput();
-
-            for(JsonObject feature : output){
-
-                //Persistent Storage
-                String key = feature.get(SensingUtils.SENSOR_TYPE).getAsString();
-                try {
-                    storage.store(key, feature);
-                    storedFeatures++;
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                    logger.log(ScoutLogger.ERR, LOG_TAG, TAG+e.getMessage());
-                }
-            }
-
-            logger.log(ScoutLogger.VERBOSE, LOG_TAG, TAG+storedFeatures+" were successfully stored.");
-        }
-    }
-
-    public static class GPXBuildStage implements Stage {
-
-        private GPXBuilder parser = GPXBuilder.getInstance();
-
-        @Override
-        public void execute(PipelineContext pipelineContext) {
-
-            JsonObject[] input = ((SensorPipeLineContext)pipelineContext).getInput();
-
-            for(JsonObject location : input)
-                parser.addTrackPoint(location);
-
-        }
-    }
 }

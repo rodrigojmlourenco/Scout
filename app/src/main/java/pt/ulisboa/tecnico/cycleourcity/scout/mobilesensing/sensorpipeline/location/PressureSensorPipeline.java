@@ -9,6 +9,7 @@ import com.ideaimpl.patterns.pipeline.Stage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,7 +25,42 @@ import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.sensor
 import pt.ulisboa.tecnico.cycleourcity.scout.parser.SensingUtils;
 
 /**
- * Created by rodrigo.jm.lourenco on 24/04/2015.
+ * @version 1.0
+ * @author rodrigo.jm.lourenco
+ *
+ * The PressureSensorPipeline is the class responsible for dealing with samples originated from
+ * a funf.PressureSensorProbe.
+ * <br>
+ * The main purpose behind this pipeline is to extract more realiable elevations through the captured
+ * atmospheric pressure.
+ * <br>
+ * This pipeline contemplates two stages:
+ * <ul>
+ *     <li>
+ *         <h3>MergeStage</h3>
+ *         <p>
+ *             This stage is responsible for merging closely related pressure samples, where two
+ *             samples are considered closely related if they have both occured in a small time
+ *             window frame. Closely related samples are merged by averaging their measured pressures.
+ *             Although it is a known fact that the mean is very susceptible to outlier poisoning,
+ *             unlike GPS altitude, measured pressure are very consistent.
+ *             <br>
+ *             Despite the consistency of measured pressure samples, it should be considere as future
+ *             work the implementation of a AdmissionControlStage.
+ *         </p>
+ *     </li>
+ *     <li>
+ *         <h3>FeatureExtractionStage</h3>
+ *         <p>
+ *             Feature extraction is this pipeline's final stage, that is responsible for deriving
+ *             the altitude from the measured atmospheric pressure.
+ *             @see <a href="http://developer.android.com/reference/android/hardware/SensorManager.html#getAltitude(float, float)">SensorManager.getAltitude(float p0, float p)</a>
+ *         </p>
+ *     </li>
+ * </ul>
+ *
+ *
+ * @see edu.mit.media.funf.probe.builtin.PressureSensorProbe
  */
 public class PressureSensorPipeline implements ISensorPipeline, FeatureExtractor {
 
@@ -104,8 +140,7 @@ public class PressureSensorPipeline implements ISensorPipeline, FeatureExtractor
         //Update
         JsonObject[] extractedFeatures = context.getOutput();
 
-        for(JsonObject feature : extractedFeatures)
-            this.extractedFeaturesQueue.add(feature);
+        Collections.addAll(this.extractedFeaturesQueue, extractedFeatures);
 
     }
 
@@ -113,6 +148,19 @@ public class PressureSensorPipeline implements ISensorPipeline, FeatureExtractor
      * STAGES: Stages to be used by the Pressure Pipeline                                   *
      ****************************************************************************************/
 
+    /**
+     * @version 1.0
+     * @author rodrigo.jm.lourenco
+     *
+     * This stage is responsible for merging closely related pressure samples, where two
+     * samples are considered closely related if they have both occured in a small time
+     * window frame. Closely related samples are merged by averaging their measured pressures.
+     * Although it is a known fact that the mean is very susceptible to outlier poisoning,
+     * unlike GPS altitude, measured pressure are very consistent.
+     * <br>
+     * Despite the consistency of measured pressure samples, it should be considere as future
+     * work the implementation of a AdmissionControlStage.
+     */
     public static class MergeStage implements Stage {
 
         private ScoutLogger logger = ScoutLogger.getInstance();
@@ -127,7 +175,7 @@ public class PressureSensorPipeline implements ISensorPipeline, FeatureExtractor
             long t1, t2, elapsed;
 
             t1 = sample1.get(SensingUtils.TIMESTAMP).getAsLong();
-            t2 = sample2.get(SensingUtils.TIMESTAMP).getAsLong();;
+            t2 = sample2.get(SensingUtils.TIMESTAMP).getAsLong();
 
             elapsed = Math.abs(t2-t1);
 
@@ -201,6 +249,15 @@ public class PressureSensorPipeline implements ISensorPipeline, FeatureExtractor
         }
     }
 
+    /**
+     * @version 1.0
+     * @author rodrigo.jm.lourenco
+     *
+     * Feature extraction is this pipeline's final stage, that is responsible for deriving
+     * the altitude from the measured atmospheric pressure.
+     * @see <a href="http://developer.android.com/reference/android/hardware/SensorManager.html#getAltitude(float, float)">SensorManager.getAltitude(float p0, float p)</a>
+
+     */
     public static class FeatureExtractionStage implements Stage {
 
         private final String TAG = "[Altitude]";

@@ -193,9 +193,9 @@ public class MobileSensingPipeline {
 
         StorageManager storage = ScoutStorageManager.getInstance();
 
+        storage.archiveGPXTrack(tag);
         //TODO: check if there is information to store;
         storage.archive(tag);
-        storage.archiveGPXTrack(tag);
 
         //Clear database contents
         storage.clearStoredData();

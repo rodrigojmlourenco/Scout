@@ -99,6 +99,13 @@ public class SensingUtils {
 
     public static class LocationSampleAccessor{
 
+        public static boolean isLocationSample(JsonObject sample){
+            if(sample!=null)
+                return sample.get(SENSOR_TYPE).getAsInt() == LOCATION;
+            else
+                return false;
+        }
+
         public static float getAccuracy(JsonObject sample){
             return sample.get(LocationKeys.ACCURACY).getAsFloat();
         }
@@ -117,6 +124,13 @@ public class SensingUtils {
                 return sample.get(LocationKeys.ALTITUDE).getAsFloat();
             }else
                 throw new NoSuchDataFieldException(LocationKeys.ALTITUDE);
+        }
+
+        public static float getBarometricAltitude(JsonObject sample) throws NoSuchDataFieldException {
+            if(sample.has(LocationKeys.BAROMETRIC_ALTITUDE)){
+                return sample.get(LocationKeys.BAROMETRIC_ALTITUDE).getAsFloat();
+            }else
+                throw new NoSuchDataFieldException(LocationKeys.BAROMETRIC_ALTITUDE);
         }
 
         public static float getSpeed(JsonObject sample) throws NoSuchDataFieldException {

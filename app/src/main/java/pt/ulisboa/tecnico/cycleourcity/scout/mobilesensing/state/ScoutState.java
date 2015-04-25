@@ -49,4 +49,8 @@ public class ScoutState {
     synchronized public void setTimestamp(double timestamp) {
         this.timestamp = timestamp;
     }
+
+    public boolean isReady(){
+        return locationState.isReadyState() && motionState.isReadyState();
+    }
 }

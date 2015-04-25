@@ -17,6 +17,10 @@ public class Location {
     private double  latitude, longitude;
     private float   altitude, speed, error;
     private int     satellites;
+    private long    realElapsedTimeNanos;
+
+    private final float nanos2Millis = 1/1000000f;
+    private final float nanos2Seconds = 1/1000000000f;
 
     public Location() {}
 
@@ -25,6 +29,7 @@ public class Location {
         LocationState locationState = ScoutState.getInstance().getLocationState();
 
         this.timestamp = SensingUtils.LocationSampleAccessor.getTimestamp(location);
+        this.realElapsedTimeNanos = SensingUtils.LocationSampleAccessor.getElapsedRealTimeNanos(location);
         this.error = SensingUtils.LocationSampleAccessor.getAccuracy(location);
 
         this.latitude   = SensingUtils.LocationSampleAccessor.getLatitude(location);
@@ -74,12 +79,15 @@ public class Location {
     }
 
     public double getTraveledDistance(Location l){
-        return LocationUtils.calculateDistance(this.latitude, this.longitude, l.getLatitude(), l.getLongitude());
+        return LocationUtils.calculateDistance(
+                this.latitude, this.longitude,
+                l.getLatitude(), l.getLongitude());
     }
 
     public float getTraveledSpeed(Location l){
         double distance = getTraveledDistance(l);
-        long elapsedTimeSeconds = (l.getTimestamp() - this.getTimestamp())/1000;
+        long elapsedTimeSeconds =
+                (long) Math.abs(((l.getRealElapsedTime() - this.getRealElapsedTime()) * nanos2Seconds));
 
         return (float) (distance / elapsedTimeSeconds);
     }
@@ -104,5 +112,9 @@ public class Location {
 
     public float getErrorMargin() {
         return error;
+    }
+
+    public long getRealElapsedTime() {
+        return realElapsedTimeNanos;
     }
 }
