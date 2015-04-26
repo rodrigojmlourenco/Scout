@@ -84,6 +84,7 @@ public class LocationState {
 
     synchronized public void updateLocationState(JsonObject location) {
 
+
         this.latitude = SensingUtils.LocationSampleAccessor.getLatitude(location);
         this.longitude = SensingUtils.LocationSampleAccessor.getLongitude(location);
 

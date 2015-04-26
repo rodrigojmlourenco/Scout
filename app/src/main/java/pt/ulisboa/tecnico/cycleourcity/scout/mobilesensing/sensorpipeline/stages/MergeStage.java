@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import pt.ulisboa.tecnico.cycleourcity.scout.logging.ScoutLogger;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.SensorPipeLineContext;
 import pt.ulisboa.tecnico.cycleourcity.scout.parser.SensingUtils;
 
@@ -33,31 +34,38 @@ import pt.ulisboa.tecnico.cycleourcity.scout.parser.SensingUtils;
  */
 public class MergeStage implements Stage {
 
-    private MergeStrategy mergingStrategy;
-    private CheckForRelationStrategy relationCheckStrategy = new DefaultCheckForRelation();
+    public final String LOG_TAG = this.getClass().getSimpleName();
+
+    private final MergeStrategy mergingStrategy;
+    private final CheckForRelationStrategy relationCheckStrategy;
+
+    private ScoutLogger logger = ScoutLogger.getInstance();
+
 
     public MergeStage(MergeStrategy strategy){
         this.mergingStrategy = strategy;
+        this.relationCheckStrategy = new DefaultCheckForRelation();
     }
 
-    public void setMergeStrategy(MergeStrategy strategy){
-        this.mergingStrategy = strategy;
+    public MergeStage(CheckForRelationStrategy relationCheckStrategy, MergeStrategy mergingStrategy){
+        this.mergingStrategy = mergingStrategy;
+        this.relationCheckStrategy = relationCheckStrategy;
     }
 
-    public void setCheckRelationStrategy(CheckForRelationStrategy strategy){
-        this.relationCheckStrategy = strategy;
-    }
 
     @Override
     public void execute(PipelineContext pipelineContext) {
 
         JsonObject[] input = ((SensorPipeLineContext)pipelineContext).getInput();
 
+        //Avoid ArrayIndexOutOfBounds
+        if (input.length<=0) return;
+
         JsonObject patientZero = input[0];
         Queue<JsonObject>   samples2Merge = new LinkedList<>(),
                             mergedSamples = new LinkedList<>();
 
-        int size = input.length;
+
         for(JsonObject sample : input){
 
             if (relationCheckStrategy.areCloselyRelated(patientZero, sample))
@@ -71,6 +79,10 @@ public class MergeStage implements Stage {
 
         if(!samples2Merge.isEmpty())
             mergedSamples.add(mergingStrategy.mergeSamples(samples2Merge));
+
+        //Debugging
+        String sensorType = SensingUtils.getSensorTypeAsString(patientZero.get(SensingUtils.SENSOR_TYPE).getAsInt());
+        logger.log(ScoutLogger.INFO, LOG_TAG, "Merged "+input.length+" "+sensorType+" samples into "+mergedSamples.size());
 
         JsonObject[] mergedInput = new JsonObject[mergedSamples.size()];
         mergedSamples.toArray(mergedInput);
@@ -133,7 +145,6 @@ public class MergeStage implements Stage {
 
             BigDecimal b1 = new BigDecimal(sample1.get(SensingUtils.TIMESTAMP).getAsString());
             BigDecimal b2 = new BigDecimal(sample2.get(SensingUtils.TIMESTAMP).getAsString());
-
 
             BigDecimal e = b2.subtract(b1).multiply(SECOND_2_NANOS).abs();
 

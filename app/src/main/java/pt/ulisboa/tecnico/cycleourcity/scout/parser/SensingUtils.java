@@ -5,6 +5,7 @@ import android.util.Log;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.math.BigDecimal;
 import java.util.concurrent.TimeUnit;
 
 import edu.mit.media.funf.json.IJsonObject;
@@ -94,7 +95,10 @@ public class SensingUtils {
             //Scout-specific Keys
             ELAPSED_TIME= "elapsedTime",
             SLOPE       = "mSlope",
-            SAMPLES      = "numSamples";
+            SAMPLES      = "numSamples",
+
+            GPS_PROVIDER="gps",
+            NETWORK_PROVIDER="network";
     }
 
     public static class LocationSampleAccessor{
@@ -107,7 +111,11 @@ public class SensingUtils {
         }
 
         public static float getAccuracy(JsonObject sample){
-            return sample.get(LocationKeys.ACCURACY).getAsFloat();
+            try {
+                return sample.get(LocationKeys.ACCURACY).getAsFloat();
+            }catch (NullPointerException e){
+                return 0;
+            }
         }
 
         public static double getLatitude(JsonObject sample) {
@@ -134,6 +142,10 @@ public class SensingUtils {
         }
 
         public static float getSpeed(JsonObject sample) throws NoSuchDataFieldException {
+
+            if(sample == null)
+                throw new NoSuchDataFieldException(LocationKeys.SPEED);
+
             if(sample.has(LocationKeys.SPEED))
                 return sample.get(LocationKeys.SPEED).getAsFloat();
             else
@@ -148,7 +160,7 @@ public class SensingUtils {
         }
 
         public static long getTimestamp(JsonObject sample) {
-            return sample.get(LocationKeys.TIMESTAMP).getAsLong();
+            return new BigDecimal(sample.get(LocationKeys.TIMESTAMP).getAsString()).longValue();
         }
 
         public static float getSlope(JsonObject sample) {

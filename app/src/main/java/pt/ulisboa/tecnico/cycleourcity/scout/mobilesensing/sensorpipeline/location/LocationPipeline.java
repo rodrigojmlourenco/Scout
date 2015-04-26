@@ -30,14 +30,8 @@ import pt.ulisboa.tecnico.cycleourcity.scout.storage.ScoutStorageManager;
 public class LocationPipeline implements ISensorPipeline {
 
     public final static String TAG = "[Location]";
-    public final String LOG_TAG = this.getClass().getSimpleName();
-
-    private final PressureSensorPipeline pressureSensorPipeline;
-    private final LocationSensorPipeline locationSensorPipeline;
-
-    private Queue<JsonObject> samplesQueue;
-
     private static SensorPipeline LOCATION_PIPELINE = new SensorPipeline();
+
     static {
         LOCATION_PIPELINE.addStage(new DispatchSensorSamplesStage());
         LOCATION_PIPELINE.addStage(new MergeStage());
@@ -46,12 +40,15 @@ public class LocationPipeline implements ISensorPipeline {
         LOCATION_PIPELINE.addFinalStage(new FeatureStorageStage());
     }
 
+    public final String LOG_TAG = this.getClass().getSimpleName();
+    private final PressureSensorPipeline pressureSensorPipeline;
+    private final LocationSensorPipeline locationSensorPipeline;
     private final Object lock = new Object();
-
+    private Queue<JsonObject> samplesQueue;
     //Debugging
     private ScoutLogger logger = ScoutLogger.getInstance();
 
-    public LocationPipeline(){
+    public LocationPipeline() {
 
         this.pressureSensorPipeline = new PressureSensorPipeline();
         this.locationSensorPipeline = new LocationSensorPipeline();
@@ -91,10 +88,12 @@ public class LocationPipeline implements ISensorPipeline {
         }
     }
 
-    /****************************************************************************************
+    /**
+     * *************************************************************************************
      * STAGES: Stages to be used by the Location Pipeline                                   *
-     ****************************************************************************************/
-    public static class DispatchSensorSamplesStage implements Stage{
+     * **************************************************************************************
+     */
+    public static class DispatchSensorSamplesStage implements Stage {
 
         private ScoutLogger logger = ScoutLogger.getInstance();
 
@@ -104,17 +103,17 @@ public class LocationPipeline implements ISensorPipeline {
         @Override
         public void execute(PipelineContext pipelineContext) {
 
-            JsonObject[] input = ((SensorPipeLineContext)pipelineContext).getInput();
+            JsonObject[] input = ((SensorPipeLineContext) pipelineContext).getInput();
 
-            Queue<JsonObject>   pressureSamples = new LinkedList<>(),
-                                locationSamples = new LinkedList<>();
+            Queue<JsonObject> pressureSamples = new LinkedList<>(),
+                    locationSamples = new LinkedList<>();
 
             int sensorType;
-            for (JsonObject sample : input){
+            for (JsonObject sample : input) {
 
                 sensorType = sample.get(SensingUtils.SENSOR_TYPE).getAsInt();
 
-                switch (sensorType){
+                switch (sensorType) {
                     case SensingUtils.PRESSURE:
                         pressureSamples.add(sample);
                         break;
@@ -139,7 +138,7 @@ public class LocationPipeline implements ISensorPipeline {
             sensorTasks[0].start();
             sensorTasks[1].start();
 
-            for(Thread t : sensorTasks)
+            for (Thread t : sensorTasks)
                 try {
                     t.join();
                 } catch (InterruptedException e) {
@@ -147,10 +146,10 @@ public class LocationPipeline implements ISensorPipeline {
                 }
 
             JsonObject[] pressureFeatures =
-                    ((FeatureExtractor)pressureSensorPipeline).consumeExtractedFeatures();
+                    ((FeatureExtractor) pressureSensorPipeline).consumeExtractedFeatures();
 
             JsonObject[] locationFeatures =
-                    ((FeatureExtractor)locationSensorPipeline).consumeExtractedFeatures();
+                    ((FeatureExtractor) locationSensorPipeline).consumeExtractedFeatures();
 
             LinkedList<JsonObject> merger = new LinkedList<>();
             Collections.addAll(merger, pressureFeatures);
@@ -159,106 +158,112 @@ public class LocationPipeline implements ISensorPipeline {
             JsonObject[] dispatchOutput = new JsonObject[merger.size()];
             merger.toArray(dispatchOutput);
 
-            ((SensorPipeLineContext)pipelineContext).setInput(dispatchOutput);
+            ((SensorPipeLineContext) pipelineContext).setInput(dispatchOutput);
         }
     }
 
+
+    /**
+     * @version 2.0 Forceful Merging
+     * @author rodrigo.jm.lourenco
+     *
+     * This stage is responsible for merging all samples originated from different sensor probes,
+     * manages by this pipeline, as this is a nested pipeline.
+     * <br>
+     * Given that this is a LocationPipeline, the most important samples are the location samples,
+     * however at each iteration of the pipeline, more pressure-based samples are generated.
+     * Additionally the location and pressure timestamps conform to a different format, making it
+     * impossible to establish a close relationshinp, given a time frame.
+     * <br>
+     * Due to this challenges the LocationPipeline opts to maintain all location samples, and
+     * distributes pressure-based samples among the different locations. Given that the overall
+     * strategy is quite different from that of the stages.MergeStage, the LocationPipeline
+     * specifies its own MergeStage.
+     *
+     * @see pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.stages.MergeStage
+     */
     public static class MergeStage implements Stage {
 
-        public final float nano2Millis = 1/1000000f;
-        public final int MAX_TIME_DISTANCE = 1000;//ms
-
-        private JsonObject mergeSamples(Queue<JsonObject> samples){
-
-            JsonObject merged = new JsonObject();
-
-            float pAltitude = -1f;
-            JsonObject pressureSample = null;
-            JsonObject locationSample = null;
-
-            if (samples.size() > 2)
-                logger.log(ScoutLogger.WARN, LOG_TAG, "Merging more than two samples, RISKY BUSINESS!");
-
-            for(JsonObject sample : samples){
-
-                switch (sample.get(SensingUtils.SENSOR_TYPE).getAsInt()){
-                    case SensingUtils.LOCATION:
-                        locationSample = sample;
-                        break;
-                    case SensingUtils.PRESSURE:
-                        pressureSample = sample;
-                        pAltitude = sample.get(SensingUtils.LocationKeys.BAROMETRIC_ALTITUDE).getAsFloat();
-                        break;
-                }
-            }
-
-            if(locationSample!=null && pAltitude!=-1) {
-                locationSample.addProperty(SensingUtils.LocationKeys.BAROMETRIC_ALTITUDE, pAltitude);
-                locationSample.add(SensingUtils.LocationKeys.PRESSURE, pressureSample);
-                return locationSample;
-            }
-
-            return null;
-        }
-
-        private boolean closelyRelated(JsonObject sample1, JsonObject sample2){
-
-            //Avoid NullPointerException
-            if(sample1 == null || sample2 == null) return false;
-
-            float t1, t2, elapsed;
-
-            t1 = (SensingUtils.LocationSampleAccessor.getTimestamp(sample1)*nano2Millis);
-            t2 = (SensingUtils.LocationSampleAccessor.getTimestamp(sample2)*nano2Millis);
-
-            elapsed = Math.abs(t2-t1);
-
-            return elapsed < MAX_TIME_DISTANCE;
-        }
-
-        private ScoutLogger logger = ScoutLogger.getInstance();
         private final String LOG_TAG = this.getClass().getSimpleName();
+        private ScoutLogger logger = ScoutLogger.getInstance();
+
+        public void mergeSamples(JsonObject locationSample, JsonObject pressureSample) {
+
+            if (locationSample == null || pressureSample == null)
+                return;
+
+            if (!locationSample.has(SensingUtils.LocationKeys.PRESSURE)) {
+                locationSample.add(SensingUtils.LocationKeys.BAROMETRIC_ALTITUDE,
+                        pressureSample.get(SensingUtils.LocationKeys.BAROMETRIC_ALTITUDE));
+                locationSample.add(SensingUtils.LocationKeys.PRESSURE, pressureSample);
+            } else {
+                float altitude1 = locationSample.get(SensingUtils.LocationKeys.BAROMETRIC_ALTITUDE).getAsFloat(),
+                        altitude2 = pressureSample.get(SensingUtils.LocationKeys.BAROMETRIC_ALTITUDE).getAsFloat();
+
+                locationSample.remove(SensingUtils.LocationKeys.BAROMETRIC_ALTITUDE);
+                locationSample.addProperty(SensingUtils.LocationKeys.BAROMETRIC_ALTITUDE, (altitude1 + altitude2) / 2);
+
+            }
+
+        }
 
         @Override
         public void execute(PipelineContext pipelineContext) {
-            JsonObject[] input = ((SensorPipeLineContext)pipelineContext).getInput();
+            JsonObject[] input = ((SensorPipeLineContext) pipelineContext).getInput();
 
-            if(input.length <= 0) return;
+            if (input.length <= 0) return;
 
-            int merged=0;
-            JsonObject patientZero = input[0];
-            Queue<JsonObject> samples2Merge = new LinkedList<>(),
-                              mergedSamples = new LinkedList<>();
+            Queue<JsonObject> locationSamples = new LinkedList<>(),
+                    pressureSamples = new LinkedList<>();
 
-            for(JsonObject sample : input){
-                if(closelyRelated(patientZero, sample)) {
-                    samples2Merge.add(sample);
-                    merged++;
-                }else{
-                    patientZero = sample;
-                    mergedSamples.add(mergeSamples(samples2Merge));
-                    samples2Merge.clear();
+            int sensorType;
+            //Divide 2 Conquer
+            for (JsonObject sample : input) {
+                sensorType = sample.get(SensingUtils.SENSOR_TYPE).getAsInt();
+                switch (sensorType) {
+                    case SensingUtils.PRESSURE:
+                        pressureSamples.add(sample);
+                        break;
+                    case SensingUtils.LOCATION:
+                        locationSamples.add(sample);
+                        break;
                 }
             }
 
-            if(!samples2Merge.isEmpty()) {
-                mergedSamples.add(mergeSamples(samples2Merge));
-                merged++;
+            //If there are no location samples then there is no point...
+            if (locationSamples.size() <= 0) {
+                logger.log(ScoutLogger.WARN, LOG_TAG, "No location samples, skipping...");
+                ((SensorPipeLineContext) pipelineContext).setInput(new JsonObject[0]);
+                return;
             }
 
-            logger.log(ScoutLogger.VERBOSE, LOG_TAG, "Merged "+merged+" samples into "+mergedSamples.size());
+            //Distribution ratios
+            int pressure2LocationRatio = pressureSamples.size() / locationSamples.size();
+            int remainingPressureSamples = pressureSamples.size() % locationSamples.size();
+
+            JsonObject[] mergedSamples = new JsonObject[locationSamples.size()];
+            locationSamples.toArray(mergedSamples);
+            for (JsonObject location : mergedSamples) {
+
+                for (int i = 0; i < pressure2LocationRatio; i++)
+                    mergeSamples(location, pressureSamples.remove());
+
+                if (remainingPressureSamples > 0) {
+                    mergeSamples(location, pressureSamples.remove());
+                    remainingPressureSamples--;
+                }
+            }
 
 
-            JsonObject[] mergedOutput = new JsonObject[mergedSamples.size()];
-            mergedSamples.toArray(mergedOutput);
-            ((SensorPipeLineContext)pipelineContext).setInput(mergedOutput);
+            logger.log(ScoutLogger.VERBOSE, LOG_TAG, "Merged " + input.length + " samples into " + mergedSamples.length);
+            ((SensorPipeLineContext) pipelineContext).setInput(mergedSamples);
         }
     }
+
 
     /**
      * @version 1.0
      * @author rodrigo.jm.lourenco
-     *
      * Given the results of the previous stages, this stage updates the application's internal
      * state.
      */
@@ -272,11 +277,14 @@ public class LocationPipeline implements ISensorPipeline {
             LocationState locationState = state.getLocationState();
 
             double currTimestamp = 0, auxTimestamp;
-            JsonObject[] input = ((SensorPipeLineContext)pipelineContext).getInput();
+            JsonObject[] input = ((SensorPipeLineContext) pipelineContext).getInput();
 
-            for(JsonObject sample : input) {
+            //Avoid NullPointerException
+            if (input == null) return;
 
-                if (sample!=null) {
+            for (JsonObject sample : input) {
+
+                if (sample != null) {
                     auxTimestamp = SensingUtils.LocationSampleAccessor.getTimestamp(sample);
                     //Check if sample is the most recent
                     if (currTimestamp < auxTimestamp) {
@@ -300,16 +308,16 @@ public class LocationPipeline implements ISensorPipeline {
         @Override
         public void execute(PipelineContext pipelineContext) {
 
-            if(!ScoutState.getInstance().isReady()){
+            if (!ScoutState.getInstance().isReady()) {
                 logger.log(ScoutLogger.WARN, LOG_TAG, "Scout is not ready, captured samples will not be stored.");
                 return;
             }
 
-            JsonObject[] input = ((SensorPipeLineContext)pipelineContext).getInput();
+            JsonObject[] input = ((SensorPipeLineContext) pipelineContext).getInput();
 
-            for(JsonObject location : input) {
+            for (JsonObject location : input) {
 
-                if(location!=null) { //TODO: assegurar que na Stage anterior nao passa NULL
+                if (location != null) { //TODO: assegurar que na Stage anterior nao passa NULL
 
                     try {
                         parser.addTrackPoint(GPXBuilder.GPS_BASED_ALTITUDE, location);
@@ -331,13 +339,12 @@ public class LocationPipeline implements ISensorPipeline {
 
     /**
      * @version 1.0
-     * This stage operates as a callback function, it extracts the output from the PipelineContext,
-     * which is basically the extracted features, and stores it both in an extracted feature queue
-     * and on the application's storage manager.
-     *
+     *          This stage operates as a callback function, it extracts the output from the PipelineContext,
+     *          which is basically the extracted features, and stores it both in an extracted feature queue
+     *          and on the application's storage manager.
      * @see pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.SensorPipeLineContext
      * @see pt.ulisboa.tecnico.cycleourcity.scout.storage.ScoutStorageManager
-     *
+     * <p/>
      * TODO: esta stage deve ser igual para todos os pipelines pelo que pode ser externa
      */
     public static class FeatureStorageStage implements Stage {
@@ -350,19 +357,19 @@ public class LocationPipeline implements ISensorPipeline {
         @Override
         public void execute(PipelineContext pipelineContext) {
 
-            if(!ScoutState.getInstance().isReady()){
+            if (!ScoutState.getInstance().isReady()) {
                 logger.log(ScoutLogger.WARN, LOG_TAG, "Scout is not ready, captured samples will not be stored.");
                 return;
             }
 
-            logger.log(ScoutLogger.VERBOSE, LOG_TAG, TAG+"pre-processing terminated.");
+            logger.log(ScoutLogger.VERBOSE, LOG_TAG, TAG + "pre-processing terminated.");
 
             int storedFeatures = 0;
-            JsonObject[] output = ((SensorPipeLineContext)pipelineContext).getInput();
+            JsonObject[] output = ((SensorPipeLineContext) pipelineContext).getInput();
 
-            for(JsonObject feature : output){
+            for (JsonObject feature : output) {
 
-                if(feature!=null) { //TODO: assegurar que na Stage anterior nao passa NULL
+                if (feature != null) { //TODO: assegurar que na Stage anterior nao passa NULL
                     //Persistent Storage
                     String key = feature.get(SensingUtils.SENSOR_TYPE).getAsString();
                     try {
@@ -375,7 +382,7 @@ public class LocationPipeline implements ISensorPipeline {
                 }
             }
 
-            logger.log(ScoutLogger.VERBOSE, LOG_TAG, TAG+storedFeatures+" were successfully stored.");
+            logger.log(ScoutLogger.VERBOSE, LOG_TAG, TAG + storedFeatures + " were successfully stored.");
 
         }
     }
