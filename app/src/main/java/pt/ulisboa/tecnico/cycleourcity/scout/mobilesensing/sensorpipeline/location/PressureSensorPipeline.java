@@ -6,15 +6,12 @@ import com.google.gson.JsonObject;
 import com.ideaimpl.patterns.pipeline.PipelineContext;
 import com.ideaimpl.patterns.pipeline.Stage;
 
-import java.util.ArrayList;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
-import java.util.concurrent.TimeUnit;
 
 import edu.mit.media.funf.json.IJsonObject;
 import pt.ulisboa.tecnico.cycleourcity.scout.logging.ScoutLogger;
@@ -22,6 +19,7 @@ import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.Sensor
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.SensorPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.sensor.FeatureExtractor;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.sensor.ISensorPipeline;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.stages.MergeStage;
 import pt.ulisboa.tecnico.cycleourcity.scout.parser.SensingUtils;
 
 /**
@@ -76,7 +74,7 @@ public class PressureSensorPipeline implements ISensorPipeline, FeatureExtractor
     private Queue<JsonObject> extractedFeaturesQueue;
 
     static{
-        PRESSURE_PIPELINE.addStage(new MergeStage());
+        PRESSURE_PIPELINE.addStage(new MergeStage(new PressureMergeStrategy()));
         PRESSURE_PIPELINE.addFinalStage(new FeatureExtractionStage());
     }
 
@@ -147,108 +145,6 @@ public class PressureSensorPipeline implements ISensorPipeline, FeatureExtractor
     /****************************************************************************************
      * STAGES: Stages to be used by the Pressure Pipeline                                   *
      ****************************************************************************************/
-
-    /**
-     * @version 1.0
-     * @author rodrigo.jm.lourenco
-     *
-     * This stage is responsible for merging closely related pressure samples, where two
-     * samples are considered closely related if they have both occured in a small time
-     * window frame. Closely related samples are merged by averaging their measured pressures.
-     * Although it is a known fact that the mean is very susceptible to outlier poisoning,
-     * unlike GPS altitude, measured pressure are very consistent.
-     * <br>
-     * Despite the consistency of measured pressure samples, it should be considere as future
-     * work the implementation of a AdmissionControlStage.
-     */
-    public static class MergeStage implements Stage {
-
-        private ScoutLogger logger = ScoutLogger.getInstance();
-
-        public final static int MAX_TIME_DISTANCE = 1000;//ms
-
-        private boolean closelyRelated(JsonObject sample1, JsonObject sample2){
-
-            //Avoid NullPointerException
-            if(sample1 == null || sample2 == null) return false;
-
-            long t1, t2, elapsed;
-
-            t1 = sample1.get(SensingUtils.TIMESTAMP).getAsLong();
-            t2 = sample2.get(SensingUtils.TIMESTAMP).getAsLong();
-
-            elapsed = Math.abs(t2-t1);
-
-            return elapsed < MAX_TIME_DISTANCE;
-        }
-
-        private JsonObject mergeSamples(List<JsonObject> samples){
-
-            JsonObject merged = new JsonObject();
-
-            int i=0, size = samples.size();
-            long[] timestamps = new long[size];
-
-            float averagePressure = 0;
-            for (JsonObject sample : samples){
-                averagePressure+=sample.get(SensingUtils.LocationKeys.PRESSURE).getAsFloat();
-                timestamps[i++]=sample.get(SensingUtils.LocationKeys.TIMESTAMP).getAsLong();
-            }
-
-            //Time values
-            Arrays.sort(timestamps);
-            long    fistTimestamp = timestamps[0],
-                    elapsedTime = timestamps[size-1]-fistTimestamp;
-
-            //Pressure Values
-            averagePressure /= size;
-
-            //Reconstruct Sample as One
-            merged.addProperty(SensingUtils.SENSOR_TYPE, SensingUtils.PRESSURE);
-            merged.addProperty(SensingUtils.TIMESTAMP, fistTimestamp);
-            merged.addProperty(SensingUtils.LocationKeys.ELAPSED_TIME, elapsedTime);
-            merged.addProperty(SensingUtils.ACCURACY, 3);
-            merged.addProperty(SensingUtils.LocationKeys.PRESSURE, averagePressure);
-            merged.addProperty(SensingUtils.LocationKeys.SAMPLES, size);
-
-            return merged;
-        }
-
-        @Override
-        public void execute(PipelineContext pipelineContext) {
-
-            JsonObject[] input = ((SensorPipeLineContext)pipelineContext).getInput();
-
-            JsonObject patientZero = input[0];
-            ArrayList<JsonObject> samples2Merge = new ArrayList<>();
-            Queue<JsonObject> mergedSamples = new LinkedList<>();
-
-            int accuracy;
-            for(JsonObject sample : input){
-
-                //Disregard sample if it has low accuracy
-                accuracy = sample.get(SensingUtils.ACCURACY).getAsInt();
-                if(accuracy == SensorManager.SENSOR_STATUS_ACCURACY_HIGH) {
-
-                    if (closelyRelated(patientZero, sample))
-                        samples2Merge.add(sample);
-                    else {
-                        patientZero = sample;
-                        mergedSamples.add(mergeSamples(samples2Merge));
-                        samples2Merge.clear();
-                    }
-                }
-            }
-
-            if(!samples2Merge.isEmpty())
-                mergedSamples.add(mergeSamples(samples2Merge));
-
-            JsonObject[] mergedInput = new JsonObject[mergedSamples.size()];
-            mergedSamples.toArray(mergedInput);
-            ((SensorPipeLineContext)pipelineContext).setInput(mergedInput);
-        }
-    }
-
     /**
      * @version 1.0
      * @author rodrigo.jm.lourenco
@@ -288,6 +184,51 @@ public class PressureSensorPipeline implements ISensorPipeline, FeatureExtractor
             features.toArray(extractedFeatures);
 
             ((SensorPipeLineContext)pipelineContext).setOutput(extractedFeatures);
+        }
+    }
+
+    /**
+    * This stage is responsible for merging closely related pressure samples, where two
+    * samples are considered closely related if they have both occured in a small time
+    * window frame. Closely related samples are merged by averaging their measured pressures.
+    * Although it is a known fact that the mean is very susceptible to outlier poisoning,
+    * unlike GPS altitude, measured pressure are very consistent.
+    * <br>
+    * Despite the consistency of measured pressure samples, it should be considere as future
+    * work the implementation of a AdmissionControlStage.
+    */
+    private static class PressureMergeStrategy implements MergeStage.MergeStrategy {
+
+        @Override
+        public JsonObject mergeSamples(Collection<JsonObject> samples) {
+            JsonObject merged = new JsonObject();
+
+            int i=0, size = samples.size();
+            BigDecimal[] timestamps = new BigDecimal[size];
+
+            float averagePressure = 0;
+            for (JsonObject sample : samples){
+                averagePressure+=sample.get(SensingUtils.LocationKeys.PRESSURE).getAsFloat();
+                timestamps[i++]= new BigDecimal(sample.get(SensingUtils.LocationKeys.TIMESTAMP).getAsString());
+            }
+
+            //Time values
+            Arrays.sort(timestamps);
+            BigDecimal  fistTimestamp = timestamps[0],
+                        elapsedTime = timestamps[size-1].subtract(fistTimestamp);
+
+            //Pressure Values
+            averagePressure /= size;
+
+            //Reconstruct Sample as One
+            merged.addProperty(SensingUtils.SENSOR_TYPE, SensingUtils.PRESSURE);
+            merged.addProperty(SensingUtils.TIMESTAMP, fistTimestamp);
+            merged.addProperty(SensingUtils.LocationKeys.ELAPSED_TIME, elapsedTime);
+            merged.addProperty(SensingUtils.ACCURACY, 3);
+            merged.addProperty(SensingUtils.LocationKeys.PRESSURE, averagePressure);
+            merged.addProperty(SensingUtils.LocationKeys.SAMPLES, size);
+
+            return merged;
         }
     }
 }

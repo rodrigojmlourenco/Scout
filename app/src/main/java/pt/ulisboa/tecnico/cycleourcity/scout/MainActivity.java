@@ -307,6 +307,7 @@ public class MainActivity extends ActionBarActivity {
             if(scoutState.getLocationState().isReadyState()) {
                 Date date = new Date(last.getTimestamp());
 
+                /*
                 Log.w("PLOT", date.toGMTString()+" : "+last.getAltitude());
                 Log.e("PLOT", date.toGMTString()+" : "+scoutState.getLocationState().getAverageAltitude());
 
@@ -319,9 +320,17 @@ public class MainActivity extends ActionBarActivity {
                 gpsElevationSeries.addLast(null, last.getAltitude());
                 meanElevationSeries.addLast(null, scoutState.getLocationState().getAverageAltitude());
                 pressureElevationSeries.addLast(null, scoutState.getLocationState().getPressureAltitude());
+                */
+
+                if(pressureElevationSeries.size() > 60){
+                    pressureElevationSeries.removeFirst();
+                }
+
+                pressureElevationSeries.addLast(null, scoutState.getLocationState().getPressureAltitude());
 
                 elevationPlot.redraw();
             }else{
+
                 if(pressureElevationSeries.size() > 60){
                     pressureElevationSeries.removeFirst();
                 }
