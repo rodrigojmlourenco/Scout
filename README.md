@@ -51,60 +51,103 @@ The `LocationPipeline`'s behaviour is determined by it's stages. More specifical
  * __GPXBuildStage:__ Updates the `GPXBuilder`'s track points, which will then be used to create a `.gpx` file that can be used to preview the travelled route.
  * __FeatureStorageStage:__ This stage operates as a callback function. It extracts the output from the PipelineContext, which contains the extracted features and travelled locations, and stores it on the application's storage manager.
 
+<img src="./img/architecture/locationpipeline_overview.png" width="600" height="auto">
+
+Fig. 2 - `LocationPipeline` architectural overview.
+
 
 #### Sensor Specific Pipelines
 
+##### LocationSensorPipeline
 
-#### AdmissionControlStage
+The `LocationSensorPipeline` is the pipeline responsible for processing samples originated from either a `LocationProbe` or a `SimpleLocationProbe`. It is its responsibility to assure the quality of the gathered location, as the GPS is a very unreliable sensor.
 
-The information captured by the location sensors varies in quality. In order to assure the application's robustness the AdmissionControl stage removes samples that may undermine the quality of the system, for example samples of lower quality.
+**Fig. 3 -** `LocationSensorPipeline` architectural overview
+<img src="./img/architecture/locationsensorpipeline.png"  width="600" height="auto"/>
 
-On an initial version this was achieved by a simple but unnefective heuristic where all location samples with an accuracy below
-a pre-defined value where discarded. The accuracy provided by the location sensor's readings represents and error margin in meters, where for example, a sample with 40m of accuracy represents a location that can be found inside of a 40m radius from the estimated location.
+This pipeline is characterized by the following stages:
 
-##### HeuristicsAdmissionControlStage
+* __TrimStage:__ Removes certain data fields from the location sample that have no value to the application.
+* __MergeStage:__ Appends location samples considered to be closely related, that is, samples that have both occurred inside a small time window frame.
+* __HeuristicsAdmissionControlStage:__ This is possibly the most important stage, as this is the stage responsible for assuring the quality of the gathered locations. Due to the importance of this stage, the `HeuristicsAdmissionControlStage` will further detailed next.
+* __FeatureExtractionStage:__ This stage does not actually does anything, it converts the input into output. __!!!CORRECT!!!__
 
-De forma a aumentar a robustez das localizações capturadas pelo `LocationPipeline`, houve a necessidade de melhorar o processo de controlo de admissões. Com isto em mente foi criada a `HeuristicsAdmissionControlStage` onde um conjunto de heuristicas são aplicadas de forma a remover localizações, capturadas pelo receptor GPS, que possam comprometer a precisão do mesmo.
+The information captured by the location sensors varies in quality. In order to assure the application's robustness the `AdmissionControl` stage removes samples that may undermine the quality of the system, for example samples of lower quality.
 
-Assim e de forma a permitir a identificação e remoção de possíveis outliers são aplicadas as seguiintes heurísticas:
-* __Heurística 1 :__ Margem de erro demasiado elevada
+On an initial version this was achieved by a simple but unnefective heuristic where all location samples with an accuracy below a pre-defined value were discarded. The accuracy provided by the location sensor's readings represents and error margin in meters, where for example, a sample with 40m of accuracy represents a location that can be found inside of a 40m radius from the estimated location. However the accuracy is subjective and not an ideal metric for outlier removal, as is noted by the Android's documentation:
 
-   A localização deve ter uma margem de erro inferor a um determinado limite pré-definido (`LocationState.MIN_ACCURACY`).
+> We define accuracy as the radius of 68% confidence. In other words, if you draw a circle centered at this location's latitude and longitude, and with a radius equal to the accuracy, then there is a 68% probability that the true location is inside the circle.
 
-* __Heurística 2 :__ Velocidade irrealística
+> In statistical terms, it is assumed that location errors are random with a normal distribution, so the 68% confidence circle represents one standard deviation. Note that in practice, location errors do not always follow such a simple distribution.
 
-   A velocidade registada pelo receptor GPS, para uma dada localização, não deve ultrapassar um valor pré-definido (`LocationState.MAX_SPEED`).
+> This accuracy estimation is only concerned with horizontal accuracy, and does not indicate the accuracy of bearing, velocity or altitude if those are included in this Location.
 
-* __Heurística 3 :__ Fixado a três satélites
+> If this location does not have an accuracy, then 0.0 is returned. All locations generated by the LocationManager include an accuracy.
 
-   De forma a que seja possível realizar triângulação, e consequentemente identificar a posição do dispositivo, o receptor de GPS deve estar fixado com pelo menos 3 satélites, caso contrário a localização deverá ser discartada.
+> __SEE__ <a href="http://developer.android.com/reference/android/location/Location.html#getAccuracy()">Location.getAccuracy()</a>
 
-   Adicionalmente e dependendo do número de satélites usados para determinar a localização são aplicadas as seguintes correcções:
-   * Com 3 satélites embora seja possível identificar a posição (lat & lon), não é recomendado assumir como correcto os valores da altitude e da velocidade, e como tal estes tomam como valor a média registada pelo `ScoutState`.
-   * Com 4 satélites a altitude já pode ser aceite, no entanto a velocidade toma como valor a média registada pelo `ScoutState`. 
+This lack of confidence resulted in a high number of outliers. In order to improve the outlier detection process, that is the admission control, the `HeuristicsAdmissionControlStage` was designed. This stage works as a pipeline based on heuristics, which define rules that specify which samples are acceptable or outliers. 
 
-* __Heurística 4 :__ Grande variância na altitude
+Currently the `HeuristicsAdmissionControlStage` supports several heuristics, which due to the pipeline design can be easily removed on interchanged. The following heuristics are supported:
 
-   Caso exista uma grande diferença entre a altitude registada pelo receptor GPS e da média das altitudes (valor definido pelo `ScoutState`), nomeadamente caso essa diferença ultrapasse um valor pré-definido (`LocationState.ALTITUDE_VARIANCE_THRESHOLD`) então a localização deve ser discartada.
+* __AccuracyOutlier:__ removes samples with a high error margin.
+* __SatellitesOutlier:__ removes samples that are not fixed to enough satellites. It should be noted that in order to assure positioning the sample must be fixed to at least 3 satellites (minimum required to perform triangulation), however ideally it should be fixed to at least 4 satellites.
+* __GPSSpeedOutlier [NOT WORKING]:__ removes samples with a high registered speed. 
+* __HighAltitudeOutlier [DEPRECATED]:__ removes samples with a high altitude variance. As currently the altitude is derived from the pressure probe there is no use for this heuristic. Additionally and due to the volatile nature of GPS's altitudes this heuristic was prone to state poisoning.
+* __HighTravelSpeedOutlier:__ removes samples with a high calculated speed.
+* __OverlappingLocationsOutlier:__ removes a sample if it's uncertainty area overlaps the previous location uncertainty area, and if the new location has a lower accuracy.
 
-   Esta heurística levanta um problema, caso a média de altitudes definida pelo `ScoutState` esteja "envenenada" existe a possibilidade de localizações correctas serem discartadas. Assim e de forma a resolver este problema, caso um número elevado de localizações sejam discartadas devido a esta heurística, a média das altitudes é reiniciada permitindo ao sistema corrigir-se a si próprio.
+Although this new admission control process was a great improvement, in comparison with the previous it should be noted that it still lacks in precision, and further studies are required.
 
-* __Heurística 5 :__ Velocidade calculada demasiado elevada
+**Fig. 4 -** Track01 with good precision
+<img src="./img/home_with_heuristics.jpg"  width="600" height="auto"/>
+	
 
-   Dadas duas posições consecutivas A e B, se o tempo necessário para chegar de A a B é muito baixo, i.e. a velocidade é muito elevada então B é considerado um outlier e discartado.
+**Fig. 5 -** Track02 with average to low precision
+<img src="./img/inesc_with_heuristics.jpg"  width="600" height="auto"/>
 
-* __Heurística 6 :__ Velocidade calculada avançada demasiado elevada [Tripzoom] [TODO]
-   
-   Dadas três posições consecutivas A, B e C, se o tempo necessária para chegar de A a C através de B é muito baixo, i.e. a velocidade é muito elevada então B é considerado um outlier.
 
-* __Heurística 7 :__ Sobreposição de áreas de incerteza [Tripzoom]
+##### PressureSensorPipeline
 
-   Dadas duas posições consecutivas A e B e as duas margens de erro a e b (+/- x m), se as áreas das localizações se sobrepõem e a precisão de B é inferior que a de A, i.e. o raio de incerteza é maior em B, então B é considerado um outlier e discartado.
+The creation of the `PressureSensorPipeline` arose, as was explained before, due to the need to gather more reliable elevation values. Because Android's `SensorManager` offers a method which derives altitude from pressures, the use of the `PressureSensorProbe` presented itself as a good alternative to the GPS's altitudes.
 
-<div>
-   <img src="./img/walk_inesc.jpg"  width="400" height="auto"/>
-   <p><emph>Track capturada pela aplicação com controlo de admissão por heurísticas.</emph></p>
-</div>
+> `public static float getAltitude (float p0, float p)`
+
+>Computes the Altitude in meters from the atmospheric pressure and the pressure at sea level.
+
+>Typically the atmospheric pressure is read from a TYPE_PRESSURE sensor. The pressure at sea level must be known, usually it can be retrieved from airport databases in the vicinity. If unknown, you can use PRESSURE_STANDARD_ATMOSPHERE as an approximation, but absolute altitudes won't be accurate.
+
+>To calculate altitude differences, you must calculate the difference between the altitudes at both points. If you don't know the altitude as sea level, you can use PRESSURE_STANDARD_ATMOSPHERE instead, which will give good results considering the range of pressure typically involved.
+
+> **SEE** <a href="http://developer.android.com/reference/android/hardware/SensorManager.html#getAltitude(float, float)">SensorManager.getAltitude(float p0, float p)</a>
+
+The `PressureSensorPipeline` is characterized by two pipeline stages:
+
+* __MergeStage:__ Merges samples considered to be closely related, that is, samples that have all occurred inside the same time window frame. The merger is performed by averaging all the registered pressures.
+* __FeaturedExtractionStage:__ This stage is responsible for deriving the altitude from the measured atmospheric pressure.  
+
+**Fig. 6 -** `PressureSensorPipeline` architectural overview
+<img src="./img/architecture/pressuresensorpipeline.png"  width="600" height="auto"/>
+
+**Fig. 7 -** Altitudes from **Track01** derived from the GPS
+<img src="./img/trk01_gpsltitudes.jpg"  width="600" height="auto"/>
+
+**Fig. 8 -** Altitudes from **Track01** derived from the atmospheric pressure
+<img src="./img/trk01_barometricaltitudes.jpg"  width="600" height="auto"/>
+
+**Fig. 9 -** Altitudes from **Track02** derived from the GPS
+<img src="./img/trk02_gpsAltitudes.jpg"  width="600" height="auto"/>
+
+**Fig. 10 -** Altitudes from **Track02** derived from the atmospheric pressure
+<img src="./img/trk02_barometricAltitudes.jpg"  width="600" height="auto"/>
+
+>**IMPORTANT**
+
+>It should be noted that as the atmospheric pressure changes so do the derived altitudes, however since the pressure does not change that fast it should be consistent enough for one ride. Additionally since it is not the altitude the application is interested in but the slope, even if the atmospheric pressure changes the slope should hold. Further testing will be required to assure these properties.
+
+
+
+
 
 
 

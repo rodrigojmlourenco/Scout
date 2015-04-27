@@ -75,7 +75,7 @@ public class PressureSensorPipeline implements ISensorPipeline, FeatureExtractor
 
     static{
         PRESSURE_PIPELINE.addStage(new MergeStage(new PressureMergeStrategy()));
-        PRESSURE_PIPELINE.addFinalStage(new FeatureExtractionStage());
+        PRESSURE_PIPELINE.addStage(new FeatureExtractionStage());
     }
 
     public PressureSensorPipeline(){
