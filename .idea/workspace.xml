@@ -52,8 +52,8 @@
       <file leaf-file-name="SensingUtils.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/parser/SensingUtils.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="4469" max-vertical-offset="4794">
-              <caret line="287" column="1" selection-start-line="287" selection-start-column="1" selection-end-line="287" selection-end-column="1" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="3432" max-vertical-offset="4794">
+              <caret line="225" column="22" selection-start-line="225" selection-start-column="22" selection-end-line="225" selection-end-column="22" />
               <folding />
             </state>
           </provider>
@@ -62,46 +62,11 @@
       <file leaf-file-name="LocationPipeline.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/sensorpipeline/location/LocationPipeline.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.7323077" vertical-offset="6800" max-vertical-offset="7701">
-              <caret line="416" column="17" selection-start-line="416" selection-start-column="17" selection-end-line="416" selection-end-column="17" />
+            <state vertical-scroll-proportion="0.95760596" vertical-offset="6763" max-vertical-offset="7735">
+              <caret line="445" column="0" selection-start-line="445" selection-start-column="0" selection-end-line="445" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="HeuristicsAdmissionControlStage.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/sensorpipeline/location/stages/HeuristicsAdmissionControlStage.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-9.107142" vertical-offset="527" max-vertical-offset="6885">
-              <caret line="46" column="70" selection-start-line="46" selection-start-column="70" selection-end-line="46" selection-end-column="70" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Location.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/state/data/Location.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="240" max-vertical-offset="1955">
-              <caret line="44" column="51" selection-start-line="44" selection-start-column="51" selection-end-line="44" selection-end-column="51" />
-              <folding>
-                <element signature="e#4144#4145#0" expanded="true" />
-                <element signature="e#4185#4186#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="LocationState.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/state/LocationState.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="563" max-vertical-offset="2125">
-              <caret line="78" column="5" selection-start-line="78" selection-start-column="5" selection-end-line="78" selection-end-column="5" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -1359,7 +1324,6 @@
         <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/state/ScoutState.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/state/MotionState.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/MainActivity.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/MobileSensingPipeline.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/sensorpipeline/location/PressureSensorPipeline.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/sensorpipeline/location/LocationSensorPipeline.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/parser/SensingUtils.java" />
@@ -1367,15 +1331,16 @@
         <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/state/LocationState.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/state/data/Location.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/sensorpipeline/location/stages/HeuristicsAdmissionControlStage.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/MobileSensingPipeline.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/sensorpipeline/location/LocationPipeline.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-8" />
+    <option name="x" value="1358" />
     <option name="y" value="-8" />
-    <option name="width" value="1382" />
-    <option name="height" value="744" />
+    <option name="width" value="1296" />
+    <option name="height" value="1000" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -2060,7 +2025,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
+    <frame x="1358" y="-8" width="1296" height="1000" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="15" side_tool="false" content_ui="tabs" />
@@ -2072,18 +2037,18 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39863715" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32879046" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32858837" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32879046" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="true" weight="0.32879046" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" x="1367" y="111" width="1230" height="766" />
+      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.32879046" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" x="1367" y="111" width="1230" height="766" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="13" side_tool="true" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25189108" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26941746" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Memory Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="14" side_tool="true" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32879046" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.39863715" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.27758008" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -2294,13 +2259,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/ScoutPipeline.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.42937854" vertical-offset="673" max-vertical-offset="2091">
-          <caret line="72" column="8" selection-start-line="72" selection-start-column="8" selection-end-line="72" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.33333334" vertical-offset="333" max-vertical-offset="1037">
@@ -2356,6 +2314,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="2127" max-vertical-offset="2805">
           <caret line="151" column="38" selection-start-line="151" selection-start-column="38" selection-end-line="151" selection-end-column="38" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -2396,14 +2355,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="4730" max-vertical-offset="5151">
           <caret line="354" column="0" selection-start-line="354" selection-start-column="0" selection-end-line="354" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/MobileSensingPipeline.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="153" max-vertical-offset="3162">
-          <caret line="36" column="47" selection-start-line="36" selection-start-column="47" selection-end-line="36" selection-end-column="47" />
           <folding />
         </state>
       </provider>
@@ -2466,14 +2417,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/parser/SensingUtils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="4469" max-vertical-offset="4794">
-          <caret line="287" column="1" selection-start-line="287" selection-start-column="1" selection-end-line="287" selection-end-column="1" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/state/LocationState.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="563" max-vertical-offset="2125">
@@ -2495,7 +2438,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/sensorpipeline/location/stages/HeuristicsAdmissionControlStage.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-9.107142" vertical-offset="527" max-vertical-offset="6885">
+        <state vertical-scroll-proportion="0.4722222" vertical-offset="527" max-vertical-offset="6885">
           <caret line="46" column="70" selection-start-line="46" selection-start-column="70" selection-end-line="46" selection-end-column="70" />
           <folding>
             <element signature="imports" expanded="true" />
@@ -2503,10 +2446,34 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/ScoutPipeline.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-6.428571" vertical-offset="670" max-vertical-offset="2074">
+          <caret line="69" column="19" selection-start-line="69" selection-start-column="16" selection-end-line="69" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/MobileSensingPipeline.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.53621346" vertical-offset="581" max-vertical-offset="3961">
+          <caret line="79" column="57" selection-start-line="79" selection-start-column="57" selection-end-line="79" selection-end-column="57" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/parser/SensingUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="3432" max-vertical-offset="4794">
+          <caret line="225" column="22" selection-start-line="225" selection-start-column="22" selection-end-line="225" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/sensorpipeline/location/LocationPipeline.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.7323077" vertical-offset="6800" max-vertical-offset="7701">
-          <caret line="416" column="17" selection-start-line="416" selection-start-column="17" selection-end-line="416" selection-end-column="17" />
+        <state vertical-scroll-proportion="0.95760596" vertical-offset="6763" max-vertical-offset="7735">
+          <caret line="445" column="0" selection-start-line="445" selection-start-column="0" selection-end-line="445" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

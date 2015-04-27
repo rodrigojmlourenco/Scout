@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.JsonObject;
@@ -12,14 +11,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import edu.mit.media.funf.json.IJsonObject;
-import pt.ulisboa.tecnico.cycleourcity.scout.ScoutApplication;
 import pt.ulisboa.tecnico.cycleourcity.scout.logging.ScoutLogger;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exception.MobileSensingException;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exception.NoSuchSensorException;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.location.LocationPipeline;
-import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.sensor.AccelerometerPipeline;
-import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.location.LocationSensorPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.location.PressureSensorPipeline;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.sensor.AccelerometerPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.parser.SensingUtils;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.ScoutStorageManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.StorageManager;
@@ -27,21 +24,35 @@ import pt.ulisboa.tecnico.cycleourcity.scout.storage.exceptions.NothingToArchive
 
 
 /**
+ * The MobileSensingPipeline is one of Scout's core components. It is responsible for connecting
+ * the sensor captured data and the respective sensor pre-processing pipelines.
+ * <br>
+ * The MobileSensingPipeline is designed as a singleton entity, meaning that at each moment
+ * there is only one instance of the pipeline running, which is accessible to any Scout component.
+ * <br>
+ * This component is designed to run at a fixed rate, every few seconds, once a sensing session has
+ * been initiated. At each iteration the MobileSensingPipeline dispatches all enqueue sensor samples
+ * to a sensor specific pipeline responsible for processing those sample, and that runs asynchronously.
+ * <br>
+ * The MobileSensingPipeline also serves as a bridge between the application and the StorageManager.
+ *
+ * @author rodrigo.jm.lourenco
+ * @version 1.0 Location&Pressure-Only
  */
 public class MobileSensingPipeline {
 
-    public final static String  NAME = "Scout";
-    public final static int     DB_VERSION = 1;
+    /**
+     * Specifies the rate at which the MobileSensingPipeline sensing session should run,
+     * that is, every WINDOW_SIZE seconds.
+     */
+    public final static int WINDOW_SIZE = 5;//seconds
     private final static String LOG_TAG = "MobileSensingPipeline";
-
-    public final static int     WINDOW_SIZE = 5;//seconds
 
     //Mobile Sensing Singleton
     private static MobileSensingPipeline SENSING_PIPELINE = new MobileSensingPipeline();
 
     //Sensor Specific Pipelines
     private final AccelerometerPipeline accelerometerPipeline;
-    //private final LocationSensorPipeline locationPipeline;
     private final LocationPipeline locationPipeline;
     private final PressureSensorPipeline pressurePipeline;
 
@@ -56,7 +67,6 @@ public class MobileSensingPipeline {
 
     //Storage
     private ScoutStorageManager storageManager = ScoutStorageManager.getInstance();
-    private Queue<JsonObject> storage = new LinkedList<>();
 
     private MobileSensingPipeline() {
 
@@ -68,16 +78,23 @@ public class MobileSensingPipeline {
         //Sensing Data Queues
         this.sensorSampleQueue = new LinkedList<>();
         this.extractedFeaturesQueue = new LinkedList<>();
-
-        //Storage
-        Context ctx = ScoutApplication.getContext();
     }
 
-    public static MobileSensingPipeline getInstance(){
+    /**
+     * Enables access to the MobileSensingPipeline singleton instance
+     *
+     * @return MobilePipelineSensing singleton
+     */
+    public static MobileSensingPipeline getInstance() {
         return SENSING_PIPELINE;
     }
 
-    public void startSensingSession(){
+
+    /**
+     * Initiates a new sensing sensing, which executes at a fixed rate,
+     * as specified by WINDOW_SIZE.
+     */
+    public void startSensingSession() {
         try {
 
             storageManager.clearStoredData();
@@ -86,17 +103,27 @@ public class MobileSensingPipeline {
             dispatcher = new SampleDispatcherTask();
 
             dispatcherSchedule.scheduleAtFixedRate(dispatcher, 0, WINDOW_SIZE * 1000);
-        }catch (IllegalStateException e){
+        } catch (IllegalStateException e) {
             e.printStackTrace();
         }
     }
 
-    public void stopSensingSession(){
+    /**
+     * Terminates the sensing session.
+     */
+    public void stopSensingSession() {
         dispatcherSchedule.cancel();
         dispatcherSchedule.purge();
         dispatcher.cancel();
     }
 
+    /**
+     * Adds a new sensor data sample to the pre-processing queue.
+     *
+     * @param sensorConfig The sensor configuration
+     * @param sensorSample The sensor data sample
+     * @throws MobileSensingException if the sensor type, specified by the sensorConfig parameter is not supported.
+     */
     public void pushSensorSample(IJsonObject sensorConfig, IJsonObject sensorSample)
             throws MobileSensingException {
 
@@ -106,20 +133,57 @@ public class MobileSensingPipeline {
         JsonObject sample = sensorSample.getAsJsonObject();
         sample.addProperty(SensingUtils.SENSOR_TYPE, sensorType);
 
-        synchronized (lock){ sensorSampleQueue.add(sample); }
+        synchronized (lock) {
+            sensorSampleQueue.add(sample);
+        }
     }
+
+
+    /*
+     ****************************************************************************************
+     * STORAGE                                                                              *
+     * **************************************************************************************
+     */
 
     /**
+     * Given all the sensor data captured during the last sensing session, this method
+     * procedes to storing persistently that information.
+     * <br>
+     * The information is stored in two ways:
+     * <ul>
+     * <li>
+     * As a GPX file, which can be used to preview the traveled track.
+     * </li>
+     * <li>
+     * As a DataBase file, which contains the information gathered by all running supported
+     * sensors.
+     * </li>
+     * </ul>
      *
-     * @param sensorFeature
+     * @param tag The prefix given to the file
+     * @throws SQLException              should the ScoutStorageManager be unable to store the data.
+     * @throws NothingToArchiveException should there be no information to store.
+     * @see pt.ulisboa.tecnico.cycleourcity.scout.storage.StorageManager
      */
-    public void pushExtractedFeature(JsonObject sensorFeature) throws SQLException {
-        extractedFeaturesQueue.add(sensorFeature);
+    public void archiveData(String tag) throws SQLException, NothingToArchiveException {
+
+        StorageManager storage = ScoutStorageManager.getInstance();
+
+        storage.archiveGPXTrack(tag);
+        //TODO: check if there is information to store;
+        storage.archive(tag);
+
+        //Clear database contents
+        storage.clearStoredData();
+
+        Log.d(LOG_TAG, "[ARCHIVE]: " + "Stored samples successfully archived in the device's file system.");
     }
 
-    /****************************************************************************************
-     *  Async Work                                                                          *
-     ****************************************************************************************/
+    /*
+     * *************************************************************************************
+     * Async Work                                                                          *
+     * **************************************************************************************
+     */
     private class SampleDispatcherTask extends TimerTask {
 
         ScoutLogger logger = ScoutLogger.getInstance();
@@ -145,7 +209,7 @@ public class MobileSensingPipeline {
 
             //DISPATCH PHASE
             //Dispatch sensor samples for each specific sensor pipeline
-            logger.log(ScoutLogger.VERBOSE, LOG_TAG, "Dispatching all "+sampleClone.size()+" samples...");
+            logger.log(ScoutLogger.VERBOSE, LOG_TAG, "Dispatching all " + sampleClone.size() + " samples...");
             do {
                 JsonObject sample = (JsonObject) sampleClone.remove();
 
@@ -181,25 +245,5 @@ public class MobileSensingPipeline {
             //new Thread(pressurePipeline).start();
             new Thread(locationPipeline).start();
         }
-    }
-
-
-
-
-    /****************************************************************************************
-     *                                          STORAGE                                     *
-     ****************************************************************************************/
-    public void archiveData(String tag) throws SQLException, NothingToArchiveException {
-
-        StorageManager storage = ScoutStorageManager.getInstance();
-
-        storage.archiveGPXTrack(tag);
-        //TODO: check if there is information to store;
-        storage.archive(tag);
-
-        //Clear database contents
-        storage.clearStoredData();
-
-        Log.d(LOG_TAG, "[ARCHIVE]: " + "Stored samples successfully archived in the device's file system.");
     }
 }

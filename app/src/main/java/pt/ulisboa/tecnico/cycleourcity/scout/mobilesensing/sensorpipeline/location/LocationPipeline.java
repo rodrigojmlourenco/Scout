@@ -356,6 +356,8 @@ public class LocationPipeline implements ISensorPipeline {
     /**
      * @version 1.2 Creates different maps for all different altitudes
      * @author rodrigo.jm.lourenco
+     * Updates the GPXBuilder's track points, which can then be used to create a .gpx file, which
+     * can be used to preview the travelled route.
      */
     public static class GPXBuildStage implements Stage {
 

@@ -6,62 +6,54 @@ CycleOurCity goes Mobile - Scout
 ## Index
 * [Mobile Sensing](#mobile-sensing)
 
-## TODO
-
-
-- [ ] Estudar como optimizar a precisão da elevação capturada pelo GPS.
-- [ ] Estudar melhor como pode ser realizada a extracção da aceleração linear.
-      - [ ] Low-pass Filter vs High-pass Filter vs No-Filter
-- [ ] Criação de um classificador capaz de distinguir entre dispositivo estacionario e em movimento.
-      - [ ] Criar|Procurar script que transforme amostras `.json` em formato `.arff`
-      - [ ] Criar uma base de dados classificada, para treino do classificador
-- [ ] Documentar as classes criadas
-- [x] Criar módulo para criação de ficheiros GPX
-- [x] Estudar o problema da segmentação de sequências contínuas de sinais.
-- [x] Tornar assíncrono o processo de arquivação (Desnecessário)
-- [x] Extracção de features no `LocationPipeline`
-      - [x] Fazer merge de amostras de localização "relacionadas"
-      - [x] Obter distância viajada
-	- [x] Obter declive (*Nota:* muito impreciso)
-
-
-
 ## Funf-OpenSensing Schedueling CheatSheet
 
 * `"duration":0` : com a duração da tarefa de uma probe definida a 0 então essa tarefa é iniciada mas nunca terminada.
 * `"strict":true`: garante que a tarefa de uma probe é realizada de acordo com a especificação do `interval`
 * `"offset":0`	 : força a que a tarefa da probe se realize imediatamente.
 
-## Open Issues
-
-### ISSUE 04102:VoidMotionSignals
-Estão a ser armazenadas amostras de sensores de movimento vazios no `AccelerometerPipeline`. Este problema deve-se a um bug na executação da `FeatureExtractionStage` onde as features estão a ser construídas independentemente da existência ou não de amostras.
-
-
-Com o passar do tempo a aplicação vai perdendo performance. Mesmo sem uma sessão de sensing iniciada a aplicação está a consumir muitos recursos (GC constantemente a ser chamado). É assim necessário realizar um estudo de quais os possíveis pontos de optimização.
-
-### ISSUE 04111:Haversine
-
-## Recently Solved Issues
-
-### ISSUE 07041:Scheduler
-O problema foi "resolvido" através da especificação do valor da duração das tarefas das probes como sendo 0 (`"duration":0`). Embora isto funcione bem para a `AccelerometerSensorProbe` e para a `GravitySensorProbe`, a sampling rate da `LocationProbe` ainda deixa a desejar.
-
-### ISSUE 04103:UnexpectedCrash
-Por vezes, ao iniciar pela primeira vez uma sessão de sensing, a aplicação crasha de forma inesperada. Após a análise do BUG report, gerado pelo dispositivo, foram identificados várias excepções fatais causadas por uma NullPointerException. Esta é sempre causada em `LocationPipeline.java:188`, quando é chamado o método `JsonElement.getAsString` sobre um objecto não existente. Esta excepção ocorre quando o provider da localização é a rede e o método acede ao JsonElemente "extras", que por sua vez é não existente.
-
-A solução para este problema passa assim por verificar se o campo "extras" existe ou não e apenas caso este exista são adicionados os campos especiais à nova amostra.
-
-### ISSUE 07043:EmptyDB
-Havia um bug no método `ScoutArchive.getDelegateArchive()`, em que caso o `delegateArchive` já existisse `null` era retornado.
-
-### ISSUE 04104:LazyApp
-O problema estava na forma como o consumo do estado e posterior actualização estavam a ser realizados. A TimerTask foi assim substituída por um `Runnable` invocado por um `Handler` (`handler.postDelayed(runnable, interval)`). 
-
+*** 
 
 ## Mobile Sensing
 
+The <a href="./javadoc/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/MobileSensingPipeline.html">`MobileSensingPipeline`</a> is one of Scout's core components. and is responsible for connection the sensor captured data, gathered Funf's sensor probes, and the respective sensor pre-processing pipelines. This component is designed as a singleton, meaning that at each moment there is only a single instance in the application's scope, which is accessible to every Scout component.
+
+The `MobileSensingPipeline` is designed to run a fixed rate, every few seconds (currently every 5s), once a sensing session has been initiated. At each iteration the `MobileSensingPipeline` dispatches all enqueue sensor samples to each sensor specific pipeline, in order to process thoses samples. Each sensor pipeline is executed asynchronously, as to avoid compromising the user's experience.
+
+Besides working as a bridge between the sensor captured data and the sensor processing pipelines, the `MobileSensingPipeline` also operates as bridge between the application and the `StorageManager`.
+
+<img src="./img/architecture/mobilesensingpipeline_basic.png" width="600" height="auto">
+Fig. 1 - `MobileSensingPipeline` architectural overview.
+
+
 ### LocationPipeline
+
+The <a href="./javadoc/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/sensorpipeline/location/LocationPipeline.html">`LocationPipeline`</a> is a sensor specific pipeline responsible for processing location samples.
+
+This pipeline has two main purposes:
+
+* Handling locations, used to geo-tag other samples;
+* Extracting the travelled route's slope.
+
+>Despite being a sensor specific pipeline, the `LocationPipeline` actually handles sensor data originated from two probes, the `LocationProbe` and the `PressureSensorProbe`. At an early stage it was determined that the altitudes registered by the GPS are too unreliable. Because the extraction of a route's slope was, from the beginning, one of this project's main purposes another solution had to be found. Two alternatives, to the GPS registered altitude were found:
+
+>* The pitch or roll (depending if the device is respectively in portrait or landscape mode), derived from a `RotationSensorProbe`
+* The altitude derived by Android's `SensorManager` from the measured atmospheric pressure, gathered by a `PressureSensorProbe`
+
+>Because the second one provided more reliable altitudes, the `PressureSensorProbe` was chosen, although it should be noted that the fact that this is still a novel sensor could restrict the participation of older devices. As such further studies should be performed to allow all devices to participate.     
+
+The `LocationPipeline`'s behaviour is determined by it's stages. More specifically this pipeline contemplates the following stages.
+
+ * __DispatchSensorSamplesStage:__ Given all the sensor samples provided by the `MobileSensingPipeline`, this stage divides those samples into two groups, according to the sensor that generated them. Once the samples are divided, each group of samples is passed to a sensor specific pipeline, which can be either the `LocationSensorPipeline` or the `PressureSensorPipeline`. Then each of those two pipelines is executed. Meanwhile this stage waits for both the sensor specific pipelines to run. Once both have finished, the results from both sensor specific pipelines are then passed onto the next stage.
+ * __MergeStage:__ This stage is responsible for merging all samples originated from different sensor probes, manages by this pipeline, as this is a nested pipeline. Given that this is a `LocationPipeline`, the most important samples are the location samples, however at each iteration of the pipeline, more pressure-based samples are generated. Additionally the location and pressure timestamps conform to a different format, making it impossible to establish a close relationship, given a time frame. Due to this challenges the `LocationPipeline` opts to maintain all location samples, and distributes pressure-based samples among the different locations. Given that the overall strategy is quite different from that of the `stages.MergeStage`, the `LocationPipeline` specifies its own `MergeStage`.
+ * __FeatureExtractionStage:__ This stage is responsible for deriving the slope. The slope feature is derived based on a previous and current location, the distance travelled between those two points and the altitude differences between them.
+ * __UpdateScoutStateStage:__ Given the results of the previous stages, this stage updates the application's internal state.
+ * __GPXBuildStage:__ Updates the `GPXBuilder`'s track points, which will then be used to create a `.gpx` file that can be used to preview the travelled route.
+ * __FeatureStorageStage:__ This stage operates as a callback function. It extracts the output from the PipelineContext, which contains the extracted features and travelled locations, and stores it on the application's storage manager.
+
+
+#### Sensor Specific Pipelines
+
 
 #### AdmissionControlStage
 
@@ -113,6 +105,8 @@ Assim e de forma a permitir a identificação e remoção de possíveis outliers
    <img src="./img/walk_inesc.jpg"  width="400" height="auto"/>
    <p><emph>Track capturada pela aplicação com controlo de admissão por heurísticas.</emph></p>
 </div>
+
+
 
 
 
