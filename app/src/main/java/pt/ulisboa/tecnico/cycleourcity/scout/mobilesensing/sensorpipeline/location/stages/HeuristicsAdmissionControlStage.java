@@ -75,6 +75,7 @@ public class HeuristicsAdmissionControlStage implements Stage {
 
             //Check if the sample is valid
             if (!ctx.isValidSample()) {
+                discarded++;
                 for (Error error : ctx.getErrors())
                     logger.log(ScoutLogger.DEBUG, LOG_TAG, TAG + error.toString());
             } else {

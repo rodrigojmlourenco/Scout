@@ -13,18 +13,18 @@ import pt.ulisboa.tecnico.cycleourcity.scout.parser.SensingUtils;
  */
 public class Location {
 
-    private long    timestamp;
-    private double  latitude, longitude;
-    private float   altitude, speed, error;
-    private int     satellites;
-    private long    realElapsedTimeNanos;
+    private final float nanos2Millis = 1 / 1000000f;
+    private final float nanos2Seconds = 1 / 1000000000f;
+    private long timestamp;
+    private double latitude, longitude;
+    private float altitude, barometricAltitude, speed, error;
+    private int satellites;
+    private long realElapsedTimeNanos;
 
-    private final float nanos2Millis = 1/1000000f;
-    private final float nanos2Seconds = 1/1000000000f;
+    public Location() {
+    }
 
-    public Location() {}
-
-    public Location(JsonObject location){
+    public Location(JsonObject location) {
 
         LocationState locationState = ScoutState.getInstance().getLocationState();
 
@@ -32,18 +32,24 @@ public class Location {
         this.realElapsedTimeNanos = SensingUtils.LocationSampleAccessor.getElapsedRealTimeNanos(location);
         this.error = SensingUtils.LocationSampleAccessor.getAccuracy(location);
 
-        this.latitude   = SensingUtils.LocationSampleAccessor.getLatitude(location);
-        this.longitude  = SensingUtils.LocationSampleAccessor.getLongitude(location);
+        this.latitude = SensingUtils.LocationSampleAccessor.getLatitude(location);
+        this.longitude = SensingUtils.LocationSampleAccessor.getLongitude(location);
 
         try {
-            this.altitude   = SensingUtils.LocationSampleAccessor.getAltitude(location);
+            this.altitude = SensingUtils.LocationSampleAccessor.getAltitude(location);
         } catch (NoSuchDataFieldException e) {
-            this.altitude   = locationState.getAverageAltitude();
+            this.altitude = locationState.getAverageAltitude();
+        }
+
+        try {
+            this.barometricAltitude = location.get(SensingUtils.LocationKeys.BAROMETRIC_ALTITUDE).getAsFloat();
+        } catch (NullPointerException e) {
+            this.barometricAltitude = locationState.getAverageBarometricAltitude();
         }
 
         try {
             this.speed = SensingUtils.LocationSampleAccessor.getSpeed(location);
-        }catch (NoSuchDataFieldException e){
+        } catch (NoSuchDataFieldException e) {
             this.speed = locationState.getAverageSpeed();
         }
 
@@ -78,13 +84,13 @@ public class Location {
         return satellites;
     }
 
-    public double getTraveledDistance(Location l){
+    public double getTraveledDistance(Location l) {
         return LocationUtils.calculateDistance(
                 this.latitude, this.longitude,
                 l.getLatitude(), l.getLongitude());
     }
 
-    public float getTraveledSpeed(Location l){
+    public float getTraveledSpeed(Location l) {
         double distance = getTraveledDistance(l);
         long elapsedTimeSeconds =
                 (long) Math.abs(((l.getRealElapsedTime() - this.getRealElapsedTime()) * nanos2Seconds));
@@ -97,10 +103,11 @@ public class Location {
      * overlap.
      * <br>
      * The uncertainty area if defined by the accuracy field.
+     *
      * @param l Location to compare to
      * @return True if the locations overlap, false otherwise.
      */
-    public boolean isOverlapping(Location l){
+    public boolean isOverlapping(Location l) {
 
         //Two locations overlap if the distance between the two locations
         //is smaller than the sum of their radius.
@@ -116,5 +123,9 @@ public class Location {
 
     public long getRealElapsedTime() {
         return realElapsedTimeNanos;
+    }
+
+    public float getBarometricAltitude() {
+        return barometricAltitude;
     }
 }

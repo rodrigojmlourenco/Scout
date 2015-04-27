@@ -65,6 +65,19 @@ public class LocationState {
 
     }
 
+    synchronized public float getAverageBarometricAltitude(){
+        float avgAlt = 0;
+        int size = lastLocations.size();
+        Iterator<Location> iterator = lastLocations.iterator();
+
+        while (iterator.hasNext()) {
+            avgAlt += iterator.next().getBarometricAltitude();
+        }
+
+        return size == LAST_LOCATIONS_SIZE ? avgAlt / size : 0;
+
+    }
+
     synchronized public float getAverageSpeed() {
 
         float speedTotal = 0;

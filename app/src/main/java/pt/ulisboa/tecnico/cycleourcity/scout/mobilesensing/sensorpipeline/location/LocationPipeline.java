@@ -13,12 +13,14 @@ import java.util.Queue;
 
 import edu.mit.media.funf.json.IJsonObject;
 import pt.ulisboa.tecnico.cycleourcity.scout.logging.ScoutLogger;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.location.LocationUtils;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.SensorPipeLineContext;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.SensorPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.sensor.FeatureExtractor;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.sensor.ISensorPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.state.LocationState;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.state.ScoutState;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.state.data.Location;
 import pt.ulisboa.tecnico.cycleourcity.scout.parser.SensingUtils;
 import pt.ulisboa.tecnico.cycleourcity.scout.parser.exceptions.GPXBuilderException;
 import pt.ulisboa.tecnico.cycleourcity.scout.parser.gpx.GPXBuilder;
@@ -35,6 +37,7 @@ public class LocationPipeline implements ISensorPipeline {
     static {
         LOCATION_PIPELINE.addStage(new DispatchSensorSamplesStage());
         LOCATION_PIPELINE.addStage(new MergeStage());
+        LOCATION_PIPELINE.addStage(new FeatureExtractionStage());
         LOCATION_PIPELINE.addStage(new UpdateScoutStateStage());
         LOCATION_PIPELINE.addStage(new GPXBuildStage());
         LOCATION_PIPELINE.addFinalStage(new FeatureStorageStage());
@@ -262,6 +265,60 @@ public class LocationPipeline implements ISensorPipeline {
 
 
     /**
+     * @version 2.0 Barometric Altitudes
+     * @author rodrigo.jm.lourenco
+     *
+     * This stage is responsible for deriving the slope. The slope feature is derived based on a
+     * previous and current location, the distance travelled between those two points and the
+     * altitude differences between them.
+     * <br>
+     * <img src="http://www.mathwarehouse.com/algebra/linear_equation/images/slope_given_2points/slope-of-a-line-graph.gif" >
+     */
+    public static class FeatureExtractionStage implements Stage {
+
+        private ScoutLogger logger = ScoutLogger.getInstance();
+        private final String LOG_TAG = this.getClass().getSimpleName();
+        private LocationState locationState = ScoutState.getInstance().getLocationState();
+
+
+        @Override
+        public void execute(PipelineContext pipelineContext) {
+
+            SensorPipeLineContext ctx = (SensorPipeLineContext)pipelineContext;
+            JsonObject[] input = ctx.getInput();
+
+            //Avoid NullPointerException
+            if(input == null) return;
+
+            if(!ScoutState.getInstance().isReady()){
+                logger.log(ScoutLogger.WARN, LOG_TAG, "Scout is not ready, skipping feature extraction...");
+                return;
+            }
+
+            float slope;
+            double distance;
+            Location previousLocation = locationState.getLastLocation();
+
+            for(JsonObject sample : input){
+                Location currentLocation = new Location(sample);
+
+                distance = previousLocation.getTraveledDistance(currentLocation);
+
+                slope = LocationUtils.calculateSlope(
+                        distance,
+                        previousLocation.getBarometricAltitude(),
+                        currentLocation.getBarometricAltitude()
+                );
+
+
+                sample.addProperty(SensingUtils.LocationKeys.SLOPE, slope);
+                previousLocation = currentLocation;
+            }
+        }
+
+    }
+
+    /**
      * @version 1.0
      * @author rodrigo.jm.lourenco
      * Given the results of the previous stages, this stage updates the application's internal
@@ -298,6 +355,7 @@ public class LocationPipeline implements ISensorPipeline {
 
     /**
      * @version 1.2 Creates different maps for all different altitudes
+     * @author rodrigo.jm.lourenco
      */
     public static class GPXBuildStage implements Stage {
 
@@ -339,12 +397,14 @@ public class LocationPipeline implements ISensorPipeline {
 
     /**
      * @version 1.0
-     *          This stage operates as a callback function, it extracts the output from the PipelineContext,
-     *          which is basically the extracted features, and stores it both in an extracted feature queue
-     *          and on the application's storage manager.
+     * @author rodrigo.jm.lourenco
+     * This stage operates as a callback function, it extracts the output from the PipelineContext,
+     * which is basically the extracted features, and stores it both in an extracted feature queue
+     * and on the application's storage manager.
+     *
      * @see pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.SensorPipeLineContext
      * @see pt.ulisboa.tecnico.cycleourcity.scout.storage.ScoutStorageManager
-     * <p/>
+     *
      * TODO: esta stage deve ser igual para todos os pipelines pelo que pode ser externa
      */
     public static class FeatureStorageStage implements Stage {
