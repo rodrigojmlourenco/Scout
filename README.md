@@ -3,6 +3,16 @@ CycleOurCity goes Mobile - Scout
 
 <img src="./img/screenshot_plotting.png"  width="300" height="auto"/>
 
+
+----------
+##TODO
+[ ] **ScoutSimulator** Implementar simulador da aplicação Scout. Esta irá consumir dados armazenados em ficheiros `.db`, sobre os quais irá aplicar os pipelines já desenvolvidos para aplicação. Este simulador servirá de base ao servidor.
+
+	[ ] Fazer o *port* do código do package mobilesensing para Java nativo 
+
+----------
+
+
 ## Index
 * [Mobile Sensing](#mobile-sensing)
 
@@ -16,7 +26,7 @@ CycleOurCity goes Mobile - Scout
 
 ## Mobile Sensing
 
-The <a href="./javadoc/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/MobileSensingPipeline.html">`MobileSensingPipeline`</a> is one of Scout's core components. and is responsible for connection the sensor captured data, gathered Funf's sensor probes, and the respective sensor pre-processing pipelines. This component is designed as a singleton, meaning that at each moment there is only a single instance in the application's scope, which is accessible to every Scout component.
+The <a href="./ScoutApp/javadoc/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/MobileSensingPipeline.html">`MobileSensingPipeline`</a> is one of Scout's core components. and is responsible for connection the sensor captured data, gathered Funf's sensor probes, and the respective sensor pre-processing pipelines. This component is designed as a singleton, meaning that at each moment there is only a single instance in the application's scope, which is accessible to every Scout component.
 
 The `MobileSensingPipeline` is designed to run a fixed rate, every few seconds (currently every 5s), once a sensing session has been initiated. At each iteration the `MobileSensingPipeline` dispatches all enqueue sensor samples to each sensor specific pipeline, in order to process thoses samples. Each sensor pipeline is executed asynchronously, as to avoid compromising the user's experience.
 
@@ -28,7 +38,7 @@ Fig. 1 - `MobileSensingPipeline` architectural overview.
 
 ### LocationPipeline
 
-The <a href="./javadoc/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/sensorpipeline/location/LocationPipeline.html">`LocationPipeline`</a> is a sensor specific pipeline responsible for processing location samples.
+The <a href="./ScoutApp/javadoc/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/sensorpipeline/location/LocationPipeline.html">`LocationPipeline`</a> is a sensor specific pipeline responsible for processing location samples.
 
 This pipeline has two main purposes:
 
