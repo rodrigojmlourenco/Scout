@@ -1,0 +1,57 @@
+package pt.ulisboa.tecnico.cycleourcity.scout.storage;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Environment;
+
+import com.google.gson.JsonObject;
+
+import java.io.File;
+import java.io.IOException;
+import java.sql.SQLException;
+
+import edu.mit.media.funf.storage.NameValueDatabaseHelper;
+import pt.ulisboa.tecnico.cycleourcity.scout.ScoutApplication;
+import pt.ulisboa.tecnico.cycleourcity.scout.logging.ScoutLogger;
+import pt.ulisboa.tecnico.cycleourcity.scout.parser.SensingUtils;
+import pt.ulisboa.tecnico.cycleourcity.scout.parser.gpx.GPXBuilder;
+import pt.ulisboa.tecnico.cycleourcity.scout.storage.archive.ScoutArchive;
+import pt.ulisboa.tecnico.cycleourcity.scout.storage.exceptions.NothingToArchiveException;
+
+/**
+ * Created by rodrigo.jm.lourenco on 30/03/2015.
+ */
+public class ScoutStorageManager implements StorageManager{
+
+	@Override
+	public void clearStoredData() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void store(String key, JsonObject value) throws SQLException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void archive() throws NothingToArchiveException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void archive(String tag) throws NothingToArchiveException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void archiveGPXTrack(String tag) {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

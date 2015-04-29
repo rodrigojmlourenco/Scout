@@ -6,9 +6,9 @@ import org.apache.commons.collections4.queue.CircularFifoQueue;
 
 import java.util.Iterator;
 
-import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exception.NoSuchDataFieldException;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exceptions.NoSuchDataFieldException;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.state.data.Location;
-import pt.ulisboa.tecnico.cycleourcity.scout.parser.SensingUtils;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils;
 
 /**
  * @version 1.0 Location-Only

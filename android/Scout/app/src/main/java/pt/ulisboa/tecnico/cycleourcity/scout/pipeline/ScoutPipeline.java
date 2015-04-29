@@ -1,11 +1,8 @@
 package pt.ulisboa.tecnico.cycleourcity.scout.pipeline;
 
-import android.content.Context;
 import android.hardware.SensorManager;
 import android.util.Log;
 import android.view.Display;
-import android.view.Surface;
-import android.view.WindowManager;
 
 import com.google.gson.JsonElement;
 
@@ -17,8 +14,8 @@ import edu.mit.media.funf.pipeline.BasicPipeline;
 
 import pt.ulisboa.tecnico.cycleourcity.scout.ScoutApplication;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.MobileSensingPipeline;
-import pt.ulisboa.tecnico.cycleourcity.scout.parser.SensingUtils;
-import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exception.MobileSensingException;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exceptions.MobileSensingException;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.exceptions.NothingToArchiveException;
 
 /**

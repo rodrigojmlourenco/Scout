@@ -1,0 +1,25 @@
+package sqlite;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+public class SQLiteLoader {
+	
+	Connection conn = null;
+	private final String sqlite = "jdbc:sqlite:";
+	
+	public SQLiteLoader(String dbFile) throws ClassNotFoundException{
+		
+		 // load the sqlite-JDBC driver using the current class loader
+		Class.forName("org.sqlite.JDBC");
+		
+		try {
+			conn = DriverManager.getConnection(sqlite+dbFile);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+}

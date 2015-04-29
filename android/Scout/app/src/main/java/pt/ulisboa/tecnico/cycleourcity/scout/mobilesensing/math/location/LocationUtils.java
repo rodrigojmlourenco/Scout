@@ -8,6 +8,8 @@ package pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.location;
  */
 public class LocationUtils {
 
+    public static final float PRESSURE_STANDARD_ATMOSPHERE = 1013.25f;
+
     public static enum DistanceStrategies {
         Haversine,
         SphericalLawOfCosines
@@ -148,6 +150,12 @@ public class LocationUtils {
 
     public static double convertToKilometersPerHour(float speedMetersPerSecond){
         return speedMetersPerSecond * 3.6;
+    }
+
+    //TODO: este código é da Android, estarei a violar a licença?
+    public static float getAltitude(float p0, float p){
+        final float coef = 1.0f / 5.255f;
+        return 44330.0f * (1.0f - (float)Math.pow(p/p0, coef));
     }
 
 }

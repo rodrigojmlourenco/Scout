@@ -14,8 +14,8 @@ import java.sql.SQLException;
 import edu.mit.media.funf.storage.NameValueDatabaseHelper;
 import pt.ulisboa.tecnico.cycleourcity.scout.ScoutApplication;
 import pt.ulisboa.tecnico.cycleourcity.scout.logging.ScoutLogger;
-import pt.ulisboa.tecnico.cycleourcity.scout.parser.SensingUtils;
-import pt.ulisboa.tecnico.cycleourcity.scout.parser.gpx.GPXBuilder;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils;
+import pt.ulisboa.tecnico.cycleourcity.scout.storage.gpx.GPXBuilder;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.archive.ScoutArchive;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.exceptions.NothingToArchiveException;
 

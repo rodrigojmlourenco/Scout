@@ -12,12 +12,11 @@ import java.util.TimerTask;
 
 import edu.mit.media.funf.json.IJsonObject;
 import pt.ulisboa.tecnico.cycleourcity.scout.logging.ScoutLogger;
-import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exception.MobileSensingException;
-import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exception.NoSuchSensorException;
-import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.location.LocationPipeline;
-import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.location.PressureSensorPipeline;
-import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.sensorpipeline.sensor.AccelerometerPipeline;
-import pt.ulisboa.tecnico.cycleourcity.scout.parser.SensingUtils;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exceptions.MobileSensingException;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exceptions.NoSuchSensorException;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.location.LocationPipeline;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.location.PressureSensorPipeline;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.motion.AccelerometerPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.ScoutStorageManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.StorageManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.exceptions.NothingToArchiveException;
@@ -52,9 +51,9 @@ public class MobileSensingPipeline {
     private static MobileSensingPipeline SENSING_PIPELINE = new MobileSensingPipeline();
 
     //Sensor Specific Pipelines
-    private final AccelerometerPipeline accelerometerPipeline;
+    //private final AccelerometerPipeline accelerometerPipeline;
     private final LocationPipeline locationPipeline;
-    private final PressureSensorPipeline pressurePipeline;
+    //private final PressureSensorPipeline pressurePipeline;
 
     //Sensing Data Queues
     private Queue<JsonObject> sensorSampleQueue = null;
@@ -71,9 +70,9 @@ public class MobileSensingPipeline {
     private MobileSensingPipeline() {
 
         //Sensor Pre-processing Pipelines
-        this.accelerometerPipeline = new AccelerometerPipeline();
+        //this.accelerometerPipeline = new AccelerometerPipeline();
         this.locationPipeline = new LocationPipeline();
-        this.pressurePipeline = new PressureSensorPipeline();
+        //this.pressurePipeline = new PressureSensorPipeline();
 
         //Sensing Data Queues
         this.sensorSampleQueue = new LinkedList<>();
@@ -217,10 +216,10 @@ public class MobileSensingPipeline {
                     int sensorType = sample.get(SensingUtils.SENSOR_TYPE).getAsInt();
                     switch (sensorType) {
                         case SensingUtils.ACCELEROMETER:
-                            accelerometerPipeline.pushSample(sample);
+                            //accelerometerPipeline.pushSample(sample);
                             break;
                         case SensingUtils.GRAVITY:
-                            accelerometerPipeline.pushSample(sample);
+                            //accelerometerPipeline.pushSample(sample);
                             break;
                         case SensingUtils.LOCATION:
                         case SensingUtils.ORIENTATION:
@@ -228,7 +227,7 @@ public class MobileSensingPipeline {
                             locationPipeline.pushSample(sample);
                             break;
                         case SensingUtils.PRESSURE:
-                            pressurePipeline.pushSample(sample);
+                            //pressurePipeline.pushSample(sample);
                             locationPipeline.pushSample(sample);
                             break;
                         default:

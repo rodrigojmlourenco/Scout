@@ -1,0 +1,12 @@
+package simulator;
+
+public class SensingSimulator {
+	
+	public static enum State {
+		sensing,
+		stopped
+	};
+	
+	
+
+}
