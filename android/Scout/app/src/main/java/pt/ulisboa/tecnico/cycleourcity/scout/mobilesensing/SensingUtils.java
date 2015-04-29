@@ -41,12 +41,12 @@ public class SensingUtils {
 
 
     //General Data Fields
-    public final static String SENSOR_TYPE = "@type";
-    public final static String CONFIG = "config";
-    public final static String TIMESTAMP = "timestamp";
-    public final static String NUM_FRAME_SAMPLES = "Total Samples";
-    public final static String EXTRAS = "mExtras";
-    public final static String ACCURACY     = "accuracy";
+    public final static String SENSOR_TYPE          = "@type";
+    public final static String CONFIG               = "config";
+    public final static String TIMESTAMP            = "timestamp";
+    public final static String EXTRAS               = "mExtras";
+    public final static String ACCURACY             = "accuracy";
+    public final static String SCOUT_TIME           = "sTimestamp";
 
     /**
      * Accelerometer Specific Fields */

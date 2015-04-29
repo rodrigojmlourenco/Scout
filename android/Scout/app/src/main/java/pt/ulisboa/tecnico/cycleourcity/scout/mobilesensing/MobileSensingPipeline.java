@@ -1,7 +1,5 @@
 package pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing;
 
-import android.util.Log;
-
 import com.google.gson.JsonObject;
 
 import java.sql.SQLException;
@@ -10,11 +8,11 @@ import java.util.Queue;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import edu.mit.media.funf.json.IJsonObject;
 import pt.ulisboa.tecnico.cycleourcity.scout.logging.ScoutLogger;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exceptions.MobileSensingException;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exceptions.NoSuchSensorException;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.location.LocationPipeline;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.motion.AccelerometerSensorPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.ScoutStorageManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.StorageManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.exceptions.NothingToArchiveException;
@@ -42,14 +40,14 @@ public class MobileSensingPipeline {
      * Specifies the rate at which the MobileSensingPipeline sensing session should run,
      * that is, every WINDOW_SIZE seconds.
      */
-    public final static int WINDOW_SIZE = 5;//seconds
+    public final static int WINDOW_SIZE = 1;//seconds
     private final static String LOG_TAG = "MobileSensingPipeline";
 
     //Mobile Sensing Singleton
     private static MobileSensingPipeline SENSING_PIPELINE = new MobileSensingPipeline();
 
     //Sensor Specific Pipelines
-    //private final AccelerometerPipeline accelerometerPipeline;
+    private final AccelerometerSensorPipeline accelerometerPipeline;
     private final LocationPipeline locationPipeline;
     //private final PressureSensorPipeline pressurePipeline;
 
@@ -68,7 +66,7 @@ public class MobileSensingPipeline {
     private MobileSensingPipeline() {
 
         //Sensor Pre-processing Pipelines
-        //this.accelerometerPipeline = new AccelerometerPipeline();
+        this.accelerometerPipeline = new AccelerometerSensorPipeline();
         this.locationPipeline = new LocationPipeline();
         //this.pressurePipeline = new PressureSensorPipeline();
 
@@ -115,24 +113,13 @@ public class MobileSensingPipeline {
     }
 
     /**
-     * TODO: only JsonObject no IJson
      * Adds a new sensor data sample to the pre-processing queue.
      *
-     * @param sensorConfig The sensor configuration
      * @param sensorSample The sensor data sample
-     * @throws MobileSensingException if the sensor type, specified by the sensorConfig parameter is not supported.
      */
-    public void pushSensorSample(IJsonObject sensorConfig, IJsonObject sensorSample)
-            throws MobileSensingException {
-
-        int sensorType = SensingUtils.getSensorType(sensorConfig);
-
-        //Store the sensor sample in a Queue
-        JsonObject sample = sensorSample.getAsJsonObject();
-        sample.addProperty(SensingUtils.SENSOR_TYPE, sensorType);
-
+    public void pushSensorSample(JsonObject sensorSample) {
         synchronized (lock) {
-            sensorSampleQueue.add(sample);
+            sensorSampleQueue.add(sensorSample);
         }
     }
 
@@ -173,8 +160,6 @@ public class MobileSensingPipeline {
 
         //Clear database contents
         storage.clearStoredData();
-
-        Log.d(LOG_TAG, "[ARCHIVE]: " + "Stored samples successfully archived in the device's file system.");
     }
 
     /*
@@ -214,19 +199,14 @@ public class MobileSensingPipeline {
                 try {
                     int sensorType = sample.get(SensingUtils.SENSOR_TYPE).getAsInt();
                     switch (sensorType) {
-                        case SensingUtils.ACCELEROMETER:
-                            //accelerometerPipeline.pushSample(sample);
-                            break;
                         case SensingUtils.GRAVITY:
-                            //accelerometerPipeline.pushSample(sample);
+                        case SensingUtils.ACCELEROMETER:
+                            accelerometerPipeline.pushSample(sample);
                             break;
+                        case SensingUtils.PRESSURE:
                         case SensingUtils.LOCATION:
                         case SensingUtils.ORIENTATION:
                         case SensingUtils.ROTATION_VECTOR:
-                            locationPipeline.pushSample(sample);
-                            break;
-                        case SensingUtils.PRESSURE:
-                            //pressurePipeline.pushSample(sample);
                             locationPipeline.pushSample(sample);
                             break;
                         default:
@@ -238,10 +218,8 @@ public class MobileSensingPipeline {
             } while (sampleClone.peek() != null);
 
             //PRE-PROCESSING PHASE
-            //locationPipeline.run();
-            //accelerometerPipeline.run(); //TODO: uncomment
-            //new Thread(pressurePipeline).start();
             new Thread(locationPipeline).start();
+            new Thread(accelerometerPipeline).start();
         }
     }
 }

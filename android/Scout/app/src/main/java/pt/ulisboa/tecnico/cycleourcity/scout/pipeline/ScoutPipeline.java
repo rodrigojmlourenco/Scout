@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.Display;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import java.sql.SQLException;
 
@@ -66,12 +67,18 @@ public class ScoutPipeline extends BasicPipeline {
     @Override
     public void onDataReceived(IJsonObject probeConfig, IJsonObject data) {
 
-        //testOrientation(data);
+        JsonObject  jsonData = data.getAsJsonObject(),
+                    jsonConfig = probeConfig.getAsJsonObject();
+
+        int sensorType = 0;
 
         try {
-            mPipeline.pushSensorSample(probeConfig, data);
+            sensorType = SensingUtils.getSensorType(jsonConfig);
+            jsonData.addProperty(SensingUtils.SENSOR_TYPE, sensorType);
+            jsonData.addProperty(SensingUtils.SCOUT_TIME, System.nanoTime());
+            mPipeline.pushSensorSample(jsonData);
         } catch (MobileSensingException e) {
-            Log.e(LOG_TAG, "Sensor "+probeConfig.get(SensingUtils.SENSOR_TYPE)+" not yet supported by MobileSensingPipeline.");
+            e.printStackTrace();
         }
     }
 

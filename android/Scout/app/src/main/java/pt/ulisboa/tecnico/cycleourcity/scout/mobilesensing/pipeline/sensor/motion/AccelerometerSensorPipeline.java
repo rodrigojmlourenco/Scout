@@ -40,7 +40,7 @@ public class AccelerometerSensorPipeline implements SensorProcessingPipeline {
     static{
         //ACCELEROMETER_PIPELINE.addStage(new AdmissionControlStage());
         //ACCELEROMETER_PIPELINE.addStage(new TrimStage());
-        ACCELEROMETER_PIPELINE.addStage(new FeatureExtractionStage());
+        //ACCELEROMETER_PIPELINE.addStage(new FeatureExtractionStage());
         ACCELEROMETER_PIPELINE.addFinalStage(new PostExecuteStage());
     }
 
