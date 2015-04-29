@@ -41,4 +41,9 @@ public class ScoutStorageManager implements StorageManager{
 		
 	}
 
+	public static ScoutStorageManager getInstance() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

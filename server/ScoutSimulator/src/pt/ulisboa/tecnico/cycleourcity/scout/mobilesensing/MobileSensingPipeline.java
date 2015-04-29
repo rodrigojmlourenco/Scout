@@ -1,7 +1,5 @@
 package pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing;
 
-import android.util.Log;
-
 import com.google.gson.JsonObject;
 
 import java.sql.SQLException;
@@ -10,7 +8,6 @@ import java.util.Queue;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import edu.mit.media.funf.json.IJsonObject;
 import pt.ulisboa.tecnico.cycleourcity.scout.logging.ScoutLogger;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exceptions.MobileSensingException;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exceptions.NoSuchSensorException;
@@ -115,14 +112,13 @@ public class MobileSensingPipeline {
     }
 
     /**
-     * TODO: only JsonObject no IJson
      * Adds a new sensor data sample to the pre-processing queue.
      *
      * @param sensorConfig The sensor configuration
      * @param sensorSample The sensor data sample
      * @throws MobileSensingException if the sensor type, specified by the sensorConfig parameter is not supported.
      */
-    public void pushSensorSample(IJsonObject sensorConfig, IJsonObject sensorSample)
+    public void pushSensorSample(JsonObject sensorConfig, JsonObject sensorSample)
             throws MobileSensingException {
 
         int sensorType = SensingUtils.getSensorType(sensorConfig);
@@ -135,6 +131,8 @@ public class MobileSensingPipeline {
             sensorSampleQueue.add(sample);
         }
     }
+    
+    
 
 
     /*
@@ -174,7 +172,7 @@ public class MobileSensingPipeline {
         //Clear database contents
         storage.clearStoredData();
 
-        Log.d(LOG_TAG, "[ARCHIVE]: " + "Stored samples successfully archived in the device's file system.");
+        System.out.println(LOG_TAG + "[ARCHIVE]: " + "Stored samples successfully archived in the device's file system.");
     }
 
     /*

@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exceptions.MobileSens
 import com.google.gson.JsonObject;
 
 import sensing.sqlite.SQLiteLoader;
+import simulator.SensingSimulator;
 
 
 
@@ -18,6 +19,8 @@ public class ScoutSimulator {
 	public static final String SAMPLE_BASE_DIR = "./extern/scoutSamples";
 
 	public static void main(String[] args) {
+		
+		SensingSimulator simulator = new SensingSimulator();
 		
 		String sampleFilename = "";
 		File sampleFile = null;

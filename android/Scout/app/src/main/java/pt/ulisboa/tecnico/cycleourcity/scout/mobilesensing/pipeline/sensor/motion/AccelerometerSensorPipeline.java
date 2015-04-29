@@ -27,7 +27,7 @@ import pt.ulisboa.tecnico.cycleourcity.scout.storage.ScoutStorageManager;
  *
  *
  */
-public class AccelerometerPipeline implements SensorProcessingPipeline {
+public class AccelerometerSensorPipeline implements SensorProcessingPipeline {
 
     private static final String TAG = "[MOTION]";
     private static final String LOG_TAG = "AccelerometerPipeline";
@@ -51,7 +51,7 @@ public class AccelerometerPipeline implements SensorProcessingPipeline {
     //Logging
     private ScoutLogger logger = ScoutLogger.getInstance();
 
-    public AccelerometerPipeline(){
+    public AccelerometerSensorPipeline(){
 
         //Queues initialization
         gravitySamples = new LinkedList<>();
