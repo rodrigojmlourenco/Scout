@@ -67,35 +67,35 @@ public class SensingUtils {
      * Location Specific Fields */
     public static interface LocationKeys {
         public final static String
-                //Main Keys
-                PROVIDER                = "mProvider",
-                ACCURACY                = "mAccuracy",
-                LATITUDE                = "mLatitude",
-                LONGITUDE               = "mLongitude",
-                ELAPSED_TIME_NANOS      = "mElapsedRealtimeNanos",
-                TIMESTAMP               = "timestamp",
-                TIME                    = "mTime",
+            //Main Keys
+            PROVIDER                = "mProvider",
+            ACCURACY                = "mAccuracy",
+            LATITUDE                = "mLatitude",
+            LONGITUDE               = "mLongitude",
+            ELAPSED_TIME_NANOS      = "mElapsedRealtimeNanos",
+            TIMESTAMP               = "timestamp",
+            TIME                    = "mTime",
 
-        //Only GPS
-        BEARING                 = "mBearing",
-                ALTITUDE                = "mAltitude",
-                SPEED                   = "mSpeed",
-                SATTELITES              = "satellites",
+            //Only GPS
+            BEARING                 = "mBearing",
+            ALTITUDE                = "mAltitude",
+            SPEED                   = "mSpeed",
+            SATTELITES              = "satellites",
 
-        //Only Network
-        TRAVEL_STATE            = "travelState",
+            //Only Network
+            TRAVEL_STATE            = "travelState",
 
-        //Pressure Sensor
-        PRESSURE                = "pressure",
-                BAROMETRIC_ALTITUDE     = "pAltitude",
+            //Pressure Sensor
+            PRESSURE                = "pressure",
+            BAROMETRIC_ALTITUDE     = "pAltitude",
 
-        //Scout-specific Keys
-        ELAPSED_TIME= "elapsedTime",
-                SLOPE       = "mSlope",
-                SAMPLES      = "numSamples",
+            //Scout-specific Keys
+            ELAPSED_TIME= "elapsedTime",
+            SLOPE       = "mSlope",
+            SAMPLES      = "numSamples",
 
-        GPS_PROVIDER="gps",
-                NETWORK_PROVIDER="network";
+            GPS_PROVIDER="gps",
+            NETWORK_PROVIDER="network";
     }
 
     public static class LocationSampleAccessor{

@@ -70,7 +70,7 @@ public class ScoutPipeline extends BasicPipeline {
         JsonObject  jsonData = data.getAsJsonObject(),
                     jsonConfig = probeConfig.getAsJsonObject();
 
-        int sensorType = 0;
+        int sensorType;
 
         try {
             sensorType = SensingUtils.getSensorType(jsonConfig);
@@ -84,8 +84,6 @@ public class ScoutPipeline extends BasicPipeline {
 
     @Override
     public void onDataCompleted(IJsonObject probeConfig, JsonElement checkpoint) {
-        //super.onDataCompleted(probeConfig, checkpoint);
-
         if(probeConfig!=null) Log.v(LOG_TAG, "[CONFIG]: "+probeConfig.toString());
     }
 
@@ -100,43 +98,8 @@ public class ScoutPipeline extends BasicPipeline {
         this.samplingTag = samplingTag;
     }
 
-
-    public void testOrientation(IJsonObject data){
-
-        float[] rotationMatrix = new float[9];
-        float[] rotationVector = new float[4];
-
-        rotationVector[0] = data.get("xSinThetaOver2").getAsFloat();
-        rotationVector[1] = data.get("ySinThetaOver2").getAsFloat();
-        rotationVector[2] = data.get("zSinThetaOver2").getAsFloat();
-        rotationVector[3] = data.get("cosThetaOver2").getAsFloat();
-
-        SensorManager.getRotationMatrixFromVector(rotationMatrix, rotationVector);
-
-        int worldAxisX = SensorManager.AXIS_X;
-        int worldAxisY = SensorManager.AXIS_Y;
-        int worldAxisZ = SensorManager.AXIS_Z;
-        int worldminusX= SensorManager.AXIS_MINUS_X;
-
-        float[] adjustedRotationMatrix = new float[9];
-
-        SensorManager.remapCoordinateSystem(rotationMatrix, worldAxisY, worldminusX, adjustedRotationMatrix);
-
-        float[] orientation = new float[3];
-        SensorManager.getOrientation(adjustedRotationMatrix, orientation);
-        float pitch = orientation[1] * -57;
-        float roll = orientation[2] * -57;
-
-        Log.d("ORIENTATION", "Pitch="+pitch+" Roll="+roll);
-
-
-
-    }
-
     public void setDisplay(Display display){
         this.display = display;
-
-
     }
 
 }

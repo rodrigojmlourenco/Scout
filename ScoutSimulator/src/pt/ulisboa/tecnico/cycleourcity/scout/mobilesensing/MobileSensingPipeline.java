@@ -40,7 +40,7 @@ public class MobileSensingPipeline {
      * Specifies the rate at which the MobileSensingPipeline sensing session should run,
      * that is, every WINDOW_SIZE seconds.
      */
-    public final static int WINDOW_SIZE = 1;//seconds
+    public final static int WINDOW_SIZE = 5;//seconds
     private final static String LOG_TAG = "MobileSensingPipeline";
 
     //Mobile Sensing Singleton
@@ -49,7 +49,6 @@ public class MobileSensingPipeline {
     //Sensor Specific Pipelines
     private final AccelerometerSensorPipeline accelerometerPipeline;
     private final LocationPipeline locationPipeline;
-    //private final PressureSensorPipeline pressurePipeline;
 
     //Sensing Data Queues
     private Queue<JsonObject> sensorSampleQueue = null;
@@ -68,7 +67,6 @@ public class MobileSensingPipeline {
         //Sensor Pre-processing Pipelines
         this.accelerometerPipeline = new AccelerometerSensorPipeline();
         this.locationPipeline = new LocationPipeline();
-        //this.pressurePipeline = new PressureSensorPipeline();
 
         //Sensing Data Queues
         this.sensorSampleQueue = new LinkedList<>();
@@ -92,7 +90,7 @@ public class MobileSensingPipeline {
     public void startSensingSession() {
         try {
 
-            storageManager.clearStoredData();
+            //storageManager.clearStoredData(); TODO: refactorizar o StorageManager
 
             dispatcherSchedule = new Timer(true);
             dispatcher = new SampleDispatcherTask();
@@ -156,7 +154,7 @@ public class MobileSensingPipeline {
 
         storage.archiveGPXTrack(tag);
         //TODO: check if there is information to store;
-        storage.archive(tag);
+        //storage.archive(tag);
 
         //Clear database contents
         storage.clearStoredData();
@@ -192,7 +190,7 @@ public class MobileSensingPipeline {
 
             //DISPATCH PHASE
             //Dispatch sensor samples for each specific sensor pipeline
-            logger.log(ScoutLogger.VERBOSE, LOG_TAG, "Dispatching all " + sampleClone.size() + " samples...");
+            logger.log(ScoutLogger.ERR, LOG_TAG, "Dispatching all " + sampleClone.size() + " samples...");
             do {
                 JsonObject sample = (JsonObject) sampleClone.remove();
 
@@ -217,6 +215,7 @@ public class MobileSensingPipeline {
                 }
             } while (sampleClone.peek() != null);
 
+            
             //PRE-PROCESSING PHASE
             new Thread(locationPipeline).start();
             //new Thread(accelerometerPipeline).start();

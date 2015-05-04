@@ -1,9 +1,5 @@
 package pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.location;
 
-import com.google.gson.JsonObject;
-import com.ideaimpl.patterns.pipeline.PipelineContext;
-import com.ideaimpl.patterns.pipeline.Stage;
-
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
@@ -20,6 +16,10 @@ import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.Featu
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.SensorProcessingPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.stages.FinalizeStage;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.stages.MergeStage;
+
+import com.google.gson.JsonObject;
+import com.ideaimpl.patterns.pipeline.PipelineContext;
+import com.ideaimpl.patterns.pipeline.Stage;
 
 /**
  * @author rodrigo.jm.lourenco
@@ -71,8 +71,8 @@ public class PressureSensorPipeline implements SensorProcessingPipeline, Feature
     private Queue<JsonObject> extractedFeaturesQueue;
 
     static {
-        //PRESSURE_PIPELINE.addStage(new MergeStage(new PressureMergeStrategy()));
-        //PRESSURE_PIPELINE.addStage(new FeatureExtractionStage());
+        PRESSURE_PIPELINE.addStage(new MergeStage(new PressureMergeStrategy()));
+        PRESSURE_PIPELINE.addStage(new FeatureExtractionStage());
         PRESSURE_PIPELINE.addFinalStage(new FinalizeStage());
     }
 

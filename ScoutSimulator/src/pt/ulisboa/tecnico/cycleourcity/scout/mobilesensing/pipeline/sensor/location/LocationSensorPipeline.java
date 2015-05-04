@@ -15,6 +15,7 @@ import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.SensorPipeli
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.FeatureExtractor;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.SensorProcessingPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.stages.FinalizeStage;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.stages.HeuristicsAdmissionControlStage;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.stages.MergeStage;
 
 import com.google.gson.JsonObject;
@@ -47,9 +48,9 @@ public class LocationSensorPipeline implements SensorProcessingPipeline, Feature
 
     static {
         //Pre-processing pipeline stages
-        //LOCATION_PIPELINE.addStage(new TrimStage());
-        //LOCATION_PIPELINE.addStage(new MergeStage(new LocationSensorMergeStrategy()));
-        //LOCATION_PIPELINE.addStage(new HeuristicsAdmissionControlStage());
+        LOCATION_PIPELINE.addStage(new TrimStage());
+        LOCATION_PIPELINE.addStage(new MergeStage(new LocationSensorMergeStrategy()));
+        LOCATION_PIPELINE.addStage(new HeuristicsAdmissionControlStage());
         LOCATION_PIPELINE.addFinalStage(new FinalizeStage());
     }
 
