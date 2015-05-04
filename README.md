@@ -6,9 +6,15 @@ CycleOurCity goes Mobile - Scout
 
 ----------
 ##TODO
-[ ] **ScoutSimulator** Implementar simulador da aplicação Scout. Esta irá consumir dados armazenados em ficheiros `.db`, sobre os quais irá aplicar os pipelines já desenvolvidos para aplicação. Este simulador servirá de base ao servidor.
-
-	[ ] Fazer o *port* do código do package mobilesensing para Java nativo 
+- [ ] Migrar package `MobileSensing` para Java nativo
+   - [ ] Criar simulador, que usando as funcionalidades de `MobileSensing`, replica o funcionamento da aplicação
+   - [ ] Testar simulador
+- [ ] Implementar arquitectura cliente-servidor
+   - [ ] Criar web-service para receber as amostras sensoriais
+   - [ ] Implementar componente na aplicação Scout, responsável pelo envio das amostras
+   - [ ] Lançar web-service
+- [ ] Implementar o componente `AdaptiveOffloadinManager`
+   - [ ] Estudar como realizar a monitorização dos recursos do dispositivo 
 
 ----------
 
