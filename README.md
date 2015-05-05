@@ -6,13 +6,15 @@ CycleOurCity goes Mobile - Scout
 
 ----------
 ##TODO
-- [ ] Migrar package `MobileSensing` para Java nativo
-   - [ ] Criar simulador, que usando as funcionalidades de `MobileSensing`, replica o funcionamento da aplicação
-   - [ ] Testar simulador
-- [ ] Implementar arquitectura cliente-servidor
-   - [ ] Criar web-service para receber as amostras sensoriais
+- [x] Migrar package `MobileSensing` para Java nativo
+   - [x] Criar simulador, que usando as funcionalidades de `MobileSensing`, replica o funcionamento da aplicação
+   - [x] Testar simulador
+   - [ ] Melhorar a lib `MobileSensing` ao nível do *adaptive offloading*.
+- [x] Implementar arquitectura cliente-servidor
+   - [x] Criar web-service para receber as amostras sensoriais
    - [ ] Implementar componente na aplicação Scout, responsável pelo envio das amostras
-   - [ ] Lançar web-service
+   - [x] Lançar web-service **LANÇADO NO CLOUD SERVICE HEROKU**
+   - [ ] Modificar o web-service de forma a que este lide com objectos JSON (actualmente este está a lidar apenas com Strings)
 - [ ] Implementar o componente `AdaptiveOffloadinManager`
    - [ ] Estudar como realizar a monitorização dos recursos do dispositivo 
 
