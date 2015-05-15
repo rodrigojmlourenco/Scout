@@ -12,6 +12,8 @@
          "name":"default",
          "version":1,
          "data":[
+            "edu.mit.media.funf.probe.builtin.BatteryProbe"
+            <!--
             {
                 "@type":"edu.mit.media.funf.probe.builtin.LocationProbe",
                 "@schedule": {"interval":1, "duration":0, "strict":true}
@@ -21,6 +23,7 @@
                 "@type":"edu.mit.media.funf.probe.builtin.PressureSensorProbe",
                 "@schedule": {"interval":1, "duration":0, "strict":true}
             }
+            -->
             <!--,
             {
                 "@type":"edu.mit.media.funf.probe.builtin.AccelerometerSensorProbe",

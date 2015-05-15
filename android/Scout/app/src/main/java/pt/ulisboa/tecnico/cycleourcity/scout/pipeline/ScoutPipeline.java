@@ -67,8 +67,12 @@ public class ScoutPipeline extends BasicPipeline {
     @Override
     public void onDataReceived(IJsonObject probeConfig, IJsonObject data) {
 
+
+        Log.d("BATTERY", String.valueOf(data));
+        /*
         JsonObject  jsonData = data.getAsJsonObject(),
                     jsonConfig = probeConfig.getAsJsonObject();
+
 
         int sensorType;
 
@@ -80,6 +84,7 @@ public class ScoutPipeline extends BasicPipeline {
         } catch (MobileSensingException e) {
             e.printStackTrace();
         }
+        */
     }
 
     @Override
