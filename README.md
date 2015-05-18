@@ -1,3 +1,14 @@
+# Importante
+
+Android API 5, da qual faz parte o projecto Volta, contempla um conjunto de novas ferramentas e componentes para optimizar os consumos energéticos das aplicações. Uma dessas classes é o `JobSchedueler`:
+	JobScheduler API that lets you optimize battery life by defining jobs for the system to run asynchronously at a later 	time or under specified conditions (such as when the device is charging). Job scheduling is useful in such situations as:
+
+	The app has non-user-facing work that you can defer.
+	The app has work you'd prefer to do when the unit is plugged in.
+	The app has a task that requires network access or a Wi-Fi connection.
+	The app has a number of tasks that you want to run as a batch on a regular schedule.
+
+
 # Scout
 CycleOurCity goes Mobile - Scout
 
