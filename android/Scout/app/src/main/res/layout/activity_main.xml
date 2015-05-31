@@ -208,6 +208,38 @@
             androidPlot.domainLabel="Time"
             androidPlot.rangeLabel="Altitude"/>
 
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Energy"
+                android:id="@+id/eProfile"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentStart="true" />
+
+            <Button
+                android:layout_width="74dp"
+                android:layout_height="wrap_content"
+                android:text="CPU"
+                android:id="@+id/cProfile" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Traffic"
+                android:id="@+id/tProfile" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Network"
+                android:id="@+id/nProfiler" />
+        </LinearLayout>
+
 
     </LinearLayout>
 

@@ -13,6 +13,8 @@
     <!-- Wifi probe -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
 
     <!-- Gravity Sensor Probe -->
     <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true"/>
@@ -37,7 +39,7 @@
         </activity>
 
         <service android:name="edu.mit.media.funf.FunfManager">
-            <meta-data android:name="default" android:value="@string/scout_pipeline"/>
+            <me-data android:name="default" android:value="@string/scout_pipeline"/>
         </service>
 
         <receiver android:name="edu.mit.media.funf.Launcher" android:enabled="true">

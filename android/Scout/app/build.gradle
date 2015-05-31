@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId "pt.ulisboa.tecnico.cycleourcity.scout"
-        minSdkVersion 9
+        minSdkVersion 21
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"
@@ -35,4 +35,5 @@ dependencies {
     compile files('libs/gpxparser-20130603.jar')
     compile files('libs/log4j-1.2.17.jar')
     compile files('libs/commons-collections4-4.0.jar')
+    compile files('libs/scout-sensing-analytics-0.0.1-BETA.jar')
 }

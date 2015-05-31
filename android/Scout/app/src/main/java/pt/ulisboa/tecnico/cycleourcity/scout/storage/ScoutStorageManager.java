@@ -10,6 +10,7 @@ import com.google.gson.JsonObject;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 import edu.mit.media.funf.storage.NameValueDatabaseHelper;
 import pt.ulisboa.tecnico.cycleourcity.scout.ScoutApplication;
@@ -90,6 +91,11 @@ public class ScoutStorageManager implements StorageManager{
         empty = false;
 
 
+    }
+
+    @Override
+    public List<JsonObject> fetchStoredSamples() {
+        return null;
     }
 
     @Override

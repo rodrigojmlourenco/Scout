@@ -1,13 +1,13 @@
 package pt.ulisboa.tecnico.cycleourcity.scout;
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
-import android.graphics.DashPathEffect;
-import android.graphics.Paint;
 import android.location.Address;
 import android.location.Geocoder;
+import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -21,21 +21,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.androidplot.Plot;
-import com.androidplot.util.PixelUtils;
 import com.androidplot.xy.BoundaryMode;
 import com.androidplot.xy.LineAndPointFormatter;
 import com.androidplot.xy.SimpleXYSeries;
 import com.androidplot.xy.XYPlot;
-import com.androidplot.xy.XYSeries;
-import com.androidplot.xy.XYStepMode;
 
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,8 +37,10 @@ import edu.mit.media.funf.pipeline.BasicPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.config.ScoutConfigManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.config.exceptions.NotInitializedException;
 import pt.ulisboa.tecnico.cycleourcity.scout.logging.ScoutLogger;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.MobileSensing;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.state.ScoutState;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.state.data.Location;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.EnergyProfiler;
 import pt.ulisboa.tecnico.cycleourcity.scout.pipeline.ScoutPipeline;
 
 public class MainActivity extends ActionBarActivity {
@@ -54,7 +49,7 @@ public class MainActivity extends ActionBarActivity {
 
 
     //UI
-    private Button startSession, stopSession, saveSession;
+    private Button startSession, stopSession, saveSession, eProfile, cProfile, tProfile;
     private EditText tagText;
 
     private TextView
@@ -116,6 +111,7 @@ public class MainActivity extends ActionBarActivity {
                         if(pipeline.isEnabled()) {
                             startSession.setEnabled(false);
                             stopSession.setEnabled(true);
+                            pipeline.onRun(ScoutPipeline.ACTION_PROFILE, null);
                             startRepeatingTask();
                         }else
                             Toast.makeText(MainActivity.this, "Unable to start sensing pipeline.", Toast.LENGTH_SHORT).show();
@@ -139,6 +135,7 @@ public class MainActivity extends ActionBarActivity {
                             startSession.setEnabled(true);
                             stopSession.setEnabled(false);
                             stopRepeatingTask();
+                            pipeline.onRun(ScoutPipeline.ACTION_PROFILE, null);
                         }else
                             Toast.makeText(MainActivity.this, "Unable to stop sensing pipeline.", Toast.LENGTH_SHORT).show();
 
@@ -159,6 +156,7 @@ public class MainActivity extends ActionBarActivity {
             funfManager = null;
         }
     };
+    private Button nProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -223,6 +221,48 @@ public class MainActivity extends ActionBarActivity {
         elevationPlot.addSeries(pressureElevationSeries, new LineAndPointFormatter(Color.YELLOW, Color.TRANSPARENT, Color.TRANSPARENT, null));
 
 
+        boolean eIsProfiling = false;
+        final EnergyProfiler eProf = new EnergyProfiler(
+                (BatteryManager) getSystemService(Context.BATTERY_SERVICE),
+                getSharedPreferences(EnergyProfiler.PREFS_NAME,Context.MODE_PRIVATE));
+        eProfile = (Button) findViewById(R.id.eProfile);
+        eProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            if (!eProf.isProfiling())
+                eProf.startProfiling();
+            else eProf.stopProfiling();
+
+
+
+            }
+        });
+
+        cProfile = (Button) findViewById(R.id.cProfile);
+        cProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+
+            }
+        });
+
+        tProfile = (Button) findViewById(R.id.tProfile);
+        tProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        nProfile = (Button) findViewById(R.id.nProfiler);
+        nProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+        });
 
 
 
