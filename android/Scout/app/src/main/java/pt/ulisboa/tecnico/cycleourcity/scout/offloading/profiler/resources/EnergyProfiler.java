@@ -159,8 +159,12 @@ public class EnergyProfiler extends ResourceProfiler{
      */
     public int getCurrentAverage() throws EnergyPropertyNotSupportedException {
 
+
         if(!settings.getBoolean(EnergyProfilerSettings.SUPPORTS_CURRENT_AVG, false))
             throw new EnergyPropertyNotSupportedException("Current Average");
+
+        if(instantCurrents.size() == 0)
+            return 0;
 
         int total = 0;
         if(currentAverage==0){

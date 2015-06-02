@@ -37,10 +37,13 @@ import edu.mit.media.funf.pipeline.BasicPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.config.ScoutConfigManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.config.exceptions.NotInitializedException;
 import pt.ulisboa.tecnico.cycleourcity.scout.logging.ScoutLogger;
-import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.MobileSensing;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.state.ScoutState;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.state.data.Location;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ScoutProfiler;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.CPUStatsProfiler;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.EnergyProfiler;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.NetworkProfiler;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.TrafficStatsProfiler;
 import pt.ulisboa.tecnico.cycleourcity.scout.pipeline.ScoutPipeline;
 
 public class MainActivity extends ActionBarActivity {
@@ -55,9 +58,6 @@ public class MainActivity extends ActionBarActivity {
     private TextView
             locationView,
             speedView;
-            //slopeView,
-            //altitudeView,
-            //travelStateView;
 
     //Plotting
     private XYPlot elevationPlot;
@@ -82,8 +82,7 @@ public class MainActivity extends ActionBarActivity {
 
             funfManager = ((FunfManager.LocalBinder)service).getManager();
             pipeline = (ScoutPipeline) funfManager.getRegisteredPipeline(PIPELINE_NAME);
-
-            ((ScoutPipeline)pipeline).setDisplay(getWindowManager().getDefaultDisplay());
+            pipeline.setDisplay(getWindowManager().getDefaultDisplay());
 
             //Initialize Configuration Manager
             // & reload default configuration
@@ -230,9 +229,13 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
-            if (!eProf.isProfiling())
-                eProf.startProfiling();
-            else eProf.stopProfiling();
+                EnergyProfiler.IdleEnergyProfiler eProf = new EnergyProfiler.IdleEnergyProfiler(
+                        (BatteryManager) getApplicationContext().getSystemService(Context.BATTERY_SERVICE),
+                        getApplicationContext().getSharedPreferences(EnergyProfiler.PREFS_NAME, Context.MODE_PRIVATE)
+                );
+
+                eProf.profile();
+                Toast.makeText(getApplicationContext(), eProf.dumpInfo(), Toast.LENGTH_LONG).show();
 
 
 
@@ -243,7 +246,9 @@ public class MainActivity extends ActionBarActivity {
         cProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                CPUStatsProfiler cProf = new CPUStatsProfiler(getApplicationInfo().uid);
+                cProf.profile();
+                Toast.makeText(getApplicationContext(), cProf.dumpInfo(), Toast.LENGTH_LONG).show();
 
 
             }
@@ -253,7 +258,9 @@ public class MainActivity extends ActionBarActivity {
         tProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                TrafficStatsProfiler tProf = new TrafficStatsProfiler(getApplicationContext(), getApplicationInfo().uid);
+                tProf.profile();
+                Toast.makeText(getApplicationContext(), tProf.dumpInfo(), Toast.LENGTH_LONG).show();
             }
         });
 
@@ -261,8 +268,15 @@ public class MainActivity extends ActionBarActivity {
         nProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                NetworkProfiler nProf = new NetworkProfiler(getApplicationContext());
+                nProf.profile();
+                Toast.makeText(getApplicationContext(), nProf.dumpInfo(), Toast.LENGTH_LONG).show();
             }
         });
+
+        //UI profiling
+        iddleEnergyTextView = (TextView) findViewById(R.id.iddleEnergy);
+        sensingEnergyTextView = (TextView) findViewById(R.id.sensingEnergy);
 
 
 
@@ -380,6 +394,8 @@ public class MainActivity extends ActionBarActivity {
                 elevationPlot.redraw();
             }
 
+            double MILLIS2UNIT = (double)1/1000000;
+
             mHandler.postDelayed(this, mInterval);
         }
     };
@@ -391,4 +407,13 @@ public class MainActivity extends ActionBarActivity {
     void stopRepeatingTask() {
         mHandler.removeCallbacks(uiUpdate);
     }
+
+    public static interface EnergyProfileUpdateCallback{
+        public void updateEnergyConsumption(int capacity, long iddleEnergy, long sensingEnergy);
+    }
+
+    /*
+     * Profiling in the UI
+     */
+    private TextView iddleEnergyTextView, sensingEnergyTextView;
 }

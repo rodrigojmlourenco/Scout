@@ -12,6 +12,7 @@ import org.apache.commons.collections4.queue.CircularFifoQueue;
 import java.util.UUID;
 
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.SensorPipelineContext;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.PipelinePartitionEngine;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.StageProfiler;
 
 /**
@@ -81,7 +82,7 @@ public class ProfilingStageWrapper implements Stage {
         }
     }
 
-    public long averageRunningTime(){
+    public long getAverageRunningTime(){
 
         long total = 0;
 
@@ -91,9 +92,20 @@ public class ProfilingStageWrapper implements Stage {
         return total / executionTimes.size();
     }
 
+    public long getAverageGeneratedDataSize(){
+        long total = 0;
+
+        for(DataProfileInfo info : dataSizes)
+            total += info.getGeneratedDataSize();
+
+        return total;
+    }
+
     private long sampleMemSize(String sample){
         return sample.length()*2;
     }
+
+
 
     public static class DataProfileInfo {
 
@@ -112,5 +124,7 @@ public class ProfilingStageWrapper implements Stage {
         public float getCompressionRate(){
             return  ((float)finalDataSize)/initalDataSize;
         }
+
+        public long getGeneratedDataSize(){ return this.finalDataSize; }
     }
 }
