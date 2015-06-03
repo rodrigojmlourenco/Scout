@@ -89,6 +89,7 @@ public class ScoutPipeline extends BasicPipeline {
 
         //Scout Profiling
         offloadingManager = AdaptiveOffloadingManager.getInstance(ScoutApplication.getContext());
+        offloadingManager.setDecisionEngineApathy((float) .125);
 
         //TODO: enable
         //offloadingManager.validatePipeline(locationConfig);
@@ -103,6 +104,7 @@ public class ScoutPipeline extends BasicPipeline {
         this.setName(NAME);
 
         mPipeline.startSensingSession();
+
         this.reloadDbHelper(ScoutApplication.getContext());
     }
 

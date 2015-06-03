@@ -1,5 +1,8 @@
 package pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.BatteryManager;
 import android.util.Log;
@@ -19,24 +22,32 @@ import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.exceptions.Ener
  */
 public class EnergyProfiler extends ResourceProfiler{
 
+    //TESTING
+    public static boolean ACCOUNT_FOR_CHARGING = true;
+    public static final long AVERAGE_CHARGING_CURRENT = -200000;//mA
+
+
     public String LOG_TAG = "EnergyProfiler";
 
     private final BatteryManager batteryStats;
 
+    //Energy Profiler Properties
     private int capacity;
     private int currentInstant;
     private int currentAverage;
     private int chargeCounter;
-
     private long energyCounter;
+    private boolean isCharging, isFull;
 
-    private boolean isCharging;
 
     private List<Integer> supportedProperties;
     private final SharedPreferences settings;
 
+    //Charging Status
+    private IntentFilter chargingFilter;
+    private Intent batteryStatus;
 
-    private CircularFifoQueue<Integer> instantCurrents = new CircularFifoQueue(25);
+    private CircularFifoQueue<Integer> instantCurrents = new CircularFifoQueue(60);
 
     public static interface EnergyProfilerSettings {
         public static String
@@ -50,10 +61,13 @@ public class EnergyProfiler extends ResourceProfiler{
 
     public final static String PREFS_NAME = "EnergySettings";
 
-    public EnergyProfiler(BatteryManager batteryStats, SharedPreferences settings){
+    public EnergyProfiler(Context applicationContext, SharedPreferences settings){
         this.settings = settings;
-        this.batteryStats = batteryStats;
+        this.batteryStats = (BatteryManager) applicationContext.getSystemService(Context.BATTERY_SERVICE);
         supportedProperties = new ArrayList<>();
+
+        chargingFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        batteryStatus  = applicationContext.registerReceiver(null, chargingFilter);
 
         //Checks if the energy profiler has been executed before
         if(!settings.getBoolean(EnergyProfilerSettings.CONFIGURED, false)) {
@@ -91,16 +105,27 @@ public class EnergyProfiler extends ResourceProfiler{
     @Override
     public void profile() {
 
+        int status  = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+        isFull      = (status == BatteryManager.BATTERY_STATUS_FULL);
+        isCharging  = !isFull && status == BatteryManager.BATTERY_STATUS_CHARGING;
+
+
         capacity = batteryStats.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
 
         chargeCounter = batteryStats.getIntProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER);
         energyCounter = batteryStats.getLongProperty(BatteryManager.BATTERY_PROPERTY_ENERGY_COUNTER);
 
         currentAverage = batteryStats.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_AVERAGE);
+
         currentInstant = batteryStats.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW);
+
+        //TESTING
+        if(ACCOUNT_FOR_CHARGING && isCharging) currentInstant -= AVERAGE_CHARGING_CURRENT;
+
         instantCurrents.add(currentInstant);
 
-        isCharging = BatteryManager.BATTERY_STATUS_CHARGING == 1 ? true : false;
+
+
 
     }
 
@@ -216,19 +241,26 @@ public class EnergyProfiler extends ResourceProfiler{
     }
 
     /**
-     * Battery remaining energy in nanowatt-hours, as a long integer.
-     * @return remaining battery in nanowatts-hour
+     * Checks if the device is charging
+     * @return True if is charging, false otherwise.
      */
     public boolean isCharging() {
         return isCharging;
     }
 
+    /**
+     * Checks if the device is fully charged.
+     * @return True if fully charged, false otherwise.
+     */
+    public boolean isFull() { return isFull; }
+
+
     public static class IdleEnergyProfiler extends EnergyProfiler {
 
         public final String LOG_TAG = this.getClass().getSimpleName();
 
-        public IdleEnergyProfiler(BatteryManager batteryStats, SharedPreferences settings) {
-            super(batteryStats, settings);
+        public IdleEnergyProfiler(Context applicationContext, SharedPreferences settings) {
+            super(applicationContext, settings);
         }
 
         @Override
@@ -241,8 +273,8 @@ public class EnergyProfiler extends ResourceProfiler{
 
         public final String LOG_TAG = this.getClass().getSimpleName();
 
-        public SensingEnergyProfiler(BatteryManager batteryStats, SharedPreferences settings) {
-            super(batteryStats, settings);
+        public SensingEnergyProfiler(Context applicationContext, SharedPreferences settings) {
+            super(applicationContext, settings);
         }
 
         @Override

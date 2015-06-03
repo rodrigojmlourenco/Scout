@@ -39,6 +39,7 @@ import pt.ulisboa.tecnico.cycleourcity.scout.config.exceptions.NotInitializedExc
 import pt.ulisboa.tecnico.cycleourcity.scout.logging.ScoutLogger;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.state.ScoutState;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.state.data.Location;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.AdaptiveOffloadingManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ScoutProfiler;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.CPUStatsProfiler;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.EnergyProfiler;
@@ -75,6 +76,10 @@ public class MainActivity extends ActionBarActivity {
 
     //Logging
     private ScoutLogger logger = ScoutLogger.getInstance();
+
+    //Adaptive Offloading
+    private AdaptiveOffloadingManager offloadingManager;
+
 
     private ServiceConnection funfManagerConn = new ServiceConnection() {
         @Override
@@ -220,24 +225,20 @@ public class MainActivity extends ActionBarActivity {
         elevationPlot.addSeries(pressureElevationSeries, new LineAndPointFormatter(Color.YELLOW, Color.TRANSPARENT, Color.TRANSPARENT, null));
 
 
+        //Profiling
+        offloadingManager = AdaptiveOffloadingManager.getInstance(getApplicationContext());
+
         boolean eIsProfiling = false;
         final EnergyProfiler eProf = new EnergyProfiler(
-                (BatteryManager) getSystemService(Context.BATTERY_SERVICE),
+                getApplicationContext(),
                 getSharedPreferences(EnergyProfiler.PREFS_NAME,Context.MODE_PRIVATE));
         eProfile = (Button) findViewById(R.id.eProfile);
         eProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                EnergyProfiler.IdleEnergyProfiler eProf = new EnergyProfiler.IdleEnergyProfiler(
-                        (BatteryManager) getApplicationContext().getSystemService(Context.BATTERY_SERVICE),
-                        getApplicationContext().getSharedPreferences(EnergyProfiler.PREFS_NAME, Context.MODE_PRIVATE)
-                );
-
                 eProf.profile();
                 Toast.makeText(getApplicationContext(), eProf.dumpInfo(), Toast.LENGTH_LONG).show();
-
-
 
             }
         });
@@ -395,6 +396,8 @@ public class MainActivity extends ActionBarActivity {
             }
 
             double MILLIS2UNIT = (double)1/1000000;
+            iddleEnergyTextView.setText("Remaining Battery: "+offloadingManager.getRemainingBattery()+"%");
+            sensingEnergyTextView.setText("Average Energy Consumption: " +offloadingManager.getAverageCurrent()+ "mA\n");
 
             mHandler.postDelayed(this, mInterval);
         }

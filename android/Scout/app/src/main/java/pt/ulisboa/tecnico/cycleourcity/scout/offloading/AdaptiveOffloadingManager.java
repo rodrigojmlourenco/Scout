@@ -56,6 +56,7 @@ public class AdaptiveOffloadingManager {
         return applicationProfiler.isProfiling();
     }
 
+
     public void startProfiling(){
 
         try {
@@ -67,10 +68,22 @@ public class AdaptiveOffloadingManager {
         }
     }
 
+
     public void stopProfiling(){
         applicationProfiler.stopProfiling();
         decisionEngine.stopMonitoring();
     }
+
+
+    public int getRemainingBattery(){
+        return applicationProfiler.getBatteryCapacity();
+    }
+
+
+    public long getAverageCurrent(){
+        return applicationProfiler.getSensingAverageCurrent();
+    }
+
 
     /*
      ************************************************************************
@@ -99,4 +112,13 @@ public class AdaptiveOffloadingManager {
             //partitionEngine.offloadMostExpensiveStage();
         }
     };
+
+    /**
+     * Redefines the apathy level. The bigger the apathy, the lazier the OffloadingDecisionEngine
+     * becomes, by postponing offloading.
+     * @param apathy
+     */
+    public void setDecisionEngineApathy(float apathy){
+        this.decisionEngine.setApathy(apathy);
+    }
 }

@@ -5,6 +5,7 @@ import android.os.BatteryManager;
 import android.util.Log;
 
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -30,7 +31,7 @@ import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.Energ
 public class ScoutProfiler {
 
     //TODO: remover antes da release
-    public static boolean VERBOSE = false;
+    public static boolean VERBOSE = true;
     private final String LOG_TAG = AdaptiveOffloadingManager.LOG_TAG;
 
     //Sync Locks
@@ -42,10 +43,12 @@ public class ScoutProfiler {
     //Profiler State
     private boolean isProfiling = false;
 
+
     //Execution Rate
-    public static final int DEFAULT_PROFILING_RATE = 45;//ms
-    private int profilingRate = DEFAULT_PROFILING_RATE; //50ms
+    public static final int DEFAULT_PROFILING_RATE = 1*1000;//ms
+    private int profilingRate = DEFAULT_PROFILING_RATE;
     private ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+    private Future executorHandler;
 
     //Singleton
     private static ScoutProfiler APP_PROFILER = null;
@@ -63,7 +66,7 @@ public class ScoutProfiler {
     private ScoutProfiler(Context context){
 
         sensingEProf = new EnergyProfiler.SensingEnergyProfiler(
-                (BatteryManager) context.getSystemService(Context.BATTERY_SERVICE),
+                context,
                 context.getSharedPreferences(EnergyProfiler.PREFS_NAME, Context.MODE_PRIVATE));
 
     }
@@ -94,16 +97,16 @@ public class ScoutProfiler {
                 isProfiling = true;
         }
 
-        executorService.scheduleWithFixedDelay(new Runnable() {
-        @Override
+        executorHandler = executorService.scheduleWithFixedDelay(new Runnable() {
+
+            @Override
             public void run() {
 
-                synchronized (lockValues) {
-                    sensingEProf.profile();
-                }
+            synchronized (lockValues) {
+                sensingEProf.profile();
+            }
 
-                if(VERBOSE)
-                    Log.d(LOG_TAG, dumpInfo());
+            if(VERBOSE) Log.d(LOG_TAG, dumpInfo());
 
             }
         }, 0, profilingRate, TimeUnit.MILLISECONDS);
@@ -113,10 +116,16 @@ public class ScoutProfiler {
 
         synchronized (lockState) {
             if(isProfiling()){
-                executorService.shutdownNow();
-                isProfiling = true;
+                //executorService.shutdownNow();
+                executorHandler.cancel(true);
+                isProfiling = false;
             }
+
         }
+    }
+
+    protected void destroy(){
+        executorService.shutdownNow();
     }
 
     public long getSensingAverageCurrent(){
@@ -140,10 +149,17 @@ public class ScoutProfiler {
         }
     }
 
+    public boolean isCharging(){
+        synchronized (lockValues) {
+            return this.sensingEProf.isCharging();
+        }
+    }
+
     private String dumpInfo(){
         return "["+getClass().getSimpleName()+"]\n"+
                 "\t[Energy Profiling]\n"+
                 "\t\tBattery Capacity "+getBatteryCapacity()+"%\n"+
-                "\t\tAverage Energy Current: "+getSensingAverageCurrent()+"mA";
+                "\t\tAverage Energy Current: "+getSensingAverageCurrent()+"mA\n"+
+                "\t\tThe device is "+(isCharging()? "" : "not")+" charging";
     }
 }

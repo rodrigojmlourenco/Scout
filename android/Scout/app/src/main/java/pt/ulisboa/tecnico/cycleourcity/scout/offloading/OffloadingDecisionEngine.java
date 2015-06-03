@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.cycleourcity.scout.offloading;
 import android.util.Log;
 
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -24,16 +25,33 @@ public class OffloadingDecisionEngine {
     private static int ATTEMPT_OFFLOAD_INTERVAL = OFFLOAD_ATTEMPT_DEFAULT_INTERVAL;
 
     private ScoutProfiler appProfiler;
+    private Future executorHandler;
     private ScheduledExecutorService engineExecutor;
     private AdaptiveOffloadingManager.OffloadingObserver observer;
 
-    private static OffloadingDecisionEngine ENGINE = null;
+    //Apathy
+    private float apathy;
+    public static final float RECOMMENDED_APATHY    = (float) .5;
+    public static final float NO_APATHY             = (float)  0;
+    public static final float HYPER_APATHY          = (float) 20;
+    public static final float REDUCED_APATHY        = (float).25;
 
+    private static OffloadingDecisionEngine ENGINE = null;
     private OffloadingDecisionEngine(final ScoutProfiler appProfiler){
 
         this.appProfiler = appProfiler;
         engineExecutor = Executors.newSingleThreadScheduledExecutor();
 
+        apathy = RECOMMENDED_APATHY;
+    }
+
+    /**
+     * Redefines the apathy level. The bigger the apathy, the lazier the OffloadingDecisionEngine
+     * becomes by postponing offloading.
+     * @param apathy
+     */
+    protected void setApathy(float apathy){
+        this.apathy = apathy;
     }
 
     public void startMonitoring(){
@@ -41,7 +59,7 @@ public class OffloadingDecisionEngine {
         if(!isMonitoring) {
             isMonitoring = true;
 
-            engineExecutor.scheduleAtFixedRate(new Runnable() {
+            executorHandler = engineExecutor.scheduleAtFixedRate(new Runnable() {
                 @Override
                 public void run() {
 
@@ -63,11 +81,15 @@ public class OffloadingDecisionEngine {
 
     public void stopMonitoring(){
         if(isMonitoring) {
-            engineExecutor.shutdownNow();
+            //engineExecutor.shutdownNow();
+            executorHandler.cancel(true);
             isMonitoring = false;
         }
     }
 
+    protected void destroy(){
+        engineExecutor.shutdownNow();
+    }
 
     protected static OffloadingDecisionEngine getInstance(ScoutProfiler appProfiler,
                                                           AdaptiveOffloadingManager.OffloadingObserver observer){
@@ -89,7 +111,7 @@ public class OffloadingDecisionEngine {
 
 
     public boolean isTimeToOffload(int capacity, float energy){
-        return isTimeToOffload(capacity, energy, 1);
+        return isTimeToOffload(capacity, energy, apathy);
     }
 
     public boolean isTimeToOffload(int capacity, float energy, float priority){
