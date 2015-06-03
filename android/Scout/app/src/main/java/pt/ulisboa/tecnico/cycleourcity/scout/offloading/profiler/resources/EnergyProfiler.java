@@ -38,6 +38,7 @@ public class EnergyProfiler extends ResourceProfiler{
     private int chargeCounter;
     private long energyCounter;
     private boolean isCharging, isFull;
+    private MockupBatteryProfiler batteryProfiler;
 
 
     private List<Integer> supportedProperties;
@@ -68,6 +69,8 @@ public class EnergyProfiler extends ResourceProfiler{
 
         chargingFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
         batteryStatus  = applicationContext.registerReceiver(null, chargingFilter);
+
+        batteryProfiler = MockupBatteryProfiler.activate(80);
 
         //Checks if the energy profiler has been executed before
         if(!settings.getBoolean(EnergyProfilerSettings.CONFIGURED, false)) {
@@ -107,10 +110,12 @@ public class EnergyProfiler extends ResourceProfiler{
 
         int status  = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
         isFull      = (status == BatteryManager.BATTERY_STATUS_FULL);
-        isCharging  = !isFull && status == BatteryManager.BATTERY_STATUS_CHARGING;
+        isCharging  = (status == BatteryManager.BATTERY_STATUS_CHARGING);
 
-
-        capacity = batteryStats.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
+        if(isCharging)
+            capacity = batteryProfiler.getCurrentBattery();
+        else
+            capacity = batteryStats.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
 
         chargeCounter = batteryStats.getIntProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER);
         energyCounter = batteryStats.getLongProperty(BatteryManager.BATTERY_PROPERTY_ENERGY_COUNTER);

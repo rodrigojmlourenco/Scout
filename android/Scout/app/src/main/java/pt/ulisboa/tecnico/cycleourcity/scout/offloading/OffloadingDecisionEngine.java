@@ -8,6 +8,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.StageProfiler;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.MockupBatteryProfiler;
 
 /**
  * Created by rodrigo.jm.lourenco on 01/06/2015.
@@ -73,6 +74,9 @@ public class OffloadingDecisionEngine {
                         observer.notifyTimeOffloadOpportunity();
                     }else
                         if(VERBOSE) Log.d(LOG_TAG, NAME_TAG+" has deemed computation offloading unnecessary.");
+
+                    if(MockupBatteryProfiler.isActive())
+                        MockupBatteryProfiler.decrementBattery();
 
                 }
             }, ATTEMPT_OFFLOAD_INTERVAL, ATTEMPT_OFFLOAD_INTERVAL, TimeUnit.MILLISECONDS);

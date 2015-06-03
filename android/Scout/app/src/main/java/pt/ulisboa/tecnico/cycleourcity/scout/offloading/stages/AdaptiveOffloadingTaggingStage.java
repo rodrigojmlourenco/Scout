@@ -43,7 +43,7 @@ public class AdaptiveOffloadingTaggingStage implements Stage {
                 missingStages.add(missingStageName);
             }
 
-            //TODO: corrigir "_config" não devia estar hardcoded
+            //TODO: corrigir "_config" nao devia estar hardcoded
             sample.add("_config", missingStages);
         }
     }
