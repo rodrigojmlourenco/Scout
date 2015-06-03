@@ -12,6 +12,8 @@ import org.apache.commons.math3.stat.descriptive.moment.Mean;
 import org.apache.log4j.helpers.CyclicBuffer;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.timedomain.StatisticalMetrics;
@@ -38,7 +40,7 @@ public class EnergyProfiler extends ResourceProfiler{
     private int chargeCounter;
     private long energyCounter;
     private boolean isCharging, isFull;
-    private MockupBatteryProfiler batteryProfiler;
+
 
 
     private List<Integer> supportedProperties;
@@ -49,6 +51,10 @@ public class EnergyProfiler extends ResourceProfiler{
     private Intent batteryStatus;
 
     private CircularFifoQueue<Integer> instantCurrents = new CircularFifoQueue(60);
+
+    //DEBUG: Device is charging
+    private MockupBatteryProfiler batteryProfiler;
+    private CircularFifoQueue<Integer> negativeCurrents = null;
 
     public static interface EnergyProfilerSettings {
         public static String
@@ -69,8 +75,6 @@ public class EnergyProfiler extends ResourceProfiler{
 
         chargingFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
         batteryStatus  = applicationContext.registerReceiver(null, chargingFilter);
-
-        batteryProfiler = MockupBatteryProfiler.activate(80);
 
         //Checks if the energy profiler has been executed before
         if(!settings.getBoolean(EnergyProfilerSettings.CONFIGURED, false)) {
@@ -101,6 +105,15 @@ public class EnergyProfiler extends ResourceProfiler{
 
             editor.commit();
         }
+
+        //DEBUG: Deal with the device behaviour when charging
+        int status  = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+        isCharging  = (status == BatteryManager.BATTERY_STATUS_CHARGING);
+
+        if(isCharging){
+            batteryProfiler = MockupBatteryProfiler.activate(80);
+            negativeCurrents = new CircularFifoQueue<>(60);
+        }
     }
 
 
@@ -125,13 +138,13 @@ public class EnergyProfiler extends ResourceProfiler{
         currentInstant = batteryStats.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW);
 
         //TESTING
-        if(ACCOUNT_FOR_CHARGING && isCharging) currentInstant -= AVERAGE_CHARGING_CURRENT;
+        if(ACCOUNT_FOR_CHARGING && isCharging){
+            if(currentInstant < 0 ) negativeCurrents.add(currentInstant);
+            currentInstant -= Collections.min(negativeCurrents);
+        }
+
 
         instantCurrents.add(currentInstant);
-
-
-
-
     }
 
     @Override

@@ -160,6 +160,7 @@ public class ScoutPipeline extends BasicPipeline {
     @Override
     public void onDestroy() {
         mPipeline.stopSensingSession();
+        offloadingManager.onDestroy();
         super.onDestroy();
         Log.e(LOG_TAG, "DESTROY!!!");
     }

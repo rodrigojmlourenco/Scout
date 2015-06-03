@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.cycleourcity.scout.offloading;
 
 import android.content.Context;
-import android.os.BatteryManager;
 import android.util.Log;
 
 import java.util.concurrent.Executors;
@@ -91,11 +90,15 @@ public class ScoutProfiler {
     protected void startProfiling(){
 
         synchronized (lockState) {
-            if(isProfiling())
+            if(isProfiling()) {
+                if(VERBOSE) Log.w(LOG_TAG, "[ScoutProfiler:startProfiling] ScoutProfiler is already running");
                 return;
-            else
+            }else
                 isProfiling = true;
         }
+
+        if(VERBOSE) Log.w(LOG_TAG,
+                "[ScoutProfiler:startProfiling] Initiated a profiling session, to run every "+profilingRate+"ms...");
 
         executorHandler = executorService.scheduleWithFixedDelay(new Runnable() {
 
@@ -117,9 +120,11 @@ public class ScoutProfiler {
         synchronized (lockState) {
             if(isProfiling()){
                 //executorService.shutdownNow();
+                if(VERBOSE) Log.w(LOG_TAG, "[ScoutProfiler:stopProfiling] Stopping ScoutProfiler");
                 executorHandler.cancel(true);
                 isProfiling = false;
-            }
+            }else
+            if(VERBOSE) Log.w(LOG_TAG, "[ScoutProfiler:stopProfiling] ScoutProfiler is already stopped");
 
         }
     }

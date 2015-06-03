@@ -34,6 +34,11 @@ public class AdaptiveOffloadingManager {
         return OFFLOADING_MANAGER;
     }
 
+    public void onDestroy(){
+        decisionEngine.destroy();
+        applicationProfiler.destroy();
+    }
+
     /*
      ************************************************************************
      * Profiling Functions                                                  *
