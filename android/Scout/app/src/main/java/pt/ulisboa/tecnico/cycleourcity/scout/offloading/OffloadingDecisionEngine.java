@@ -77,7 +77,7 @@ public class OffloadingDecisionEngine {
                         if(VERBOSE) Log.d(LOG_TAG, NAME_TAG+" has deemed it opportunistic to perform computation offloading.");
 
                         OffloadingLogger.log(NAME_TAG, "Offloading Opportunity after "+offloadingAttempts+" attempts");
-                        OffloadingLogger.log(NAME_TAG, "{ battery:"+battery+" , current:"+current+"}");
+                        OffloadingLogger.log(NAME_TAG, dumpOffloadInfo(battery, current));
                         offloadingAttempts = 0;
 
                         performedOffloads++;
@@ -85,8 +85,8 @@ public class OffloadingDecisionEngine {
                         observer.notifyTimeOffloadOpportunity();
                     }else {
                         if (VERBOSE) Log.d(LOG_TAG, NAME_TAG + " has deemed computation offloading unnecessary.");
-                        offloadingAttempts++;
                         OffloadingLogger.log(appProfiler.NAME_TAG, appProfiler.dumpInfo());
+                        offloadingAttempts++;
                     }
 
                     if(MockupBatteryProfiler.isActive())
@@ -150,4 +150,21 @@ public class OffloadingDecisionEngine {
     }
 
     public int getPerformedOffloads(){ return  performedOffloads; }
+
+    public String dumpInfo(){
+        return "{name: \""+NAME_TAG+"\","+
+                "offloads: "+getPerformedOffloads()+", "+
+                "attemptsSinceLastOffload: "+getOffloadingAttempts()+", "+
+                "timestamp: "+System.nanoTime()+"}";
+    }
+
+    public String dumpOffloadInfo(int battery, long current){
+        return "{name: \""+NAME_TAG+"\", "+
+                "offloadInfo: {"+
+                    "battery: "+battery+", "+
+                    "current: "+current+", "+
+                    "timestamp: "+System.nanoTime()+"}"+
+                "}";
+    }
+
 }

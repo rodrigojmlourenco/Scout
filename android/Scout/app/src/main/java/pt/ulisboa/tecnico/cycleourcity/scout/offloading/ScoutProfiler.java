@@ -172,6 +172,7 @@ public class ScoutProfiler {
                 "battery:"+getBatteryCapacity()+", "+
                 "current: "+getSensingAverageCurrent()+", "+
                 "isCharging: "+(isCharging()? "true" : "false")+", "+
-                "isFull: "+((isFull())? "true" : "false")+"}";
+                "isFull: "+((isFull())? "true" : "false")+
+                "timestamp: "+System.nanoTime()+"}";
     }
 }
