@@ -30,8 +30,9 @@ import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.Energ
 public class ScoutProfiler {
 
     //TODO: remover antes da release
-    public static boolean VERBOSE = true;
+    public static boolean VERBOSE = false;
     private final String LOG_TAG = AdaptiveOffloadingManager.LOG_TAG;
+    public final String NAME_TAG = this.getClass().getSimpleName();
 
     //Sync Locks
     private final Object lockState = new Object(), lockValues = new Object();
@@ -119,7 +120,6 @@ public class ScoutProfiler {
 
         synchronized (lockState) {
             if(isProfiling()){
-                //executorService.shutdownNow();
                 if(VERBOSE) Log.w(LOG_TAG, "[ScoutProfiler:stopProfiling] Stopping ScoutProfiler");
                 executorHandler.cancel(true);
                 isProfiling = false;
@@ -130,6 +130,7 @@ public class ScoutProfiler {
     }
 
     protected void destroy(){
+        if(VERBOSE) Log.w(LOG_TAG, "[ScoutProfiler:destroy] ScoutProfiler has been destroyed!");
         executorService.shutdownNow();
     }
 
@@ -160,11 +161,17 @@ public class ScoutProfiler {
         }
     }
 
-    private String dumpInfo(){
-        return "["+getClass().getSimpleName()+"]\n"+
-                "\t[Energy Profiling]\n"+
-                "\t\tBattery Capacity "+getBatteryCapacity()+"%\n"+
-                "\t\tAverage Energy Current: "+getSensingAverageCurrent()+"mA\n"+
-                "\t\tThe device is "+(isCharging()? "" : "not")+" charging";
+    public boolean isFull(){
+        synchronized (lockValues) {
+            return this.sensingEProf.isFull();
+        }
+    }
+
+    public String dumpInfo(){
+        return "{ name: \""+getClass().getSimpleName()+"\", "+
+                "battery:"+getBatteryCapacity()+", "+
+                "current: "+getSensingAverageCurrent()+", "+
+                "isCharging: "+(isCharging()? "true" : "false")+", "+
+                "isFull: "+((isFull())? "true" : "false")+"}";
     }
 }

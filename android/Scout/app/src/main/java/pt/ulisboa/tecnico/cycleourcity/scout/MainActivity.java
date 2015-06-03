@@ -317,6 +317,8 @@ public class MainActivity extends ActionBarActivity {
 
         stopRepeatingTask();
 
+        offloadingManager.onDestroy();
+
     }
 
     /**********************************************************************************************
@@ -419,4 +421,7 @@ public class MainActivity extends ActionBarActivity {
      * Profiling in the UI
      */
     private TextView iddleEnergyTextView, sensingEnergyTextView;
+
+
+
 }

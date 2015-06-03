@@ -119,6 +119,9 @@ public class ScoutPipeline extends BasicPipeline {
                 } catch (NothingToArchiveException e) {
                     e.printStackTrace();
                 }
+
+                offloadingManager.exportOffloadingLog();
+
                 break;
             case ACTION_PROFILE:
                 if(offloadingManager.isProfiling())
@@ -160,9 +163,7 @@ public class ScoutPipeline extends BasicPipeline {
     @Override
     public void onDestroy() {
         mPipeline.stopSensingSession();
-        offloadingManager.onDestroy();
         super.onDestroy();
-        Log.e(LOG_TAG, "DESTROY!!!");
     }
 
     public void setSamplingTag(String samplingTag) {

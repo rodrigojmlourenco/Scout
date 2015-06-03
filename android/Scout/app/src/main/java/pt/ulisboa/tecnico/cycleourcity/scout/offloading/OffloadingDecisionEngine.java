@@ -17,8 +17,8 @@ public class OffloadingDecisionEngine {
 
     //Debugging
     public static boolean VERBOSE = true;
-    private final String LOG_TAG = AdaptiveOffloadingManager.LOG_TAG;
-    private final String NAME_TAG = this.getClass().getSimpleName();
+    public final String LOG_TAG = AdaptiveOffloadingManager.LOG_TAG;
+    public final String NAME_TAG = this.getClass().getSimpleName();
 
     //
     private boolean isMonitoring = false;
@@ -36,6 +36,10 @@ public class OffloadingDecisionEngine {
     public static final float NO_APATHY             = (float)  0;
     public static final float HYPER_APATHY          = (float) 20;
     public static final float REDUCED_APATHY        = (float).25;
+
+    //Statistics
+    private int offloadingAttempts  = 0;
+    private int performedOffloads   = 0;
 
     private static OffloadingDecisionEngine ENGINE = null;
     private OffloadingDecisionEngine(final ScoutProfiler appProfiler){
@@ -64,16 +68,26 @@ public class OffloadingDecisionEngine {
                 @Override
                 public void run() {
 
-                    boolean offload;
-                    offload = isTimeToOffload(
-                            appProfiler.getBatteryCapacity(),
-                            appProfiler.getSensingAverageCurrent());
+                    int battery     = appProfiler.getBatteryCapacity();
+                    long current    = appProfiler.getSensingAverageCurrent();
+
+                    boolean offload = isTimeToOffload(battery,current);
 
                     if(offload){
                         if(VERBOSE) Log.d(LOG_TAG, NAME_TAG+" has deemed it opportunistic to perform computation offloading.");
+
+                        OffloadingLogger.log(NAME_TAG, "Offloading Opportunity after "+offloadingAttempts+" attempts");
+                        OffloadingLogger.log(NAME_TAG, "{ battery:"+battery+" , current:"+current+"}");
+                        offloadingAttempts = 0;
+
+                        performedOffloads++;
+
                         observer.notifyTimeOffloadOpportunity();
-                    }else
-                        if(VERBOSE) Log.d(LOG_TAG, NAME_TAG+" has deemed computation offloading unnecessary.");
+                    }else {
+                        if (VERBOSE) Log.d(LOG_TAG, NAME_TAG + " has deemed computation offloading unnecessary.");
+                        offloadingAttempts++;
+                        OffloadingLogger.log(appProfiler.NAME_TAG, appProfiler.dumpInfo());
+                    }
 
                     if(MockupBatteryProfiler.isActive())
                         MockupBatteryProfiler.decrementBattery();
@@ -90,6 +104,8 @@ public class OffloadingDecisionEngine {
             isMonitoring = false;
         }
     }
+
+
 
     protected void destroy(){
         engineExecutor.shutdownNow();
@@ -122,4 +138,16 @@ public class OffloadingDecisionEngine {
         float capacityPercentage = (float)capacity/100;
         return (1-capacityPercentage)*energy >= capacityPercentage*priority;
     }
+
+    /*
+     ************************************************************************
+     * Decision Engine Statistics                                           *
+     ************************************************************************
+     */
+
+    public int getOffloadingAttempts(){
+        return offloadingAttempts;
+    }
+
+    public int getPerformedOffloads(){ return  performedOffloads; }
 }

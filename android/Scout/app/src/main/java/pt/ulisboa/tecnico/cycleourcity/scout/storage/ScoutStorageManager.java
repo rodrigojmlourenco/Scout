@@ -4,13 +4,20 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
+import android.util.Log;
 
 import com.google.gson.JsonObject;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Queue;
 
 import edu.mit.media.funf.storage.NameValueDatabaseHelper;
 import pt.ulisboa.tecnico.cycleourcity.scout.ScoutApplication;
@@ -180,5 +187,31 @@ public class ScoutStorageManager implements StorageManager{
             return true;
         }
         return false;
+    }
+
+    public void archiveLog(String dirName, String fileName, Queue<String> logs){
+
+        File directory = new File(getApplicationFolder().toString()+"/"+dirName);
+        if(!directory.exists()) directory.mkdirs();
+
+        File outputFile = new File(directory, fileName);
+
+        try {
+
+            FileWriter writer = new FileWriter(outputFile);
+
+            for(String message : logs) {
+                writer.append(message+"\n");
+
+            }
+
+            writer.flush();
+            writer.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

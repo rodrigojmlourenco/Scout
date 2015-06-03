@@ -2,6 +2,9 @@ package pt.ulisboa.tecnico.cycleourcity.scout.offloading;
 
 import android.content.Context;
 
+import java.text.DateFormat;
+import java.util.Date;
+
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.PipelineConfiguration;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.AdaptiveOffloadingException;
 
@@ -65,6 +68,9 @@ public class AdaptiveOffloadingManager {
     public void startProfiling(){
 
         try {
+            OffloadingLogger.log(getClass().getSimpleName(),
+                    "[BEGIN SESSION "+ DateFormat.getTimeInstance().format(new Date())+"]");
+
             applicationProfiler.setProfilingRate(ScoutProfiler.DEFAULT_PROFILING_RATE);
             applicationProfiler.startProfiling();
             decisionEngine.startMonitoring();
@@ -77,6 +83,13 @@ public class AdaptiveOffloadingManager {
     public void stopProfiling(){
         applicationProfiler.stopProfiling();
         decisionEngine.stopMonitoring();
+
+        //Logging
+        OffloadingLogger.log(getClass().getSimpleName(), "[TERMINATING SESSION]");
+        OffloadingLogger.log(decisionEngine.NAME_TAG,
+                "{name: \"" + decisionEngine.NAME_TAG + "\", " +
+                        " offloads: " + decisionEngine.getPerformedOffloads() + ", " +
+                        " attemptsSinceOffload: " + decisionEngine.getOffloadingAttempts() + "}");
     }
 
 
@@ -126,4 +139,14 @@ public class AdaptiveOffloadingManager {
     public void setDecisionEngineApathy(float apathy){
         this.decisionEngine.setApathy(apathy);
     }
+
+    /*
+     ************************************************************************
+     * Logging                                                              *
+     ************************************************************************
+     */
+    public void exportOffloadingLog(){
+        OffloadingLogger.exportLog();
+    }
+
 }
