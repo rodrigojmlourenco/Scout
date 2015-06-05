@@ -1,19 +1,20 @@
 package pt.ulisboa.tecnico.cycleourcity.scout.offloading;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.text.DateFormat;
 import java.util.Date;
 
-import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.PipelineConfiguration;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.AdaptivePipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.AdaptiveOffloadingException;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.exceptions.NoAdaptivePipelineValidatedException;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.exceptions.NothingToOffloadException;
 
-/**
- * Created by rodrigo.jm.lourenco on 02/06/2015.
- */
 public class AdaptiveOffloadingManager {
 
     protected final static String LOG_TAG = "AdaptiveOffloading";
+    private final String NAME_TAG = this.getClass().getSimpleName();
 
     private final ScoutProfiler applicationProfiler;
     private final OffloadingDecisionEngine decisionEngine;
@@ -34,6 +35,9 @@ public class AdaptiveOffloadingManager {
                 if(OFFLOADING_MANAGER == null)
                     OFFLOADING_MANAGER = new AdaptiveOffloadingManager(context);
             }
+
+        OFFLOADING_MANAGER.partitionEngine.clearState();
+
         return OFFLOADING_MANAGER;
     }
 
@@ -110,8 +114,8 @@ public class AdaptiveOffloadingManager {
      */
 
 
-    public void validatePipeline(PipelineConfiguration configuration) throws AdaptiveOffloadingException {
-        partitionEngine.validatePipeline(configuration);
+    public void validatePipeline(AdaptivePipeline pipeline) throws AdaptiveOffloadingException {
+        partitionEngine.validatePipeline(pipeline);
     }
 
     /*
@@ -126,8 +130,18 @@ public class AdaptiveOffloadingManager {
     private OffloadingObserver decisionEngineObserver = new OffloadingObserver() {
         @Override
         public void notifyTimeOffloadOpportunity() {
-            //TODO: enable
-            //partitionEngine.offloadMostExpensiveStage();
+
+            try {
+                partitionEngine.offloadMostExpensiveStage();
+            } catch (NoAdaptivePipelineValidatedException e) {
+                Log.e(LOG_TAG, e.getMessage());
+                e.printStackTrace();
+            } catch (NothingToOffloadException e) {
+                OffloadingLogger.log(NAME_TAG,
+                        OffloadingDecisionEngine.class.getSimpleName()+" shutdown, all stages have been offloaded.");
+                decisionEngine.stopMonitoring();
+                applicationProfiler.enableActiveLogging();
+            }
         }
     };
 
@@ -148,5 +162,4 @@ public class AdaptiveOffloadingManager {
     public void exportOffloadingLog(){
         OffloadingLogger.exportLog();
     }
-
 }

@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages;
 
+import android.util.Log;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -7,8 +9,11 @@ import com.google.gson.JsonParser;
 import com.ideaimpl.patterns.pipeline.PipelineContext;
 import com.ideaimpl.patterns.pipeline.Stage;
 
+import java.util.UUID;
+
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.SensorPipelineContext;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.ConfigurationCaretaker;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.AdaptiveOffloadingManager;
 
 /**
  * The AdaptiveOffloadingTaggingStage is a custom stage, designed to tag each sample with the
@@ -19,17 +24,28 @@ import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.Confi
  */
 public class AdaptiveOffloadingTaggingStage implements Stage {
 
+
+    private Object stateLock = new Object();
+    private boolean wasModified = false;
     private ConfigurationCaretaker caretaker;
 
     public AdaptiveOffloadingTaggingStage(ConfigurationCaretaker caretaker){
         this.caretaker = caretaker;
     }
 
+    public void setWasModified(){
+        synchronized (stateLock) {
+            wasModified = true;
+        }
+    }
+
     @Override
     public void execute(PipelineContext pipelineContext) {
 
-        if(caretaker.isOriginal())
-            return;
+        synchronized (stateLock) {
+            if (!wasModified) return;
+        }
+
 
         SensorPipelineContext ctx = (SensorPipelineContext)pipelineContext;
         JsonObject[] input = ctx.getInput();

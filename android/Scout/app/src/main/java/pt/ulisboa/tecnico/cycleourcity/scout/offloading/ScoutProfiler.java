@@ -43,6 +43,8 @@ public class ScoutProfiler {
     //Profiler State
     private boolean isProfiling = false;
 
+    //Logging
+    private boolean activeLogging = false;
 
     //Execution Rate
     public static final int DEFAULT_PROFILING_RATE = 1*1000;//ms
@@ -101,6 +103,8 @@ public class ScoutProfiler {
         if(VERBOSE) Log.w(LOG_TAG,
                 "[ScoutProfiler:startProfiling] Initiated a profiling session, to run every "+profilingRate+"ms...");
 
+
+        disableActiveLogging();
         executorHandler = executorService.scheduleWithFixedDelay(new Runnable() {
 
             @Override
@@ -110,7 +114,7 @@ public class ScoutProfiler {
                 sensingEProf.profile();
             }
 
-            if(VERBOSE) Log.d(LOG_TAG, dumpInfo());
+            if(activeLogging) OffloadingLogger.log(NAME_TAG, dumpInfo());
 
             }
         }, 0, profilingRate, TimeUnit.MILLISECONDS);
@@ -174,5 +178,14 @@ public class ScoutProfiler {
                 "isCharging: "+(isCharging()? "true" : "false")+", "+
                 "isFull: "+((isFull())? "true" : "false")+
                 "timestamp: "+System.nanoTime()+"}";
+    }
+
+    protected void enableActiveLogging(){
+        OffloadingLogger.log(NAME_TAG, "Enabling active logging.");
+        activeLogging = true;
+    }
+
+    protected void disableActiveLogging(){
+        activeLogging = false;
     }
 }

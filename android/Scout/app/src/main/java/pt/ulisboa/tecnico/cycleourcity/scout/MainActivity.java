@@ -87,7 +87,6 @@ public class MainActivity extends ActionBarActivity {
 
             funfManager = ((FunfManager.LocalBinder)service).getManager();
             pipeline = (ScoutPipeline) funfManager.getRegisteredPipeline(PIPELINE_NAME);
-            pipeline.setDisplay(getWindowManager().getDefaultDisplay());
 
             //Initialize Configuration Manager
             // & reload default configuration

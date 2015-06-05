@@ -19,7 +19,9 @@ import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.locat
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.location.PressureSensorPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.stages.CommonStages;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.AdaptiveOffloadingManager;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.OffloadingDecisionEngine;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.AdaptiveOffloadingException;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.AdaptiveOffloadingTaggingStage;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.ProfilingStageWrapper;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.ScoutStorageManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.exceptions.NothingToArchiveException;
@@ -34,8 +36,6 @@ public class ScoutPipeline extends BasicPipeline {
 
     private String samplingTag = "scout";
 
-    private Display display;
-
     public final static String ACTION_PROFILE = "profile";
 
     //Mobile Sensing Pipeline
@@ -43,10 +43,16 @@ public class ScoutPipeline extends BasicPipeline {
     private ScoutStorageManager storage;
 
     //Profiling
-    private final AdaptiveOffloadingManager offloadingManager;
+    private AdaptiveOffloadingManager offloadingManager;
 
     public ScoutPipeline() throws AdaptiveOffloadingException {
         super();
+    }
+
+    private boolean isInstantiated = false;
+    synchronized private void instantiateScoutSensing() throws AdaptiveOffloadingException {
+
+        if(isInstantiated) return;
 
         mPipeline = new MobileSensing();
         storage = ScoutStorageManager.getInstance();
@@ -56,12 +62,9 @@ public class ScoutPipeline extends BasicPipeline {
         ConfigurationCaretaker locationCaretaker = new ConfigurationCaretaker();
         PipelineConfiguration locationConfig = new PipelineConfiguration();
 
-        //locationConfig.addStage(new LocationSensorPipeline.TrimStage());
-        //locationConfig.addStage(new ProfiledTrimStage());
         locationConfig.addStage(new ProfilingStageWrapper(new LocationSensorPipeline.TrimStage()));
         locationConfig.addStage(new ProfilingStageWrapper(new CommonStages.HeuristicsAdmissionControlStage()));
-
-        //locationConfig.addFinalStage(new CommonStages.TagConfigurationStage(locationCaretaker));
+        locationConfig.addFinalStage(new AdaptiveOffloadingTaggingStage(locationCaretaker));
         locationConfig.addFinalStage(new CommonStages.FinalizeStage());
         locationConfig.addFinalStage(new LocationSensorPipeline.UpdateScoutStateStage());
         locationConfig.addFinalStage(new CommonStages.FeatureStorageStage(storage));
@@ -69,32 +72,33 @@ public class ScoutPipeline extends BasicPipeline {
         locationCaretaker.setOriginalPipelineConfiguration(locationConfig);
 
         LocationSensorPipeline lPipeline = new LocationSensorPipeline(locationCaretaker);
-        lPipeline.registerCallback(mPipeline.getStateUpdateCallback());
+        //lPipeline.registerCallback(mPipeline.getStateUpdateCallback());
+
 
         //  //Pressure Pipeline
         ConfigurationCaretaker pressureCaretaker = new ConfigurationCaretaker();
         PipelineConfiguration pressureConfig = new PipelineConfiguration();
 
-        pressureConfig.addStage(new CommonStages.MergeStage(new PressureSensorPipeline.PressureMergeStrategy()));
-        pressureConfig.addStage(new PressureSensorPipeline.FeatureExtractionStage());
+        pressureConfig.addStage(new ProfilingStageWrapper(new PressureSensorPipeline.PressureMergeStage()));
+        pressureConfig.addStage(new ProfilingStageWrapper(new PressureSensorPipeline.FeatureExtractionStage()));
+        pressureConfig.addFinalStage(new AdaptiveOffloadingTaggingStage(pressureCaretaker));
         pressureConfig.addFinalStage(new CommonStages.FinalizeStage());
         pressureConfig.addFinalStage(new CommonStages.FeatureStorageStage(storage));
         pressureCaretaker.setOriginalPipelineConfiguration(pressureConfig);
         PressureSensorPipeline pPipeline = new PressureSensorPipeline(pressureCaretaker);
-        pPipeline.registerCallback(mPipeline.getStateUpdateCallback());
-
+        //pPipeline.registerCallback(mPipeline.getStateUpdateCallback());
         mPipeline.addSensorProcessingPipeline(lPipeline);
         mPipeline.addSensorProcessingPipeline(pPipeline);
 
 
         //Scout Profiling
         offloadingManager = AdaptiveOffloadingManager.getInstance(ScoutApplication.getContext());
-        offloadingManager.setDecisionEngineApathy((float) .125);
+        offloadingManager.setDecisionEngineApathy(OffloadingDecisionEngine.RECOMMENDED_APATHY);
 
-        //TODO: enable
-        //offloadingManager.validatePipeline(locationConfig);
-        //offloadingManager.validatePipeline(pressureConfig);
+        offloadingManager.validatePipeline(lPipeline);
+        offloadingManager.validatePipeline(pPipeline);
 
+        isInstantiated = true;
     }
 
     @Override
@@ -103,7 +107,13 @@ public class ScoutPipeline extends BasicPipeline {
 
         this.setName(NAME);
 
-        mPipeline.startSensingSession();
+        try {
+            instantiateScoutSensing();
+            mPipeline.startSensingSession();
+        } catch (AdaptiveOffloadingException e) {
+            e.printStackTrace();
+        }
+
 
         this.reloadDbHelper(ScoutApplication.getContext());
     }
@@ -169,9 +179,4 @@ public class ScoutPipeline extends BasicPipeline {
     public void setSamplingTag(String samplingTag) {
         this.samplingTag = samplingTag;
     }
-
-    public void setDisplay(Display display){
-        this.display = display;
-    }
-
 }

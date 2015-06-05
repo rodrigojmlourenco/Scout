@@ -8,6 +8,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.StageProfiler;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.EnergyProfiler;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.MockupBatteryProfiler;
 
 /**
@@ -23,6 +24,7 @@ public class OffloadingDecisionEngine {
     //
     private boolean isMonitoring = false;
     public static int OFFLOAD_ATTEMPT_DEFAULT_INTERVAL  = 15*1000;
+    public final static int WAIT_TO_ATTEMPT_OFFLOAD = 1*60*1000; //1min
     private static int ATTEMPT_OFFLOAD_INTERVAL = OFFLOAD_ATTEMPT_DEFAULT_INTERVAL;
 
     private ScoutProfiler appProfiler;
@@ -71,13 +73,13 @@ public class OffloadingDecisionEngine {
                     int battery     = appProfiler.getBatteryCapacity();
                     long current    = appProfiler.getSensingAverageCurrent();
 
-                    boolean offload = isTimeToOffload(battery,current);
+                    boolean offload = isTimeToOffload(battery, EnergyProfiler.convertToAmpere(current));
 
                     if(offload){
                         if(VERBOSE) Log.d(LOG_TAG, NAME_TAG+" has deemed it opportunistic to perform computation offloading.");
 
                         OffloadingLogger.log(NAME_TAG, "Offloading Opportunity after "+offloadingAttempts+" attempts");
-                        OffloadingLogger.log(NAME_TAG, dumpOffloadInfo(battery, current));
+                        OffloadingLogger.log(NAME_TAG, dumpOffloadInfo(battery, current, true));
                         offloadingAttempts = 0;
 
                         performedOffloads++;
@@ -93,7 +95,7 @@ public class OffloadingDecisionEngine {
                         MockupBatteryProfiler.decrementBattery();
 
                 }
-            }, ATTEMPT_OFFLOAD_INTERVAL, ATTEMPT_OFFLOAD_INTERVAL, TimeUnit.MILLISECONDS);
+            }, WAIT_TO_ATTEMPT_OFFLOAD, ATTEMPT_OFFLOAD_INTERVAL, TimeUnit.MILLISECONDS);
         }
     }
 
@@ -158,11 +160,12 @@ public class OffloadingDecisionEngine {
                 "timestamp: "+System.nanoTime()+"}";
     }
 
-    public String dumpOffloadInfo(int battery, long current){
+    public String dumpOffloadInfo(int battery, long current, boolean offload){
         return "{name: \""+NAME_TAG+"\", "+
                 "offloadInfo: {"+
                     "battery: "+battery+", "+
                     "current: "+current+", "+
+                    "isOpportunity: "+(offload ? "true" : "false")+", "+
                     "timestamp: "+System.nanoTime()+"}"+
                 "}";
     }

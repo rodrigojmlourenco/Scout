@@ -106,6 +106,16 @@ public class ProfilingStageWrapper implements Stage {
     }
 
 
+    /**
+     * Generates relevant stage information, as a JSON string.
+     * @return Stage information
+     */
+    public String dumpInfo(){
+        return "{ stage: \""+stage.getClass().getName()+"\", "+
+                "duration: "+getAverageRunningTime() +", "+
+                "data: "+getAverageGeneratedDataSize()+
+                "}";
+    }
 
     public static class DataProfileInfo {
 

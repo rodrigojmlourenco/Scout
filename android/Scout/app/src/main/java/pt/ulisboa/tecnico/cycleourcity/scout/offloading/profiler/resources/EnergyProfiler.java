@@ -300,4 +300,16 @@ public class EnergyProfiler extends ResourceProfiler{
             super.profile();
         }
     }
+
+
+    /*
+     ********************************************************************
+     * Util Functions                                                   *
+     ********************************************************************
+     */
+    public static final float MICRO_2_BASE = (float)1/1000000;
+
+    public static float convertToAmpere(long microAmp){
+        return microAmp*MICRO_2_BASE;
+    }
 }
