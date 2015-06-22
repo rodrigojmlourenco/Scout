@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.cycleourcity.scout.pipeline;
 
 import android.util.Log;
-import android.view.Display;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -17,6 +16,7 @@ import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.PipelineConf
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.ConfigurationCaretaker;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.location.LocationSensorPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.location.PressureSensorPipeline;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.motion.AccelerometerSensorPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.stages.CommonStages;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.AdaptiveOffloadingManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.OffloadingDecisionEngine;
@@ -47,6 +47,9 @@ public class ScoutPipeline extends BasicPipeline {
 
     public ScoutPipeline() throws AdaptiveOffloadingException {
         super();
+        storage = ScoutStorageManager.getInstance();
+        offloadingManager = AdaptiveOffloadingManager.getInstance(ScoutApplication.getContext());
+        offloadingManager.setDecisionEngineApathy(OffloadingDecisionEngine.RECOMMENDED_APATHY);
     }
 
     private boolean isInstantiated = false;
@@ -55,30 +58,24 @@ public class ScoutPipeline extends BasicPipeline {
         if(isInstantiated) return;
 
         mPipeline = new MobileSensing();
-        storage = ScoutStorageManager.getInstance();
+
 
         //Pipeline Setup
         //  //Location Pipeline
         ConfigurationCaretaker locationCaretaker = new ConfigurationCaretaker();
         PipelineConfiguration locationConfig = new PipelineConfiguration();
-
         locationConfig.addStage(new ProfilingStageWrapper(new LocationSensorPipeline.TrimStage()));
         locationConfig.addStage(new ProfilingStageWrapper(new CommonStages.HeuristicsAdmissionControlStage()));
         locationConfig.addFinalStage(new AdaptiveOffloadingTaggingStage(locationCaretaker));
         locationConfig.addFinalStage(new CommonStages.FinalizeStage());
         locationConfig.addFinalStage(new LocationSensorPipeline.UpdateScoutStateStage());
         locationConfig.addFinalStage(new CommonStages.FeatureStorageStage(storage));
-
         locationCaretaker.setOriginalPipelineConfiguration(locationConfig);
-
         LocationSensorPipeline lPipeline = new LocationSensorPipeline(locationCaretaker);
-        //lPipeline.registerCallback(mPipeline.getStateUpdateCallback());
-
 
         //  //Pressure Pipeline
         ConfigurationCaretaker pressureCaretaker = new ConfigurationCaretaker();
         PipelineConfiguration pressureConfig = new PipelineConfiguration();
-
         pressureConfig.addStage(new ProfilingStageWrapper(new PressureSensorPipeline.PressureMergeStage()));
         pressureConfig.addStage(new ProfilingStageWrapper(new PressureSensorPipeline.FeatureExtractionStage()));
         pressureConfig.addFinalStage(new AdaptiveOffloadingTaggingStage(pressureCaretaker));
@@ -86,15 +83,25 @@ public class ScoutPipeline extends BasicPipeline {
         pressureConfig.addFinalStage(new CommonStages.FeatureStorageStage(storage));
         pressureCaretaker.setOriginalPipelineConfiguration(pressureConfig);
         PressureSensorPipeline pPipeline = new PressureSensorPipeline(pressureCaretaker);
-        //pPipeline.registerCallback(mPipeline.getStateUpdateCallback());
+
+        //  //Accelerometer Pipeline
+        ConfigurationCaretaker accelerometerCaretaker = new ConfigurationCaretaker();
+        PipelineConfiguration accelerometerConfig = new PipelineConfiguration();
+        accelerometerConfig.addStage(new ProfilingStageWrapper(new AccelerometerSensorPipeline.AdmissionControlStage()));
+        //accelerometerConfig.addStage(new ProfilingStageWrapper(new AccelerometerSensorPipeline.TrimStage()));
+        accelerometerConfig.addStage(new ProfilingStageWrapper(new AccelerometerSensorPipeline.FeatureExtractionStage()));
+        accelerometerConfig.addFinalStage(new AdaptiveOffloadingTaggingStage(accelerometerCaretaker));
+        accelerometerConfig.addFinalStage(new CommonStages.FinalizeStage());
+        accelerometerConfig.addFinalStage(new CommonStages.FeatureStorageStage(storage));
+        accelerometerCaretaker.setOriginalPipelineConfiguration(accelerometerConfig);
+        AccelerometerSensorPipeline aPipeline = new AccelerometerSensorPipeline(accelerometerCaretaker);
+
         mPipeline.addSensorProcessingPipeline(lPipeline);
         mPipeline.addSensorProcessingPipeline(pPipeline);
+        mPipeline.addSensorProcessingPipeline(aPipeline);
 
 
         //Scout Profiling
-        offloadingManager = AdaptiveOffloadingManager.getInstance(ScoutApplication.getContext());
-        offloadingManager.setDecisionEngineApathy(OffloadingDecisionEngine.RECOMMENDED_APATHY);
-
         offloadingManager.validatePipeline(lPipeline);
         offloadingManager.validatePipeline(pPipeline);
 

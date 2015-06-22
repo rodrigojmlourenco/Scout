@@ -23,12 +23,13 @@
                 "@type":"edu.mit.media.funf.probe.builtin.PressureSensorProbe",
                 "@schedule": {"interval":1, "duration":0, "strict":true}
             }
-            <!--,
+            ,
             {
                 "@type":"edu.mit.media.funf.probe.builtin.AccelerometerSensorProbe",
                 "@schedule": {"interval":1, "duration":0, "strict":true},
                 "sensorDelay": "NORMAL"
-            },
+            }
+            <!--,
             {
                 "@type":"edu.mit.media.funf.probe.builtin.GravitySensorProbe",
                 "@schedule": {"interval":1, "duration":0, "strict":true}
