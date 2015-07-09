@@ -14,15 +14,11 @@ import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exceptions.MobileSensingException;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.PipelineConfiguration;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.ConfigurationCaretaker;
-import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.location.LocationSensorPipeline;
-import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.location.PressureSensorPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.motion.AccelerometerSensorPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.stages.CommonStages;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.AdaptiveOffloadingManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.OffloadingDecisionEngine;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.AdaptiveOffloadingException;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.AdaptiveOffloadingTaggingStage;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.ProfilingStageWrapper;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.ScoutStorageManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.exceptions.NothingToArchiveException;
 
@@ -45,6 +41,8 @@ public class ScoutPipeline extends BasicPipeline {
     //Profiling
     private AdaptiveOffloadingManager offloadingManager;
 
+    private ActiveGeoTagger geoTagger;
+
     public ScoutPipeline() throws AdaptiveOffloadingException {
         super();
         storage = ScoutStorageManager.getInstance();
@@ -52,58 +50,43 @@ public class ScoutPipeline extends BasicPipeline {
         offloadingManager.setDecisionEngineApathy(OffloadingDecisionEngine.RECOMMENDED_APATHY);
     }
 
+
     private boolean isInstantiated = false;
     synchronized private void instantiateScoutSensing() throws AdaptiveOffloadingException {
 
         if(isInstantiated) return;
 
+        geoTagger = ActiveGeoTagger.getInstance();
+
         mPipeline = new MobileSensing();
 
 
         //Pipeline Setup
-        //  //Location Pipeline
-        ConfigurationCaretaker locationCaretaker = new ConfigurationCaretaker();
-        PipelineConfiguration locationConfig = new PipelineConfiguration();
-        locationConfig.addStage(new ProfilingStageWrapper(new LocationSensorPipeline.TrimStage()));
-        locationConfig.addStage(new ProfilingStageWrapper(new CommonStages.HeuristicsAdmissionControlStage()));
-        locationConfig.addFinalStage(new AdaptiveOffloadingTaggingStage(locationCaretaker));
-        locationConfig.addFinalStage(new CommonStages.FinalizeStage());
-        locationConfig.addFinalStage(new LocationSensorPipeline.UpdateScoutStateStage());
-        locationConfig.addFinalStage(new CommonStages.FeatureStorageStage(storage));
-        locationCaretaker.setOriginalPipelineConfiguration(locationConfig);
-        LocationSensorPipeline lPipeline = new LocationSensorPipeline(locationCaretaker);
-
-        //  //Pressure Pipeline
-        ConfigurationCaretaker pressureCaretaker = new ConfigurationCaretaker();
-        PipelineConfiguration pressureConfig = new PipelineConfiguration();
-        pressureConfig.addStage(new ProfilingStageWrapper(new PressureSensorPipeline.PressureMergeStage()));
-        pressureConfig.addStage(new ProfilingStageWrapper(new PressureSensorPipeline.FeatureExtractionStage()));
-        pressureConfig.addFinalStage(new AdaptiveOffloadingTaggingStage(pressureCaretaker));
-        pressureConfig.addFinalStage(new CommonStages.FinalizeStage());
-        pressureConfig.addFinalStage(new CommonStages.FeatureStorageStage(storage));
-        pressureCaretaker.setOriginalPipelineConfiguration(pressureConfig);
-        PressureSensorPipeline pPipeline = new PressureSensorPipeline(pressureCaretaker);
-
         //  //Accelerometer Pipeline
+        /*
         ConfigurationCaretaker accelerometerCaretaker = new ConfigurationCaretaker();
         PipelineConfiguration accelerometerConfig = new PipelineConfiguration();
-        accelerometerConfig.addStage(new ProfilingStageWrapper(new AccelerometerSensorPipeline.AdmissionControlStage()));
-        //accelerometerConfig.addStage(new ProfilingStageWrapper(new AccelerometerSensorPipeline.TrimStage()));
-        accelerometerConfig.addStage(new ProfilingStageWrapper(new AccelerometerSensorPipeline.FeatureExtractionStage()));
-        accelerometerConfig.addFinalStage(new AdaptiveOffloadingTaggingStage(accelerometerCaretaker));
+        accelerometerConfig.addStage(new AccelerometerSensorPipeline.AdmissionControlStage());
         accelerometerConfig.addFinalStage(new CommonStages.FinalizeStage());
-        accelerometerConfig.addFinalStage(new CommonStages.FeatureStorageStage(storage));
+        accelerometerConfig.addFinalStage(new CommonStages.FeatureStorageStage(storage, false));
         accelerometerCaretaker.setOriginalPipelineConfiguration(accelerometerConfig);
         AccelerometerSensorPipeline aPipeline = new AccelerometerSensorPipeline(accelerometerCaretaker);
+         */
 
-        mPipeline.addSensorProcessingPipeline(lPipeline);
-        mPipeline.addSensorProcessingPipeline(pPipeline);
-        mPipeline.addSensorProcessingPipeline(aPipeline);
+
+        PipelineConfiguration roadConditionMonitoringConfiguration =
+                RoadConditionMonitoringPipeline.generateRoadConditionMonitoringPipelineConfiguration();
+        ConfigurationCaretaker roadConditionMonitoringCaretaker = new ConfigurationCaretaker();
+        roadConditionMonitoringCaretaker.setOriginalPipelineConfiguration(roadConditionMonitoringConfiguration);
+        RoadConditionMonitoringPipeline rcmPipeline = new RoadConditionMonitoringPipeline(roadConditionMonitoringCaretaker);
+        mPipeline.addSensorProcessingPipeline(rcmPipeline, SensingUtils.GRAVITY);
+
+        //mPipeline.addSensorProcessingPipeline(aPipeline, SensingUtils.ACCELEROMETER, SensingUtils.GRAVITY);
 
 
         //Scout Profiling
-        offloadingManager.validatePipeline(lPipeline);
-        offloadingManager.validatePipeline(pPipeline);
+        //offloadingManager.validatePipeline(lPipeline);
+        //offloadingManager.validatePipeline(pPipeline);
 
         isInstantiated = true;
     }
@@ -131,25 +114,33 @@ public class ScoutPipeline extends BasicPipeline {
 
         switch (action){
             case BasicPipeline.ACTION_ARCHIVE:
+
                 try {
                     storage.archive(samplingTag);
                 } catch (NothingToArchiveException e) {
                     e.printStackTrace();
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
 
-                offloadingManager.exportOffloadingLog();
+                if(offloadingManager.isProfilingEnabled())
+                    offloadingManager.exportOffloadingLog();
 
                 break;
             case ACTION_PROFILE:
-                if(offloadingManager.isProfiling())
-                    offloadingManager.stopProfiling();
-                else
-                    offloadingManager.startProfiling();
+                if(offloadingManager.isProfilingEnabled()) {
+                    if (offloadingManager.isProfiling())
+                        offloadingManager.stopProfiling();
+                    else
+                        offloadingManager.startProfiling();
+                }
                 break;
             default:
                 Log.e(LOG_TAG, "ScoutPipeline doesn't support the "+action+" action.");
         }
     }
+
+
 
     @Override
     public void onDataReceived(IJsonObject probeConfig, IJsonObject data) {
@@ -158,17 +149,25 @@ public class ScoutPipeline extends BasicPipeline {
                     jsonConfig = probeConfig.getAsJsonObject();
 
         int sensorType;
-
         try {
-
             sensorType = SensingUtils.getSensorType(jsonConfig);
             jsonData.addProperty(SensingUtils.SENSOR_TYPE, sensorType);
             jsonData.addProperty(SensingUtils.SCOUT_TIME, System.nanoTime());
-
-            mPipeline.pushSensorSample(jsonData);
-
         } catch (MobileSensingException e) {
             e.printStackTrace();
+            return;
+        }
+
+        switch (sensorType){
+            case SensingUtils.LOCATION:
+                geoTagger.pushLocation(jsonData);
+                break;
+            case SensingUtils.ROTATION_VECTOR:
+                geoTagger.pushOrientation(jsonData);
+                break;
+            default:
+                geoTagger.tagSample(jsonData);
+                mPipeline.pushSensorSample(jsonData);
         }
     }
 

@@ -44,6 +44,7 @@ public class ScoutStorageManager implements StorageManager{
 
     private NameValueDatabaseHelper dbHelper;
     private ScoutArchive archive;
+    private SQLiteDatabase database;
 
     private ScoutStorageManager(){
         Context ctx = ScoutApplication.getContext();
@@ -96,6 +97,8 @@ public class ScoutStorageManager implements StorageManager{
         cv.put(NameValueDatabaseHelper.COLUMN_TIMESTAMP, timestamp);
         db.insertOrThrow(NameValueDatabaseHelper.DATA_TABLE.name, "", cv);
         empty = false;
+
+        Log.d(LOG_TAG, "Stored");
 
 
     }
@@ -155,6 +158,12 @@ public class ScoutStorageManager implements StorageManager{
         dbHelper.getWritableDatabase(); // Build new database
         logger.log(ScoutLogger.INFO, LOG_TAG, "Samples were successfully archived");
         //setHandler(null); // free system resources
+
+        //TESTING
+        archiveAccVals("accelerometer", "native"+tag+"_"+System.nanoTime()+".txt", NATIVE.dump());
+        archiveAccVals("accelerometer", "projected" + tag + "_" + System.nanoTime() + ".txt", PROJECTED.dump());
+        NATIVE.clear();
+        PROJECTED.clear();
     }
 
     public void archiveGPXTrack(String tag){
@@ -214,4 +223,36 @@ public class ScoutStorageManager implements StorageManager{
             e.printStackTrace();
         }
     }
+
+    /*
+     *****************************************************
+     * TESTING
+     *****************************************************
+     */
+    public final static AccelerometerStorage
+            NATIVE = new AccelerometerStorage("native"),
+            PROJECTED = new AccelerometerStorage("projected");
+
+    public void archiveAccVals(String dirName, String fileName, String data){
+
+        File directory = new File(getApplicationFolder().toString()+"/"+dirName);
+        if(!directory.exists()) directory.mkdirs();
+
+        File outputFile = new File(directory, fileName);
+
+        try {
+
+            FileWriter writer = new FileWriter(outputFile);
+            writer.write(data);
+
+            writer.flush();
+            writer.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

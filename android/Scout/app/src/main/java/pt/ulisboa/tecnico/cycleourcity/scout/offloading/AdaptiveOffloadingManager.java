@@ -20,6 +20,7 @@ public class AdaptiveOffloadingManager {
     private final OffloadingDecisionEngine decisionEngine;
     private final PipelinePartitionEngine partitionEngine;
 
+    private boolean isProfilingEnabled = false;
 
     private static AdaptiveOffloadingManager OFFLOADING_MANAGER = null;
 
@@ -162,4 +163,15 @@ public class AdaptiveOffloadingManager {
     public void exportOffloadingLog(){
         OffloadingLogger.exportLog();
     }
+
+    /*
+     ************************************************************************
+     * Internal State                                                       *
+     ************************************************************************
+     */
+    public boolean isProfilingEnabled(){ return isProfilingEnabled; }
+
+    public void enableProfiling(){ isProfilingEnabled = true; }
+
+    public void disableProfiling(){ isProfilingEnabled = false; }
 }

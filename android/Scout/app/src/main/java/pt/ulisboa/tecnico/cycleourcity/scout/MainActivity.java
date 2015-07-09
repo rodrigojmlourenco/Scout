@@ -13,9 +13,12 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Surface;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -53,7 +56,7 @@ public class MainActivity extends ActionBarActivity {
 
 
     //UI
-    private Button startSession, stopSession, saveSession, eProfile, cProfile, tProfile;
+    private Button startSession, stopSession, saveSession;
     private EditText tagText;
 
     private TextView
@@ -114,7 +117,7 @@ public class MainActivity extends ActionBarActivity {
                         if(pipeline.isEnabled()) {
                             startSession.setEnabled(false);
                             stopSession.setEnabled(true);
-                            pipeline.onRun(ScoutPipeline.ACTION_PROFILE, null);
+                            //pipeline.onRun(ScoutPipeline.ACTION_PROFILE, null);
                             startRepeatingTask();
                         }else
                             Toast.makeText(MainActivity.this, "Unable to start sensing pipeline.", Toast.LENGTH_SHORT).show();
@@ -138,7 +141,7 @@ public class MainActivity extends ActionBarActivity {
                             startSession.setEnabled(true);
                             stopSession.setEnabled(false);
                             stopRepeatingTask();
-                            pipeline.onRun(ScoutPipeline.ACTION_PROFILE, null);
+                            //pipeline.onRun(ScoutPipeline.ACTION_PROFILE, null);
                         }else
                             Toast.makeText(MainActivity.this, "Unable to stop sensing pipeline.", Toast.LENGTH_SHORT).show();
 
@@ -200,8 +203,8 @@ public class MainActivity extends ActionBarActivity {
 
         //Background UI updating
         mHandler = new Handler();
-        locationView = (TextView) findViewById(R.id.locationValue);
-        speedView = (TextView) findViewById(R.id.speedValue);
+        //locationView = (TextView) findViewById(R.id.locationValue);
+        //speedView = (TextView) findViewById(R.id.speedValue);
         //slopeView = (TextView) findViewById(R.id.slopeValue);
         //altitudeView = (TextView) findViewById(R.id.altitudeValue);
         //travelStateView = (TextView) findViewById(R.id.travelStateValue);
@@ -226,59 +229,6 @@ public class MainActivity extends ActionBarActivity {
 
         //Profiling
         offloadingManager = AdaptiveOffloadingManager.getInstance(getApplicationContext());
-
-        boolean eIsProfiling = false;
-        final EnergyProfiler eProf = new EnergyProfiler(
-                getApplicationContext(),
-                getSharedPreferences(EnergyProfiler.PREFS_NAME,Context.MODE_PRIVATE));
-        eProfile = (Button) findViewById(R.id.eProfile);
-        eProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                eProf.profile();
-                Toast.makeText(getApplicationContext(), eProf.dumpInfo(), Toast.LENGTH_LONG).show();
-
-            }
-        });
-
-        cProfile = (Button) findViewById(R.id.cProfile);
-        cProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CPUStatsProfiler cProf = new CPUStatsProfiler(getApplicationInfo().uid);
-                cProf.profile();
-                Toast.makeText(getApplicationContext(), cProf.dumpInfo(), Toast.LENGTH_LONG).show();
-
-
-            }
-        });
-
-        tProfile = (Button) findViewById(R.id.tProfile);
-        tProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TrafficStatsProfiler tProf = new TrafficStatsProfiler(getApplicationContext(), getApplicationInfo().uid);
-                tProf.profile();
-                Toast.makeText(getApplicationContext(), tProf.dumpInfo(), Toast.LENGTH_LONG).show();
-            }
-        });
-
-        nProfile = (Button) findViewById(R.id.nProfiler);
-        nProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NetworkProfiler nProf = new NetworkProfiler(getApplicationContext());
-                nProf.profile();
-                Toast.makeText(getApplicationContext(), nProf.dumpInfo(), Toast.LENGTH_LONG).show();
-            }
-        });
-
-        //UI profiling
-        iddleEnergyTextView = (TextView) findViewById(R.id.iddleEnergy);
-        sensingEnergyTextView = (TextView) findViewById(R.id.sensingEnergy);
-
-
 
         // Bind to the service, to create the connection with FunfManager
         bindService(new Intent(this, FunfManager.class), funfManagerConn, BIND_AUTO_CREATE);
@@ -340,6 +290,7 @@ public class MainActivity extends ActionBarActivity {
             lon = scoutState.getLocationState().getLongitude();
 
 
+            /*
             try {
                 List<Address> addresses = geoDecoder.getFromLocation(lat, lon, 1);
 
@@ -354,11 +305,13 @@ public class MainActivity extends ActionBarActivity {
 
             locationView.setText(address);
             speedView.setText(String.valueOf(scoutState.getLocationState().getPressureAltitude()));
+            */
 
             //travelStateView.setText(scoutState.getMotionState().getTravelState());
             //slopeView.setText(String.valueOf(scoutState.getLocationState().getSlope()));
             //altitudeView.setText(String.valueOf(scoutState.getLocationState().getAltitude()));
 
+            /*
             Location last = scoutState.getLocationState().getLastLocation();
             if(scoutState.getLocationState().isReadyState()) {
                 Date date = new Date(last.getTimestamp());
@@ -376,7 +329,7 @@ public class MainActivity extends ActionBarActivity {
                 gpsElevationSeries.addLast(null, last.getAltitude());
                 meanElevationSeries.addLast(null, scoutState.getLocationState().getAverageAltitude());
                 pressureElevationSeries.addLast(null, scoutState.getLocationState().getPressureAltitude());
-                */
+                //
 
                 if(pressureElevationSeries.size() > 60){
                     pressureElevationSeries.removeFirst();
@@ -401,7 +354,9 @@ public class MainActivity extends ActionBarActivity {
             sensingEnergyTextView.setText("Average Energy Consumption: " +offloadingManager.getAverageCurrent()+ "mA\n");
 
             mHandler.postDelayed(this, mInterval);
+            */
         }
+
     };
 
     void startRepeatingTask(){
@@ -415,12 +370,6 @@ public class MainActivity extends ActionBarActivity {
     public static interface EnergyProfileUpdateCallback{
         public void updateEnergyConsumption(int capacity, long iddleEnergy, long sensingEnergy);
     }
-
-    /*
-     * Profiling in the UI
-     */
-    private TextView iddleEnergyTextView, sensingEnergyTextView;
-
 
 
 }
