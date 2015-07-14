@@ -84,8 +84,8 @@ public class PipelinePartitionEngine {
         if(validatedPipelines.isEmpty()) throw new NoAdaptivePipelineValidatedException();
 
         if(VERBOSE)
-            Log.d(LOG_TAG,
-                "[1] Initiating offloading process... Offloading the last stage of one of "+validatedPipelines.size()+"pipelines");
+            OffloadingLogger.log(this.getClass().getSimpleName(),
+                    "[1] Initiating offloading process... Offloading the last stage of one of " + validatedPipelines.size() + "pipelines");
 
         //PHASE 1 - Preparation
         List<Long>  executionTimesByStage = new ArrayList<>(),
@@ -101,18 +101,21 @@ public class PipelinePartitionEngine {
             auxStage = (ProfilingStageWrapper) p.getLastAdaptiveStage();
 
             if(auxStage==null){
-                if(VERBOSE) Log.w(AdaptiveOffloadingManager.LOG_TAG, p.getClass().getSimpleName()+" has no more stages");
-                validatedPipelines.remove(p);
-                continue;
+                if(VERBOSE) OffloadingLogger.log(this.getClass().getSimpleName(), p.getClass().getSimpleName() + " has no more stages");
+                //validatedPipelines.remove(p);
+                //continue;
+                Log.e("AdaptiveOffloading", "TESTING if continues...");
+            }else {
+                offloadingStageOptions.add(auxStage);
+                executionTimesByStage.add(auxStage.getAverageRunningTime());
+                generatedDataByStage.add(auxStage.getAverageGeneratedDataSize());
             }
-
-            offloadingStageOptions.add(auxStage);
-            executionTimesByStage.add(auxStage.getAverageRunningTime());
-            generatedDataByStage.add(auxStage.getAverageGeneratedDataSize());
         }
 
-        if(validatedPipelines.isEmpty())
+        if(validatedPipelines.isEmpty()) {
+            Log.e("AdaptiveOffloading", "All pipelines were offloaded.");
             throw new NothingToOffloadException();
+        }
 
 
         ////Aux variables:
@@ -147,7 +150,6 @@ public class PipelinePartitionEngine {
          "' which belong to the "+validatedPipelines.get(worst).getClass().getSimpleName());
 
         OffloadingLogger.log(NAME_TAG, dumpInfo(mostExpensiveStage, offloadingStageOptions));
-
 
         //PHASE 3 - Offloading
         validatedPipelines.get(worst).removeStage();
@@ -204,8 +206,8 @@ public class PipelinePartitionEngine {
 
     public static abstract class StageCostComputer {
 
-        public final static float TIME_WEIGHT = (float).7;
-        public final static float DATA_WEIGHT = (float).3;
+        public final static float TIME_WEIGHT = (float)1;
+        public final static float DATA_WEIGHT = (float)0;
 
         public abstract float computeCost(ProfilingStageWrapper stage);
 
@@ -216,7 +218,7 @@ public class PipelinePartitionEngine {
             cost1 = computeCost(baseStage);
             cost2 = computeCost(stage);
 
-            return cost1 >= cost2;
+            return cost1 <= cost2;
         }
     }
 
@@ -291,3 +293,4 @@ public class PipelinePartitionEngine {
         return stage.dumpInfo();
     }
 }
+

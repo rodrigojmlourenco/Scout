@@ -30,7 +30,7 @@ import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.Energ
 public class ScoutProfiler {
 
     //TODO: remover antes da release
-    public static boolean VERBOSE = false;
+    public static boolean VERBOSE = true;
     private final String LOG_TAG = AdaptiveOffloadingManager.LOG_TAG;
     public final String NAME_TAG = this.getClass().getSimpleName();
 

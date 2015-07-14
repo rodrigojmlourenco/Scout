@@ -134,6 +134,7 @@ public class AdaptiveOffloadingManager {
             try {
                 partitionEngine.offloadMostExpensiveStage();
             } catch (NoAdaptivePipelineValidatedException e) {
+                OffloadingLogger.log(LOG_TAG, "[END] All pipelines are empty [END]");
                 Log.e(LOG_TAG, e.getMessage());
                 e.printStackTrace();
             } catch (NothingToOffloadException e) {
