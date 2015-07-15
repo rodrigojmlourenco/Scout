@@ -1,37 +1,26 @@
 package pt.ulisboa.tecnico.cycleourcity.scout;
 
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.Color;
-import android.location.Address;
 import android.location.Geocoder;
-import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.Surface;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.androidplot.xy.BoundaryMode;
-import com.androidplot.xy.LineAndPointFormatter;
 import com.androidplot.xy.SimpleXYSeries;
 import com.androidplot.xy.XYPlot;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,15 +28,10 @@ import edu.mit.media.funf.FunfManager;
 import edu.mit.media.funf.pipeline.BasicPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.config.ScoutConfigManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.config.exceptions.NotInitializedException;
+import pt.ulisboa.tecnico.cycleourcity.scout.learning.PavementType;
 import pt.ulisboa.tecnico.cycleourcity.scout.logging.ScoutLogger;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.state.ScoutState;
-import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.state.data.Location;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.AdaptiveOffloadingManager;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ScoutProfiler;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.CPUStatsProfiler;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.EnergyProfiler;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.NetworkProfiler;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.TrafficStatsProfiler;
 import pt.ulisboa.tecnico.cycleourcity.scout.pipeline.ScoutPipeline;
 
 public class MainActivity extends ActionBarActivity {
@@ -59,14 +43,8 @@ public class MainActivity extends ActionBarActivity {
     private Button startSession, stopSession, saveSession;
     private EditText tagText;
 
-    private TextView
-            locationView,
-            speedView;
-
-    //Plotting
-    private XYPlot elevationPlot;
-    private SimpleXYSeries gpsElevationSeries = null, meanElevationSeries, pressureElevationSeries;
-
+    //Pavement Type
+    private RadioGroup pavementTypeGroup;
 
 
     //Funf
@@ -199,32 +177,38 @@ public class MainActivity extends ActionBarActivity {
         startSession.setEnabled(false);
         stopSession.setEnabled(false);
 
+        //Pavement Type Group
+        final PavementType pavementType = PavementType.getInstance();
+        pavementTypeGroup = (RadioGroup) findViewById(R.id.pavementTypeGroup);
+        pavementTypeGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                PavementType.Pavements pavement;
+
+                switch (checkedId){
+                    case R.id.isAsphalt:
+                        pavement = PavementType.Pavements.asphalt;
+                        break;
+                    case R.id.isCobblestone:
+                        pavement = PavementType.Pavements.cobblestone;
+                        break;
+                    case R.id.isGravel:
+                        pavement = PavementType.Pavements.gravel;
+                        break;
+                    default:
+                        pavement = PavementType.Pavements.undefined;
+                }
+
+                pavementType.setPavementType(pavement);
+            }
+        });
+
+
         tagText = (EditText) findViewById(R.id.tag);
 
         //Background UI updating
         mHandler = new Handler();
-        //locationView = (TextView) findViewById(R.id.locationValue);
-        //speedView = (TextView) findViewById(R.id.speedValue);
-        //slopeView = (TextView) findViewById(R.id.slopeValue);
-        //altitudeView = (TextView) findViewById(R.id.altitudeValue);
-        //travelStateView = (TextView) findViewById(R.id.travelStateValue);
-
-        //Plotting
-        elevationPlot = (XYPlot) findViewById(R.id.elevationPlot);
-
-        gpsElevationSeries = new SimpleXYSeries("GPS Altitude");
-        gpsElevationSeries.useImplicitXVals(); //Maybe not (Use index value as xVal, instead of explicit, user provided xVals.)
-        meanElevationSeries = new SimpleXYSeries("Scout Mean Altitude");
-        meanElevationSeries.useImplicitXVals();
-        pressureElevationSeries = new SimpleXYSeries("Scout Pressure Altitude");
-        pressureElevationSeries.useImplicitXVals();
-
-        elevationPlot.setRangeBoundaries(100, 300, BoundaryMode.AUTO);
-        elevationPlot.setDomainBoundaries(0, 60, BoundaryMode.FIXED);
-
-        elevationPlot.addSeries(gpsElevationSeries, new LineAndPointFormatter(Color.BLUE, Color.TRANSPARENT, Color.TRANSPARENT, null));
-        elevationPlot.addSeries(meanElevationSeries, new LineAndPointFormatter(Color.RED, Color.TRANSPARENT, Color.TRANSPARENT, null));
-        elevationPlot.addSeries(pressureElevationSeries, new LineAndPointFormatter(Color.YELLOW, Color.TRANSPARENT, Color.TRANSPARENT, null));
 
 
         //Profiling

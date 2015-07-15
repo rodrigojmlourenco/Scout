@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.cycleourcity.scout.pipeline;
 
 import android.opengl.Matrix;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -9,11 +8,8 @@ import com.ideaimpl.patterns.pipeline.PipelineContext;
 import com.ideaimpl.patterns.pipeline.Stage;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
 
+import pt.ulisboa.tecnico.cycleourcity.scout.learning.PavementType;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.timedomain.EnvelopeMetrics;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.timedomain.RMS;
@@ -40,8 +36,10 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
         ScoutStorageManager storage = ScoutStorageManager.getInstance();
 
         PipelineConfiguration configuration = new PipelineConfiguration();
+
         configuration.addStage(new RoadConditionMonitoringStages.ProjectionStage());
         configuration.addStage(new RoadConditionMonitoringStages.ZFeatureExtractionStage());
+        configuration.addStage(new RoadConditionMonitoringStages.TagForLearningStage());
 
         configuration.addFinalStage(new CommonStages.FeatureStorageStage(storage));
         configuration.addFinalStage(new RoadConditionMonitoringStages.FinalizeStage());
@@ -202,6 +200,7 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
                 //TODO: faltam todos os crossings
 
                 //Location Property
+                featureVector.addProperty(SensingUtils.LocationKeys.SPEED, location.get(SensingUtils.LocationKeys.SPEED).getAsString());
                 featureVector.add(SensingUtils.LocationKeys.LOCATION, location);
 
                 return featureVector;
@@ -232,6 +231,20 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
                 JsonObject[] output = new JsonObject[1];
                 output[0] = featureVector;
                 ctx.setInput(output);
+            }
+        }
+
+        public class TagForLearningStage implements Stage{
+
+            @Override
+            public void execute(PipelineContext pipelineContext) {
+                JsonObject[] input = ((SensorPipelineContext)pipelineContext).getInput();
+
+                if(input.length == 1 && input[0]!=null){
+                    PavementType type = PavementType.getInstance();
+                    input[0].addProperty("CLASS", type.getPavementType());
+                }
+
             }
         }
     }
