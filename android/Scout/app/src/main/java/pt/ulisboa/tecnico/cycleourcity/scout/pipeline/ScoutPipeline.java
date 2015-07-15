@@ -59,34 +59,19 @@ public class ScoutPipeline extends BasicPipeline {
         geoTagger = ActiveGeoTagger.getInstance();
 
         mPipeline = new MobileSensing();
-
-
-        //Pipeline Setup
-        //  //Accelerometer Pipeline
-        /*
-        ConfigurationCaretaker accelerometerCaretaker = new ConfigurationCaretaker();
-        PipelineConfiguration accelerometerConfig = new PipelineConfiguration();
-        accelerometerConfig.addStage(new AccelerometerSensorPipeline.AdmissionControlStage());
-        accelerometerConfig.addFinalStage(new CommonStages.FinalizeStage());
-        accelerometerConfig.addFinalStage(new CommonStages.FeatureStorageStage(storage, false));
-        accelerometerCaretaker.setOriginalPipelineConfiguration(accelerometerConfig);
-        AccelerometerSensorPipeline aPipeline = new AccelerometerSensorPipeline(accelerometerCaretaker);
-         */
+        mPipeline.setWindowSize(3);
 
 
         PipelineConfiguration roadConditionMonitoringConfiguration =
                 RoadConditionMonitoringPipeline.generateRoadConditionMonitoringPipelineConfiguration();
         ConfigurationCaretaker roadConditionMonitoringCaretaker = new ConfigurationCaretaker();
         roadConditionMonitoringCaretaker.setOriginalPipelineConfiguration(roadConditionMonitoringConfiguration);
-        RoadConditionMonitoringPipeline rcmPipeline = new RoadConditionMonitoringPipeline(roadConditionMonitoringCaretaker);
-        mPipeline.addSensorProcessingPipeline(rcmPipeline, SensingUtils.GRAVITY);
-
-        //mPipeline.addSensorProcessingPipeline(aPipeline, SensingUtils.ACCELEROMETER, SensingUtils.GRAVITY);
+        RoadConditionMonitoringPipeline rPipeline = new RoadConditionMonitoringPipeline(roadConditionMonitoringCaretaker);
+        mPipeline.addSensorProcessingPipeline(rPipeline);
 
 
         //Scout Profiling
-        //offloadingManager.validatePipeline(lPipeline);
-        //offloadingManager.validatePipeline(pPipeline);
+        //offloadingManager.validatePipeline(rPipeline);
 
         isInstantiated = true;
     }

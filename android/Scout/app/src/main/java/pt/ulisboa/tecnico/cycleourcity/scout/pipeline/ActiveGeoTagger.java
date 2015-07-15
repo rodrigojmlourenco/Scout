@@ -137,7 +137,7 @@ public class ActiveGeoTagger {
 
     public void geoTagSample(JsonObject sample){
         JsonObject location = geoHistory.getLastKnownLocation();
-        sample.add("location", location);
+        sample.add(SensingUtils.LocationKeys.LOCATION, location);
     }
 
     public void rotationTagSample(JsonObject sample){

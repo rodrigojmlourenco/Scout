@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.cycleourcity.scout.pipeline;
 
-
 import android.opengl.Matrix;
 import android.util.Log;
 
@@ -10,9 +9,15 @@ import com.ideaimpl.patterns.pipeline.PipelineContext;
 import com.ideaimpl.patterns.pipeline.Stage;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.timedomain.EnvelopeMetrics;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.timedomain.RMS;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.timedomain.StatisticalMetrics;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.PipelineConfiguration;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.SensorPipelineContext;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.ConfigurationCaretaker;
@@ -25,17 +30,18 @@ import pt.ulisboa.tecnico.cycleourcity.scout.storage.ScoutStorageManager;
  */
 public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
 
+    public final static int SENSOR_TYPE = SensingUtils.LINEAR_ACCELERATION;
+
     public RoadConditionMonitoringPipeline(ConfigurationCaretaker caretaker) {
-        super(SensingUtils.LINEAR_ACCELERATION, caretaker);
+        super(SENSOR_TYPE, caretaker);
     }
 
     public static PipelineConfiguration generateRoadConditionMonitoringPipelineConfiguration(){
         ScoutStorageManager storage = ScoutStorageManager.getInstance();
 
         PipelineConfiguration configuration = new PipelineConfiguration();
-        //configuration.addStage(new RoadConditionMonitoringStages.FramingStage());
         configuration.addStage(new RoadConditionMonitoringStages.ProjectionStage());
-        configuration.addStage(new RoadConditionMonitoringStages.BruteForceMerge());
+        configuration.addStage(new RoadConditionMonitoringStages.ZFeatureExtractionStage());
 
         configuration.addFinalStage(new CommonStages.FeatureStorageStage(storage));
         configuration.addFinalStage(new RoadConditionMonitoringStages.FinalizeStage());
@@ -50,43 +56,6 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
     public static interface RoadConditionMonitoringStages{
 
         public final String LOG_TAG = "RoadConditionMonitoring";
-
-        public static class FramingStage implements Stage {
-
-            public final static int NUM_SAMPLES_PER_FRAME = 128;
-
-
-            @Override
-            public void execute(PipelineContext pipelineContext) {
-                SensorPipelineContext ctx = (SensorPipelineContext) pipelineContext;
-                JsonObject[] input = ctx.getInput();
-
-                int totalSamples = input.length,
-                        totalFrames = input.length/NUM_SAMPLES_PER_FRAME;
-
-                JsonObject[] auxFrame = new JsonObject[NUM_SAMPLES_PER_FRAME];
-                JsonObject[] framedInput = new JsonObject[totalFrames];
-
-                Gson gson = new Gson();
-                int i, j, currSample=0;
-                for(i=0; i < totalFrames; i++) {
-
-                    Arrays.fill(auxFrame, null);
-                    for (j = 0; j < NUM_SAMPLES_PER_FRAME; j++, currSample++)
-                        auxFrame[j] = input[currSample];
-
-                    JsonObject frame = new JsonObject();
-                    frame.addProperty("frame", i);
-                    frame.addProperty("values", gson.toJson(auxFrame));
-                    framedInput[i] = frame;
-
-                }
-
-                Log.d(LOG_TAG, "=== BEGIN ===");
-                for(JsonObject obj : framedInput)
-                    Log.d(LOG_TAG, String.valueOf(obj));
-            }
-        }
 
         public static class ProjectionStage implements Stage {
 
@@ -145,58 +114,6 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
             }
         }
 
-        public static class BruteForceMerge implements Stage{
-
-            @Override
-            public void execute(PipelineContext pipelineContext) {
-                SensorPipelineContext ctx = (SensorPipelineContext) pipelineContext;
-                JsonObject[] input = ctx.getInput();
-
-                int projectedSamples = 0;
-                float x=0, y=0, z=0, px=0, py=0, pz=0;
-
-                for(JsonObject sample : input){
-                    x += sample.get(SensingUtils.MotionKeys.X).getAsFloat();
-                    y += sample.get(SensingUtils.MotionKeys.Y).getAsFloat();
-                    z += sample.get(SensingUtils.MotionKeys.Z).getAsFloat();
-
-                    if(sample.has(SensingUtils.MotionKeys.PROJECTED_X)) {
-                        px += sample.get(SensingUtils.MotionKeys.PROJECTED_X).getAsFloat();
-                        py += sample.get(SensingUtils.MotionKeys.PROJECTED_Y).getAsFloat();
-                        pz += sample.get(SensingUtils.MotionKeys.PROJECTED_Z).getAsFloat();
-                        projectedSamples++;
-                    }
-                }
-
-                x /= input.length;
-                y /= input.length;
-                z /= input.length;
-
-                px /= projectedSamples;
-                py /= projectedSamples;
-                pz /= projectedSamples;
-
-                JsonObject mergedSample = new JsonObject();
-                mergedSample.addProperty(SensingUtils.TIMESTAMP, SensingUtils.LINEAR_ACCELERATION);
-                mergedSample.addProperty(SensingUtils.SCOUT_TIME, System.nanoTime());
-
-                mergedSample.addProperty(SensingUtils.MotionKeys.X, x);
-                mergedSample.addProperty(SensingUtils.MotionKeys.Y, y);
-                mergedSample.addProperty(SensingUtils.MotionKeys.Z, z);
-                mergedSample.addProperty("NativeSamplesTotal", input.length);
-
-                mergedSample.addProperty(SensingUtils.MotionKeys.PROJECTED_X, px);
-                mergedSample.addProperty(SensingUtils.MotionKeys.PROJECTED_Y, py);
-                mergedSample.addProperty(SensingUtils.MotionKeys.PROJECTED_Z, pz);
-                mergedSample.addProperty("ProjectedSamplesTotal", projectedSamples);
-
-                Log.d(LOG_TAG, String.valueOf(mergedSample));
-
-                JsonObject[] output = new JsonObject[1];
-                output[0] = mergedSample;
-                ctx.setInput(output);
-            }
-        }
 
         public static class FinalizeStage implements Stage {
 
@@ -209,12 +126,13 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
 
                 JsonObject[] input = ctx.getInput();
 
-                if(input.length == 1) try {
+                if(input.length == 1 && input[0]!=null) try {
                     storage.store(""+SensingUtils.LINEAR_ACCELERATION, input[0]);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
 
+                /*
                 float[] nativeValues = new float[3],
                         projectedValues = new float[3];
 
@@ -227,7 +145,93 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
                 projectedValues[1] = input[0].get(SensingUtils.MotionKeys.PROJECTED_Y).getAsFloat();
                 projectedValues[2] = input[0].get(SensingUtils.MotionKeys.PROJECTED_Z).getAsFloat();
                 ScoutStorageManager.PROJECTED.storeValues(projectedValues);
+                */
 
+            }
+        }
+
+        public class ZFeatureExtractionStage implements Stage {
+
+
+
+            private JsonObject constructFeatureVector(double[] values, JsonObject location){
+
+                JsonObject featureVector = new JsonObject();
+
+                int numSamples;
+                double  mean,
+                        median,
+                        variance,
+                        stdDev,
+                        range, max, min,
+                        zeroCrossings,
+                        meanCrossings,
+                        medianCrossigns,
+                        rms;                //Root Mean Squares
+
+
+                numSamples = values.length;
+
+                mean        = StatisticalMetrics.calculateMean(values);
+                variance    = StatisticalMetrics.calculateVariance(values);
+                stdDev      = StatisticalMetrics.calculateStandardDeviation(values);
+
+                median      = EnvelopeMetrics.calculateMedian(values);
+                range       = EnvelopeMetrics.calculateRange(values);
+                max         = EnvelopeMetrics.calculateMax(values);
+                min         = EnvelopeMetrics.calculateMin(values);
+
+                rms         = RMS.calculateRootMeanSquare(values);
+
+
+                //Base Properties
+                featureVector.addProperty(SensingUtils.SENSOR_TYPE, RoadConditionMonitoringPipeline.SENSOR_TYPE);
+                featureVector.addProperty(SensingUtils.TIMESTAMP, location.get(SensingUtils.TIMESTAMP).getAsString());
+                featureVector.addProperty(SensingUtils.SCOUT_TIME, System.nanoTime());
+
+                //Feature Properties
+                featureVector.addProperty(SensingUtils.FeatureVectorKeys.NUM_SAMPLES, numSamples);
+                featureVector.addProperty(SensingUtils.FeatureVectorKeys.MEAN, mean);
+                featureVector.addProperty(SensingUtils.FeatureVectorKeys.MEDIAN, median);
+                featureVector.addProperty(SensingUtils.FeatureVectorKeys.VARIANCE, variance);
+                featureVector.addProperty(SensingUtils.FeatureVectorKeys.STDEV, stdDev);
+                featureVector.addProperty(SensingUtils.FeatureVectorKeys.MAX, max);
+                featureVector.addProperty(SensingUtils.FeatureVectorKeys.MIN, min);
+                featureVector.addProperty(SensingUtils.FeatureVectorKeys.RANGE, range);
+                featureVector.addProperty(SensingUtils.FeatureVectorKeys.RMS, rms);
+                //TODO: faltam todos os crossings
+
+                //Location Property
+                featureVector.add(SensingUtils.LocationKeys.LOCATION, location);
+
+                return featureVector;
+            }
+
+            @Override
+            public void execute(PipelineContext pipelineContext) {
+                SensorPipelineContext ctx = (SensorPipelineContext) pipelineContext;
+                JsonObject[] input = ctx.getInput();
+
+                int i=0;
+                double[] zValues = new double[input.length];
+                JsonObject featureVector=null, location = null;
+                if(input[0].has(SensingUtils.LocationKeys.LOCATION))
+                     location = (JsonObject) input[0].get(SensingUtils.LocationKeys.LOCATION);
+
+                try {
+
+                    for (JsonObject sample : input)
+                        zValues[i++] = sample.get(SensingUtils.MotionKeys.PROJECTED_Z).getAsFloat();
+
+                    featureVector = constructFeatureVector(zValues, location);
+
+                }catch (NullPointerException e){
+                    e.printStackTrace();
+                }
+
+                JsonObject[] output = new JsonObject[1];
+                output[0] = featureVector;
+                ctx.setInput(output);
             }
         }
     }

@@ -13,7 +13,7 @@
          "version":1,
          "data":[
 
-
+            <!-- Active Processing -->
             {
                 "@type":"edu.mit.media.funf.probe.builtin.LocationProbe",
                 "@schedule": {"interval":15, "duration":0, "strict":true}
@@ -22,29 +22,22 @@
                 "@type":"edu.mit.media.funf.probe.builtin.RotationVectorSensorProbe",
                 "@schedule": {"interval":1, "duration":0, "strict":true}
             },
+            <!-- Passive Processing -->
             {
-                "@type":"edu.mit.media.funf.probe.builtin.GravitySensorProbe",
-                "@schedule": {"interval":1, "duration":0, "strict":true}
-            }
-            <!--{
                 "@type":"edu.mit.media.funf.probe.builtin.LinearAccelerationSensorProbe",
                 "@schedule": {"interval":1, "duration":0, "strict":true}
             }
-            ,
+            <!--
+            {
+                "@type":"edu.mit.media.funf.probe.builtin.GravitySensorProbe",
+                "@schedule": {"interval":1, "duration":0, "strict":true}
+            },
             {
                 "@type":"edu.mit.media.funf.probe.builtin.PressureSensorProbe",
                 "@schedule": {"interval":1, "duration":0, "strict":true}
             }
-            ,-->
-            <!--{
-                "@type":"edu.mit.media.funf.probe.builtin.AccelerometerSensorProbe",
-                "@schedule": {"interval":1, "duration":0, "strict":true}
-            }
-            ,
-            {
-                "@type":"edu.mit.media.funf.probe.builtin.GravitySensorProbe",
-                "@schedule": {"interval":1, "duration":0, "strict":true}
-            }-->
+            -->
+
          ]
         }
     </string>
