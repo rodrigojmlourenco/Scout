@@ -13,7 +13,7 @@ public class PavementType {
     }
 
     private Object lock = new Object();
-    private Pavements pavementType;
+    private Pavements pavementType = Pavements.undefined;
 
     private PavementType(){};
 

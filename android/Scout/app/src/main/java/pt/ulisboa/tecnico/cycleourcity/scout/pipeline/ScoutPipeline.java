@@ -19,6 +19,8 @@ import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.stages.Commo
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.AdaptiveOffloadingManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.OffloadingDecisionEngine;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.AdaptiveOffloadingException;
+import pt.ulisboa.tecnico.cycleourcity.scout.storage.GraphValuesStorage;
+import pt.ulisboa.tecnico.cycleourcity.scout.storage.LearningSupportStorage;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.ScoutStorageManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.exceptions.NothingToArchiveException;
 
@@ -42,6 +44,12 @@ public class ScoutPipeline extends BasicPipeline {
     private AdaptiveOffloadingManager offloadingManager;
 
     private ActiveGeoTagger geoTagger;
+
+    //Storage
+    //  Weka - Learning Storage
+    private LearningSupportStorage wekaStorage = LearningSupportStorage.getInstance();
+    //  Test - Storage for graph creation
+    private GraphValuesStorage evaluationStorage = GraphValuesStorage.getInstance();
 
     public ScoutPipeline() throws AdaptiveOffloadingException {
         super();
@@ -85,6 +93,7 @@ public class ScoutPipeline extends BasicPipeline {
         try {
             instantiateScoutSensing();
             mPipeline.startSensingSession();
+            wekaStorage.prepareStorage();
         } catch (AdaptiveOffloadingException e) {
             e.printStackTrace();
         }
@@ -164,6 +173,8 @@ public class ScoutPipeline extends BasicPipeline {
     @Override
     public void onDestroy() {
         mPipeline.stopSensingSession();
+        wekaStorage.teardown();
+        evaluationStorage.teardown();
         super.onDestroy();
     }
 

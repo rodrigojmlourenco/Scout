@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.cycleourcity.scout.pipeline;
 
 import android.opengl.Matrix;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -14,11 +15,14 @@ import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.timedomain.EnvelopeMetrics;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.timedomain.RMS;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.timedomain.StatisticalMetrics;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.timedomain.TimeDomainMetrics;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.PipelineConfiguration;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.SensorPipelineContext;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.ConfigurationCaretaker;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.SensorProcessingPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.stages.CommonStages;
+import pt.ulisboa.tecnico.cycleourcity.scout.storage.GraphValuesStorage;
+import pt.ulisboa.tecnico.cycleourcity.scout.storage.LearningSupportStorage;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.ScoutStorageManager;
 
 /**
@@ -37,9 +41,13 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
 
         PipelineConfiguration configuration = new PipelineConfiguration();
 
+        configuration.addStage(new RoadConditionMonitoringStages.StoreRawValuesStage());            //TESTING
         configuration.addStage(new RoadConditionMonitoringStages.ProjectionStage());
-        configuration.addStage(new RoadConditionMonitoringStages.ZFeatureExtractionStage());
-        configuration.addStage(new RoadConditionMonitoringStages.TagForLearningStage());
+        configuration.addStage(new RoadConditionMonitoringStages.StoreProjectedValuesStage());      //TESTING
+        configuration.addStage(new RoadConditionMonitoringStages.OverkillZFeatureExtractionStage());//LEARNING
+        configuration.addStage(new RoadConditionMonitoringStages.TagForLearningStage());            //LEARNING
+        configuration.addStage(new RoadConditionMonitoringStages.StoreFeatureVectorStage());
+
 
         configuration.addFinalStage(new CommonStages.FeatureStorageStage(storage));
         configuration.addFinalStage(new RoadConditionMonitoringStages.FinalizeStage());
@@ -129,28 +137,10 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-
-                /*
-                float[] nativeValues = new float[3],
-                        projectedValues = new float[3];
-
-                nativeValues[0] = input[0].get(SensingUtils.MotionKeys.X).getAsFloat();
-                nativeValues[1] = input[0].get(SensingUtils.MotionKeys.Y).getAsFloat();
-                nativeValues[2] = input[0].get(SensingUtils.MotionKeys.Z).getAsFloat();
-                ScoutStorageManager.NATIVE.storeValues(nativeValues);
-
-                projectedValues[0] = input[0].get(SensingUtils.MotionKeys.PROJECTED_X).getAsFloat();
-                projectedValues[1] = input[0].get(SensingUtils.MotionKeys.PROJECTED_Y).getAsFloat();
-                projectedValues[2] = input[0].get(SensingUtils.MotionKeys.PROJECTED_Z).getAsFloat();
-                ScoutStorageManager.PROJECTED.storeValues(projectedValues);
-                */
-
             }
         }
 
-        public class ZFeatureExtractionStage implements Stage {
-
-
+        public class OverkillZFeatureExtractionStage implements Stage {
 
             private JsonObject constructFeatureVector(double[] values, JsonObject location){
 
@@ -162,10 +152,12 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
                         variance,
                         stdDev,
                         range, max, min,
-                        zeroCrossings,
-                        meanCrossings,
-                        medianCrossigns,
                         rms;                //Root Mean Squares
+
+                int zeroCrossings,
+                    meanCrossings,
+                    medianCrossings,
+                    rangeCrossings;
 
 
                 numSamples = values.length;
@@ -181,6 +173,10 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
 
                 rms         = RMS.calculateRootMeanSquare(values);
 
+                zeroCrossings   = TimeDomainMetrics.countZeroCrossings(values, 0);
+                meanCrossings   = TimeDomainMetrics.countZeroCrossings(values, mean);
+                medianCrossings = TimeDomainMetrics.countZeroCrossings(values, median);
+                rangeCrossings  = TimeDomainMetrics.countZeroCrossings(values, range);
 
                 //Base Properties
                 featureVector.addProperty(SensingUtils.SENSOR_TYPE, RoadConditionMonitoringPipeline.SENSOR_TYPE);
@@ -197,7 +193,10 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
                 featureVector.addProperty(SensingUtils.FeatureVectorKeys.MIN, min);
                 featureVector.addProperty(SensingUtils.FeatureVectorKeys.RANGE, range);
                 featureVector.addProperty(SensingUtils.FeatureVectorKeys.RMS, rms);
-                //TODO: faltam todos os crossings
+                featureVector.addProperty(SensingUtils.FeatureVectorKeys.ZERO_CROSSING, zeroCrossings);
+                featureVector.addProperty(SensingUtils.FeatureVectorKeys.MEAN_CROSSING, meanCrossings);
+                featureVector.addProperty(SensingUtils.FeatureVectorKeys.MEDIAN_CROSSING, medianCrossings);
+                featureVector.addProperty(SensingUtils.FeatureVectorKeys.RANGE_CROSSING, rangeCrossings);
 
                 //Location Property
                 featureVector.addProperty(SensingUtils.LocationKeys.SPEED, location.get(SensingUtils.LocationKeys.SPEED).getAsString());
@@ -214,8 +213,14 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
                 int i=0;
                 double[] zValues = new double[input.length];
                 JsonObject featureVector=null, location = null;
-                if(input[0].has(SensingUtils.LocationKeys.LOCATION))
-                     location = (JsonObject) input[0].get(SensingUtils.LocationKeys.LOCATION);
+
+                try {
+                    if (input[0] != null && input[0].has(SensingUtils.LocationKeys.LOCATION))
+                        location = (JsonObject) input[0].get(SensingUtils.LocationKeys.LOCATION);
+                }catch (ClassCastException e){
+                    Log.e(LOG_TAG, String.valueOf(input[0]));
+                    e.printStackTrace();
+                }
 
                 try {
 
@@ -245,6 +250,70 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
                     input[0].addProperty("CLASS", type.getPavementType());
                 }
 
+            }
+        }
+
+        //Storage Stages - for graph construction and learning
+
+        public abstract class StoreValuesForTestStage implements Stage{
+
+            private String testID;
+            private GraphValuesStorage testStorage = GraphValuesStorage.getInstance();
+
+            public StoreValuesForTestStage(String testID){
+                this.testID = testID;
+            }
+
+            @Override
+            public void execute(PipelineContext pipelineContext) {
+
+                SensorPipelineContext ctx = (SensorPipelineContext) pipelineContext;
+                JsonObject[] input = ctx.getInput();
+
+                for(JsonObject sample : input)
+                    testStorage.storeAccelerometerTestValue(testID, sample);
+
+            }
+        }
+
+        public class StoreRawValuesStage extends StoreValuesForTestStage {
+
+            public final static String TEST_ID = "raw";
+
+            public StoreRawValuesStage() {
+                super(TEST_ID);
+            }
+        }
+
+        public class StoreNormalizedValuesStage extends StoreValuesForTestStage {
+
+            public final static String TEST_ID = "normalized";
+
+            public StoreNormalizedValuesStage() {
+                super(TEST_ID);
+            }
+        }
+
+        public class StoreProjectedValuesStage extends StoreValuesForTestStage {
+
+            public final static String TEST_ID = "projected";
+
+            public StoreProjectedValuesStage() {
+                super(TEST_ID);
+            }
+        }
+
+        public class StoreFeatureVectorStage implements Stage {
+
+            private LearningSupportStorage wekaStorage = LearningSupportStorage.getInstance();
+
+            @Override
+            public void execute(PipelineContext pipelineContext) {
+                SensorPipelineContext ctx = (SensorPipelineContext) pipelineContext;
+                JsonObject[] input = ctx.getInput();
+
+                for(JsonObject featureVector : input)
+                    if(featureVector != null) wekaStorage.storeFeatureVector(featureVector);
             }
         }
     }
