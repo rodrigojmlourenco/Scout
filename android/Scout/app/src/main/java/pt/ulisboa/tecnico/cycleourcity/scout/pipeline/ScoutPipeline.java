@@ -14,12 +14,10 @@ import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exceptions.MobileSensingException;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.PipelineConfiguration;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.ConfigurationCaretaker;
-import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.motion.AccelerometerSensorPipeline;
-import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.stages.CommonStages;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.AdaptiveOffloadingManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.OffloadingDecisionEngine;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.AdaptiveOffloadingException;
-import pt.ulisboa.tecnico.cycleourcity.scout.storage.GraphValuesStorage;
+import pt.ulisboa.tecnico.cycleourcity.scout.storage.EvaluationSupportStorage;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.LearningSupportStorage;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.ScoutStorageManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.exceptions.NothingToArchiveException;
@@ -49,7 +47,7 @@ public class ScoutPipeline extends BasicPipeline {
     //  Weka - Learning Storage
     private LearningSupportStorage wekaStorage = LearningSupportStorage.getInstance();
     //  Test - Storage for graph creation
-    private GraphValuesStorage evaluationStorage = GraphValuesStorage.getInstance();
+    private EvaluationSupportStorage evaluationStorage = EvaluationSupportStorage.getInstance();
 
     public ScoutPipeline() throws AdaptiveOffloadingException {
         super();
@@ -69,14 +67,22 @@ public class ScoutPipeline extends BasicPipeline {
         mPipeline = new MobileSensing();
         mPipeline.setWindowSize(3);
 
-
+        /*
         PipelineConfiguration roadConditionMonitoringConfiguration =
                 RoadConditionMonitoringPipeline.generateRoadConditionMonitoringPipelineConfiguration();
         ConfigurationCaretaker roadConditionMonitoringCaretaker = new ConfigurationCaretaker();
         roadConditionMonitoringCaretaker.setOriginalPipelineConfiguration(roadConditionMonitoringConfiguration);
         RoadConditionMonitoringPipeline rPipeline = new RoadConditionMonitoringPipeline(roadConditionMonitoringCaretaker);
         mPipeline.addSensorProcessingPipeline(rPipeline);
+        */
 
+
+        PipelineConfiguration roadSlopeConfiguration =
+                RoadSlopeMonitoringPipeline.generateRoadSlopeMonitoringPipelineConfiguration();
+        ConfigurationCaretaker roadSlopeCaretaker = new ConfigurationCaretaker();
+        roadSlopeCaretaker.setOriginalPipelineConfiguration(roadSlopeConfiguration);
+        RoadSlopeMonitoringPipeline sPipeline = new RoadSlopeMonitoringPipeline(roadSlopeCaretaker);
+        mPipeline.addSensorProcessingPipeline(sPipeline);
 
         //Scout Profiling
         //offloadingManager.validatePipeline(rPipeline);

@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.cycleourcity.scout.pipeline;
 
 import android.opengl.Matrix;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -21,7 +20,7 @@ import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.SensorPipeli
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.ConfigurationCaretaker;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.SensorProcessingPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.stages.CommonStages;
-import pt.ulisboa.tecnico.cycleourcity.scout.storage.GraphValuesStorage;
+import pt.ulisboa.tecnico.cycleourcity.scout.storage.EvaluationSupportStorage;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.LearningSupportStorage;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.ScoutStorageManager;
 
@@ -47,7 +46,6 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
         configuration.addStage(new RoadConditionMonitoringStages.OverkillZFeatureExtractionStage());//LEARNING
         configuration.addStage(new RoadConditionMonitoringStages.TagForLearningStage());            //LEARNING
         configuration.addStage(new RoadConditionMonitoringStages.StoreFeatureVectorStage());
-
 
         configuration.addFinalStage(new CommonStages.FeatureStorageStage(storage));
         configuration.addFinalStage(new RoadConditionMonitoringStages.FinalizeStage());
@@ -218,7 +216,6 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
                     if (input[0] != null && input[0].has(SensingUtils.LocationKeys.LOCATION))
                         location = (JsonObject) input[0].get(SensingUtils.LocationKeys.LOCATION);
                 }catch (ClassCastException e){
-                    Log.e(LOG_TAG, String.valueOf(input[0]));
                     e.printStackTrace();
                 }
 
@@ -258,7 +255,7 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
         public abstract class StoreValuesForTestStage implements Stage{
 
             private String testID;
-            private GraphValuesStorage testStorage = GraphValuesStorage.getInstance();
+            private EvaluationSupportStorage testStorage = EvaluationSupportStorage.getInstance();
 
             public StoreValuesForTestStage(String testID){
                 this.testID = testID;
