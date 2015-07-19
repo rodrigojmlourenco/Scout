@@ -6,6 +6,9 @@ import com.google.gson.JsonObject;
 import com.ideaimpl.patterns.pipeline.PipelineContext;
 import com.ideaimpl.patterns.pipeline.Stage;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.location.LocationUtils;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.timedomain.StatisticalMetrics;
@@ -22,6 +25,9 @@ import pt.ulisboa.tecnico.cycleourcity.scout.storage.ScoutStorageManager;
  */
 public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
 
+    //Logging
+    private static boolean VERBOSE = false;
+    public final static String LOG_TAG = "RoadSlopeMonitoring";
 
     private RoadSlopeMonitoringState state;
 
@@ -47,8 +53,6 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
 
         if(!extractedFeaturesQueue.isEmpty())
             state.update(extractedFeaturesQueue.remove());
-
-        Log.d("PFX", String.valueOf(state.getPreviousState()));
     }
 
     public static PipelineConfiguration generateRoadSlopeMonitoringPipelineConfiguration() {
@@ -57,6 +61,7 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
 
         PipelineConfiguration configuration = new PipelineConfiguration();
 
+        configuration.addStage(new RoadSlopeMonitoringStages.ValidationStage());
         configuration.addStage(new RoadSlopeMonitoringStages.StoreRawValuesStage());
         //configuration.addStage(new RoadSlopeMonitoringStages.LowPassFilterStage()); //TODO
         //configuration.addStage(new RoadSlopeMonitoringStages.StoreFilteredValuesStage());
@@ -77,6 +82,37 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
      ************************************************************************
      */
     public static interface RoadSlopeMonitoringStages {
+
+
+        public class ValidationStage implements Stage {
+
+
+
+            @Override
+            public void execute(PipelineContext pipelineContext) {
+                SensorPipelineContext ctx = (SensorPipelineContext) pipelineContext;
+                JsonObject[] input = ctx.getInput();
+
+                List<JsonObject> validSamples = new ArrayList<>();
+                for(JsonObject sample : input){
+                    if( sample.has(SensingUtils.LocationKeys.LOCATION) &&
+                        sample.get(SensingUtils.LocationKeys.LOCATION) instanceof JsonObject)
+                        validSamples.add(sample);
+                }
+
+                if(validSamples.isEmpty()){
+                    if(VERBOSE) Log.w(LOG_TAG, "Scout is not fixed to a location yet! Skipping the next stages...");
+                    ctx.addError("Scout is not fixed to a location yet!");
+                    ctx.setInput(null);
+                }
+                else{
+                    JsonObject[] validatedInput = new JsonObject[validSamples.size()];
+                    validSamples.toArray(validatedInput);
+
+                    ctx.setInput(validatedInput);
+                }
+            }
+        }
 
         public class LowPassFilterStage implements Stage {
 
@@ -108,6 +144,8 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
                 mergedSample.addProperty(SensingUtils.PressureKeys.SAMPLES, samplingSize);
                 mergedSample.add(SensingUtils.PressureKeys.PREVIOUS_PRESSURE, prevPressure);
                 mergedSample.add(SensingUtils.LocationKeys.LOCATION, location);
+
+                if(VERBOSE) Log.d(LOG_TAG, samplingSize+" pressure samples have been merged into one.");
 
                 return mergedSample;
             }
@@ -157,16 +195,18 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
             public void execute(PipelineContext pipelineContext) {
 
                 SensorPipelineContext ctx = (SensorPipelineContext) pipelineContext;
-                JsonObject[] input = ctx.getInput();
+                JsonObject input = ctx.getInput()[0];
 
 
-                if (input.length == 1 && input[0] != null) { //Avoid NullPointer
-                    float altitude = LocationUtils.getAltitude(
-                            LocationUtils.PRESSURE_STANDARD_ATMOSPHERE,
-                            input[0].get(SensingUtils.PressureKeys.PRESSURE).getAsFloat());
+                if(input == null) return; //Avoid NullPointer
 
-                    input[0].addProperty(SensingUtils.PressureKeys.ALTITUDE, altitude);
-                }
+                float altitude = LocationUtils.getAltitude(
+                        LocationUtils.PRESSURE_STANDARD_ATMOSPHERE,
+                        input.get(SensingUtils.PressureKeys.PRESSURE).getAsFloat());
+
+                input.addProperty(SensingUtils.PressureKeys.ALTITUDE, altitude);
+
+                if(VERBOSE) Log.d(LOG_TAG, "Altitude has been successfully derived.");
             }
         }
 
@@ -223,12 +263,12 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
                         //OPTIONAL: reordering for readability (location at the tail)
                         currentSample.remove(SensingUtils.LocationKeys.LOCATION);
                         currentSample.add(SensingUtils.LocationKeys.LOCATION, to);
+
+                        if(VERBOSE) Log.d(LOG_TAG, "Slope has been successfully been derived.");
                     }
                 }
             }
         }
-
-
 
         public class UpdateInnerStateStage implements Stage {
 
@@ -238,11 +278,12 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
 
                 //Avoid NullPointer
                 JsonObject output;
-                if ((output = ctx.getInput()[0])==null) return;
+                if (ctx.getInput()==null || (output = ctx.getInput()[0])==null) return;
 
                 output.remove(SensingUtils.PressureKeys.PREVIOUS_PRESSURE);
 
                 ctx.setOutput(new JsonObject[]{output});
+
             }
         }
 
@@ -261,34 +302,34 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
                 SensorPipelineContext ctx = (SensorPipelineContext) pipelineContext;
                 JsonObject[] input = ctx.getInput();
 
+                if(input == null) return;
+
                 for(JsonObject sample : input)
-                    testStorage.storeSimplePressureTestValue(testID, sample);
+                    if (sample != null) testStorage.storeSimplePressureTestValue(testID, sample);
 
             }
         }
 
         public class StoreRawValuesStage extends StoreValuesForTestStage {
 
-            public final static String TEST_ID = "raw";
-
             public StoreRawValuesStage() {
-                super(TEST_ID);
+                super("raw");
             }
         }
 
         public class StoreFilteredValuesStage extends StoreValuesForTestStage {
 
-            public final static String TEST_ID = "filtered";
-
             public StoreFilteredValuesStage() {
-                super(TEST_ID);
+                super("filtered");
             }
         }
 
         public class StoreFeatureVectorStage implements Stage {
 
-            public final static String TEST_ID = "features";
+            private final String TEST_ID = "features";
             private EvaluationSupportStorage storage = EvaluationSupportStorage.getInstance();
+
+            private final String TAG = "["+this.getClass().getSimpleName()+"]: ";
 
             @Override
             public void execute(PipelineContext pipelineContext) {
@@ -296,7 +337,10 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
                 JsonObject[] input = ctx.getInput();
 
                 for(JsonObject featureVector : input)
-                    if(featureVector != null) storage.storeComplexPressureTestValue(TEST_ID, featureVector);
+                    if(featureVector != null)
+                        storage.storeComplexPressureTestValue(TEST_ID, featureVector);
+                    else if(VERBOSE)
+                        Log.w(LOG_TAG, TAG+"No features to store");
             }
         }
     }

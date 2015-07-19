@@ -7,10 +7,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils;
 
@@ -19,30 +19,32 @@ import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils;
  */
 public class EvaluationSupportStorage {
 
-    public final static String FILE_EXTENTION = ".txt";
+    public final static String FILE_EXTENSION = ".txt";
 
     private final File BASE_DIR;
     public final static String BASE_DIR_NAME = "tests";
 
+    private FileWriter writer;
+    private Object writerLock = new Object();
     //Accelerometer
     public final File ACC_BASE_DIR;
     public final static String ACC_BASE_DIR_NAME = "accelerometer";
-    private HashMap<String, FileWriter> accelerometerFileWriters;
+    private ConcurrentHashMap<String, File> accelerometerFileWriters;
 
     //Pressure
     public final File PRESSURE_BASE_DIR;
     public final static String PRESSURE_BASE_DIR_NAME = "pressure";
-    private HashMap<String, FileWriter> pressureFileWriters;
-
+    private ConcurrentHashMap<String, File> pressureFileWriters;
 
     private final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yy hh:mm:ss");
 
     private static EvaluationSupportStorage INSTANCE = new EvaluationSupportStorage();
 
 
+
     private EvaluationSupportStorage(){
-        this.accelerometerFileWriters = new HashMap<>();
-        this.pressureFileWriters = new HashMap<>();
+        this.accelerometerFileWriters = new ConcurrentHashMap<>();
+        this.pressureFileWriters = new ConcurrentHashMap<>();
 
         BASE_DIR = new File(ScoutStorageManager.getApplicationFolder().toString()+"/"+BASE_DIR_NAME);
         if(!BASE_DIR.exists()) BASE_DIR.mkdirs();
@@ -51,39 +53,63 @@ public class EvaluationSupportStorage {
         if(!ACC_BASE_DIR.exists()) ACC_BASE_DIR.mkdirs();
 
         PRESSURE_BASE_DIR = new File(BASE_DIR.toString()+"/"+PRESSURE_BASE_DIR_NAME);
-        if(!PRESSURE_BASE_DIR.exists()) ACC_BASE_DIR.mkdirs();
+        if(!PRESSURE_BASE_DIR.exists()) PRESSURE_BASE_DIR.mkdirs();
     }
 
     public static EvaluationSupportStorage getInstance(){ return  INSTANCE; }
 
-    private String printHeader(String testID){
+    private String printAccelerometerHeader(String testID){
         return "Test["+testID+"] - "+dateFormat.format(new Date())+"\n\n"+
                 "time || x || y || z\n";
     }
 
+    private String printSimplePressureHeader(String testID){
+        return "Test["+testID+"] - "+dateFormat.format(new Date())+"\n\n"+
+                "time || pressure || variance || stdDev || altitude\n";
+    }
+
+    private String printComplexPressureHeader(String testID){
+        return "Test["+testID+"] - "+dateFormat.format(new Date())+"\n\n"+
+                "time || pressure || altitude || distance (delta) || slope\n";
+    }
+
     private void registerNewAccelerometerTest(String testID){
 
-        String filename = "test_"+testID+"_"+System.currentTimeMillis()+FILE_EXTENTION;
+        String filename = "test_"+testID+"_"+System.currentTimeMillis()+ FILE_EXTENSION;
         File testFile = new File(ACC_BASE_DIR, filename);
 
         try {
-            FileWriter writer = new FileWriter(testFile);
-            writer.write(printHeader(testID));
-            accelerometerFileWriters.put(testID, writer);
+            synchronized (writerLock) {
+                writer = new FileWriter(testFile);
+                writer.write(printAccelerometerHeader(testID));
+                writer.close();
+                accelerometerFileWriters.put(testID, testFile);
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void registerNewPressureTest(String testID){
+    private void registerNewPressureTest(String testID, boolean isComplex){
 
-        String filename = "test_"+testID+"_"+System.currentTimeMillis()+FILE_EXTENTION;
+        String filename = "test_"+testID+"_"+System.currentTimeMillis()+ FILE_EXTENSION;
         File testFile = new File(PRESSURE_BASE_DIR, filename);
 
         try {
-            FileWriter writer = new FileWriter(testFile);
-            writer.write(printHeader(testID));
-            pressureFileWriters.put(testID, writer);
+
+            synchronized (writerLock) {
+                writer = new FileWriter(testFile);
+
+                if (isComplex)
+                    writer.write(printComplexPressureHeader(printAccelerometerHeader(testID)));
+                else writer.write(printSimplePressureHeader(testID));
+
+                writer.close();
+            }
+
+            pressureFileWriters.put(testID, testFile);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -99,58 +125,39 @@ public class EvaluationSupportStorage {
     }
 
     private String parseSimplePressureSample(JsonObject sample){
-        return "";
+
+        return  sample.get(SensingUtils.SCOUT_TIME).getAsString()+" || "+
+                sample.get(SensingUtils.PressureKeys.PRESSURE).getAsString()+" || "+
+                (sample.has(SensingUtils.PressureKeys.VARIANCE) ?
+                        sample.get(SensingUtils.PressureKeys.VARIANCE).getAsString(): "n/a")+" || "+
+                (sample.has(SensingUtils.PressureKeys.STDEV) ?
+                        sample.get(SensingUtils.PressureKeys.STDEV).getAsString(): "n/a")+ " || " +
+                (sample.has(SensingUtils.PressureKeys.ALTITUDE) ?
+                        sample.get(SensingUtils.PressureKeys.ALTITUDE).getAsString(): "n/a")+ "\n";
     }
 
     private String parseComplexPressureSample(JsonObject sample){
-        return "";
+
+        return  sample.get(SensingUtils.SCOUT_TIME).getAsString()+" || "+
+                sample.get(SensingUtils.PressureKeys.PRESSURE).getAsString()+" || "+
+                sample.get(SensingUtils.PressureKeys.ALTITUDE).getAsString()+" || "+
+                (sample.has(SensingUtils.PressureKeys.TRAVELLED_DISTANCE) ?
+                        sample.get(SensingUtils.PressureKeys.TRAVELLED_DISTANCE).getAsString(): "n/a")+ " || " +
+                (sample.has(SensingUtils.PressureKeys.SLOPE) ?
+                        sample.get(SensingUtils.PressureKeys.SLOPE).getAsString(): "n/a")+ "\n";
     }
 
     public void storeAccelerometerTestValue(String testID, JsonObject value){
 
-        if(!accelerometerFileWriters.containsKey(testID))
-            registerNewAccelerometerTest(testID);
+        synchronized (writerLock) {
+            if(!accelerometerFileWriters.containsKey(testID))
+                registerNewAccelerometerTest(testID);
 
-        try {
-            accelerometerFileWriters.get(testID).write(parseAccelerometerSample(value));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void storeSimplePressureTestValue(String testID, JsonObject value){
-
-        if(!pressureFileWriters.containsKey(testID))
-            registerNewPressureTest(testID);
-
-        try {
-            pressureFileWriters.get(testID).write(parseSimplePressureSample(value));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void storeComplexPressureTestValue(String testID, JsonObject value){
-
-        if(!pressureFileWriters.containsKey(testID))
-            registerNewPressureTest(testID);
-
-        try {
-            pressureFileWriters.get(testID).write(parseComplexPressureSample(value));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void teardownAccelerometerTests(){
-        for(String testID : accelerometerFileWriters.keySet()){
             try {
 
-                FileWriter writer = accelerometerFileWriters.get(testID);
-                writer.flush();
+                writer = new FileWriter(accelerometerFileWriters.get(testID), true);
+                writer.write(parseAccelerometerSample(value));
                 writer.close();
-
-                accelerometerFileWriters.remove(testID);
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -158,18 +165,50 @@ public class EvaluationSupportStorage {
         }
     }
 
-    private void teardownPressureTests(){
-        for(String testID : pressureFileWriters.keySet()){
-            try {
+    public void storeSimplePressureTestValue(String testID, JsonObject value){
+        if(!pressureFileWriters.containsKey(testID))
+            registerNewPressureTest(testID, false);
 
-                FileWriter writer = pressureFileWriters.get(testID);
-                writer.flush();
+        try {
+            synchronized (writerLock) {
+                writer = new FileWriter(pressureFileWriters.get(testID), true);
+                writer.write(parseSimplePressureSample(value));
                 writer.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
+    public void storeComplexPressureTestValue(String testID, JsonObject value){
+
+        if (!pressureFileWriters.containsKey(testID))
+            registerNewPressureTest(testID, true);
+
+        try {
+            synchronized (writerLock) {
+                writer = new FileWriter(pressureFileWriters.get(testID), true);
+                writer.write(parseComplexPressureSample(value));
+                writer.close();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void teardownAccelerometerTests(){
+        synchronized (writerLock) {
+            for (String testID : accelerometerFileWriters.keySet()) {
+                accelerometerFileWriters.remove(testID);
+            }
+        }
+    }
+
+    private void teardownPressureTests(){
+        synchronized (writerLock) {
+            for (String testID : pressureFileWriters.keySet()) {
                 pressureFileWriters.remove(testID);
-
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         }
     }

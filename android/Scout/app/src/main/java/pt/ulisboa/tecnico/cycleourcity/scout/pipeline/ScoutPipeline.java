@@ -67,14 +67,12 @@ public class ScoutPipeline extends BasicPipeline {
         mPipeline = new MobileSensing();
         mPipeline.setWindowSize(3);
 
-        /*
         PipelineConfiguration roadConditionMonitoringConfiguration =
                 RoadConditionMonitoringPipeline.generateRoadConditionMonitoringPipelineConfiguration();
         ConfigurationCaretaker roadConditionMonitoringCaretaker = new ConfigurationCaretaker();
         roadConditionMonitoringCaretaker.setOriginalPipelineConfiguration(roadConditionMonitoringConfiguration);
         RoadConditionMonitoringPipeline rPipeline = new RoadConditionMonitoringPipeline(roadConditionMonitoringCaretaker);
         mPipeline.addSensorProcessingPipeline(rPipeline);
-        */
 
 
         PipelineConfiguration roadSlopeConfiguration =

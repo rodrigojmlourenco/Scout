@@ -26,6 +26,10 @@
             {
                 "@type":"edu.mit.media.funf.probe.builtin.PressureSensorProbe",
                 "@schedule": {"interval":1, "duration":0, "strict":true}
+            },
+            {
+                "@type":"edu.mit.media.funf.probe.builtin.LinearAccelerationSensorProbe",
+                "@schedule": {"interval":1, "duration":0, "strict":true}
             }
 
             <!--
@@ -34,10 +38,7 @@
                 "@schedule": {"interval":1, "duration":0, "strict":true}
             },
 
-            {
-                "@type":"edu.mit.media.funf.probe.builtin.LinearAccelerationSensorProbe",
-                "@schedule": {"interval":1, "duration":0, "strict":true}
-            }
+
 
             -->
 
