@@ -26,10 +26,12 @@ public class EvaluationSupportStorage {
 
     private FileWriter writer;
     private Object writerLock = new Object();
+
     //Accelerometer
     public final File ACC_BASE_DIR;
     public final static String ACC_BASE_DIR_NAME = "accelerometer";
     private ConcurrentHashMap<String, File> accelerometerFileWriters;
+
 
     //Pressure
     public final File PRESSURE_BASE_DIR;
