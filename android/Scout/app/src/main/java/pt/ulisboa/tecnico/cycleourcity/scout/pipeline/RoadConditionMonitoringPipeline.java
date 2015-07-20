@@ -12,6 +12,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import pt.ulisboa.tecnico.cycleourcity.scout.calibration.ScoutCalibrationManager;
+import pt.ulisboa.tecnico.cycleourcity.scout.calibration.exceptions.UninitializedException;
 import pt.ulisboa.tecnico.cycleourcity.scout.learning.PavementType;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.timedomain.EnvelopeMetrics;
@@ -28,20 +30,78 @@ import pt.ulisboa.tecnico.cycleourcity.scout.storage.LearningSupportStorage;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.ScoutStorageManager;
 
 /**
- * Created by rodrigo.jm.lourenco on 30/06/2015.
+ * @version 1.0 - Learning-Oriented
+ * @author rodrigo.jm.lourenco
+ * @see SensorProcessingPipeline
+ *
+ * The RoadConditionMonitoringPipeline is the pipeline responsible for determining the type and
+ * condition of the surface currently being traversed by the participant. In order to do so this
+ * pipeline will analyse sensor values originated from the Linear Acceleration sensor.
+ *
+ *
  */
 public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
 
-    //Logging
-    private final String LOG_TAG = "RoadConditionMonitoring";
-    private final boolean VERBOSE = true;
-
+    private ScoutCalibrationManager calibrationManager = null;
     public final static int SENSOR_TYPE = SensingUtils.LINEAR_ACCELERATION;
 
     public RoadConditionMonitoringPipeline(ConfigurationCaretaker caretaker) {
         super(SENSOR_TYPE, caretaker);
+
+        try{
+            calibrationManager = ScoutCalibrationManager.getInstance();
+        } catch (UninitializedException e) {
+            e.printStackTrace();
+        }
+
     }
 
+    @Override
+    public void pushSample(JsonObject sensorSample) {
+
+        if(calibrationManager != null)
+            calibrationManager.tagLinearAccelerationOffsets(sensorSample);
+
+        super.pushSample(sensorSample);
+    }
+
+    /**
+     * Generates a pre-defined road condition monitoring oriented pipeline.<br>
+     * This configuration contemplates the following stages:<br>
+     * <ol>
+     *     <li>
+     *         ValidationStage: validates the samples, removing invalid ones.
+     *         @see pt.ulisboa.tecnico.cycleourcity.scout.pipeline.RoadConditionMonitoringPipeline.RoadConditionMonitoringStages.ValidationStage
+     *     </li>
+     *     <li>
+     *         NormalizationStage: normalizes the sample's values by removing an offset acquired
+     *         during calibration.
+     *         @see pt.ulisboa.tecnico.cycleourcity.scout.pipeline.RoadConditionMonitoringPipeline.RoadConditionMonitoringStages.NormalizationStage
+     *     </li>
+     *     <li>
+     *         ProjectionStage: given a rotation matrix, this stage projects the sample's values
+     *         onto the Earth's coordinate system which is an absolute coordinate system.
+     *         @see pt.ulisboa.tecnico.cycleourcity.scout.pipeline.RoadConditionMonitoringPipeline.RoadConditionMonitoringStages.ProjectionStage
+     *     </li>
+     *     <li>
+     *         OverkillFeatureExtractionStage: extracts a wide plethora of features (all time-domain).
+     *         Although ultimetly there is no need for such a wide variety of features, because at
+     *         this stage it is still not clear the most relevant ones, all possible features are
+     *         computed and added to the feature vector.
+     *         @see pt.ulisboa.tecnico.cycleourcity.scout.pipeline.RoadConditionMonitoringPipeline.RoadConditionMonitoringStages.OverkillZFeatureExtractionStage
+     *     </li>
+     *     <li>
+     *         TagForLearningStage: tags the samples with a given type of pavement, this tag will then
+     *         be used to classify the samples during the machine learning phase.
+     *         @see pt.ulisboa.tecnico.cycleourcity.scout.pipeline.RoadConditionMonitoringPipeline.RoadConditionMonitoringStages.TagForLearningStage
+     *     </li>
+     * </ol>
+     * <br>
+     * Additionally and as to ease the evaluation stage, between stages that result in transformations
+     * of the original sensor values there are stages that store those transformations. These files
+     * may then be used to generate graphs as to better understand the impact of these stages.
+     * @return RoadConditionMonitoringPipeline's configuration
+     */
     public static PipelineConfiguration generateRoadConditionMonitoringPipelineConfiguration(){
         ScoutStorageManager storage = ScoutStorageManager.getInstance();
 
@@ -76,6 +136,19 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
 
         public final String LOG_TAG = "RoadConditionMonitoring";
 
+        /**
+         * This stage is responsible for validating the linear acceleration samples, where a sample
+         * is said to be valid if it contains:
+         * <ul>
+         *     <li>Linear acceleration values</li>
+         *     <li>Location</li>
+         *     <li>Rotation Matrix</li>
+         *     <li>Calibration offset</li>
+         * </ul>
+         * Samples that do not conform to these requirements are discarded, and if all samples
+         * are discarded then an error is pushed onto the pipeline, which will result in the
+         * following stages to be skipped.
+         */
         public static class ValidationStage implements Stage {
 
             private boolean validSample(JsonObject sample){
@@ -106,6 +179,12 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
             }
         }
 
+        /**
+         * Given the linear acceleration sensor offset values, which were acquired during a calibration
+         * process, this stage normalizes the sensor's values by subtracting that offset.
+         * <br>
+         * This process is based upon the one described in <a href="http://bscw.wineme.fb5.uni-siegen.de/pub/bscw.cgi/S54d30e14/d802414/jigsaw.pdf">Jigsaw</a>.
+         */
         public static class NormalizationStage implements Stage {
 
             private boolean normalizeSample(JsonObject sample){
@@ -141,6 +220,14 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
             }
         }
 
+        /**
+         * Accelerometer-based readings are mapped according to the device's coordinate system, that
+         * depends on the device's orientation. To assure the robustness of the this pipeline
+         * there is a need to project the linear acceleration sensor's readings onto an absolute
+         * coordinate system, more specifically the Earth's coordinate systems.
+         * <br>
+         * This projection process is based upon the one described by <a href="http://www.ami-lab.org/uploads/Publications/Journal/WP2/30_A%20Robust%20Dead-Reckoning%20Pedestrian%20Tracking%20System%20with%20Low%20Cost%20Sensors.pdf">[Jin:2011]</a>
+         */
         public static class ProjectionStage implements Stage {
 
             private final Gson gson = new Gson();
@@ -195,7 +282,10 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
             }
         }
 
-
+        /**
+         * Once all processing has been performed over the original sensor readings, the results
+         * are stored into the device's internal database storage.
+         */
         public static class FinalizeStage implements Stage {
 
             private final ScoutStorageManager storage = ScoutStorageManager.getInstance();
@@ -215,6 +305,31 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
             }
         }
 
+        /**
+         * This stage is responsible for computing the feature vector, where the feature vector
+         * is comprised of almost all of the time domain-based features described by
+         * <a href="http://web.ist.utl.pt/~diogo.ferreira/papers/figo10preprocessing.pdf">[Figo:2010]</a>
+         * <br>
+         * More specifically this stage will compute the following stages:<br>
+         * <ul>
+         *     <li>Mean</li>
+         *     <li>Median</li>
+         *     <li>Variance</li>
+         *     <li>Standard Deviation</li>
+         *     <li>Maximum</li>
+         *     <li>Minimum</li>
+         *     <li>Range</li>
+         *     <li>Root Mean Squares</li>
+         *     <li>Zero-Crossings</li>
+         *     <li>Mean-Crossings</li>
+         *     <li>Median-Crossings</li>
+         *     <li>Range-Crossings</li>
+         * </ul>
+         * <br>
+         * There is actually no need to compute all of these features, however since at this stage
+         * it is still not clear which features improve the classification process, all possible
+         * features will be extracted.
+         */
         public class OverkillZFeatureExtractionStage implements Stage {
 
             private JsonObject constructFeatureVector(double[] values, JsonObject location){
@@ -289,14 +404,6 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
                 double[] zValues = new double[input.length];
                 JsonObject featureVector=null, location = null;
 
-                /*
-                try {
-                    if (input[0] != null && input[0].has(SensingUtils.LocationKeys.LOCATION))
-                        location = (JsonObject) input[0].get(SensingUtils.LocationKeys.LOCATION);
-                }catch (ClassCastException e){
-                    e.printStackTrace();
-                }
-                */
                 location = (JsonObject) input[0].get(SensingUtils.LocationKeys.LOCATION);
 
                 for (JsonObject sample : input)
@@ -310,6 +417,12 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
             }
         }
 
+
+        /**
+         * Since at the point Scout it is still not able to classify the pavement type, this
+         * stage will use user-provided classifications to tag the samples, which will then be used
+         * to create a training data-set for the supervised-learning phase of the project.
+         */
         public class TagForLearningStage implements Stage{
 
             @Override
@@ -325,7 +438,6 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
         }
 
         //Storage Stages - for graph construction and learning
-
         public abstract class StoreValuesForTestStage implements Stage{
 
             private String testID;
@@ -348,29 +460,23 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
         }
 
         public class StoreRawValuesStage extends StoreValuesForTestStage {
-
-            public final static String TEST_ID = "raw";
-
             public StoreRawValuesStage() {
-                super(this.TEST_ID);
+                super("raw");
             }
         }
 
         public class StoreNormalizedValuesStage extends StoreValuesForTestStage {
 
-            public final static String TEST_ID = "normalized";
-
             public StoreNormalizedValuesStage() {
-                super(this.TEST_ID);
+                super("normalized");
             }
         }
 
         public class StoreProjectedValuesStage extends StoreValuesForTestStage {
 
-            public final static String TEST_ID = "projected";
 
             public StoreProjectedValuesStage() {
-                super(this.TEST_ID);
+                super("projected");
             }
         }
 

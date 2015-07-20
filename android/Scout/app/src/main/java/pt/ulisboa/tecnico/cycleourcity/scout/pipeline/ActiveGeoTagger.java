@@ -223,8 +223,8 @@ public class ActiveGeoTagger {
                 Arrays.sort(input, new Comparator<JsonObject>() {
                     @Override
                     public int compare(JsonObject l1, JsonObject l2) {
-                        BigInteger scoutTime1 = new BigInteger(l1.get(SensingUtils.SCOUT_TIME).getAsString()),
-                            scoutTime2 = new BigInteger(l2.get(SensingUtils.SCOUT_TIME).getAsString());
+                        BigInteger scoutTime1 = new BigInteger(l1.get(SensingUtils.LocationKeys.ELAPSED_TIME_NANOS).getAsString()),
+                            scoutTime2 = new BigInteger(l2.get(SensingUtils.LocationKeys.ELAPSED_TIME_NANOS).getAsString());
 
                         return scoutTime2.compareTo(scoutTime1);
                     }
@@ -380,15 +380,6 @@ public class ActiveGeoTagger {
                 ctx.setOutput(input); //USELESS - throws exception if not used SOLVE THIS TODO
             }
         }
-
-        class FinalizeStage implements Stage {
-
-            @Override
-            public void execute(PipelineContext pipelineContext) {
-                SensorPipelineContext ctx = (SensorPipelineContext) pipelineContext;
-                ctx.setOutput(ctx.getInput());
-            }
-        }
     }
 
     protected interface RotationStages {
@@ -419,13 +410,9 @@ public class ActiveGeoTagger {
                         invalidSamples++;
                 }
 
-
-
                 JsonObject[] output = new JsonObject[validSamples.size()];
                 validSamples.toArray(output);
                 ctx.setInput(output);
-
-
             }
         }
 
@@ -481,15 +468,6 @@ public class ActiveGeoTagger {
                 output[0] = this.mergingStrategy.mergeSamples(Arrays.asList(input));
 
                 ctx.setInput(output);
-            }
-        }
-
-        class FeatureExtractionStage implements Stage {
-
-            @Override
-            public void execute(PipelineContext pipelineContext) {
-                SensorPipelineContext ctx = (SensorPipelineContext) pipelineContext;
-                ctx.setOutput(ctx.getInput());
             }
         }
 
@@ -563,5 +541,4 @@ public class ActiveGeoTagger {
             }
         }
     }
-
 }
