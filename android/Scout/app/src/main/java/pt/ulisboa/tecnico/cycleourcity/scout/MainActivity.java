@@ -22,7 +22,9 @@ import java.util.regex.Pattern;
 import edu.mit.media.funf.FunfManager;
 import edu.mit.media.funf.pipeline.BasicPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.calibration.LinearAccelerationCalibrator;
+import pt.ulisboa.tecnico.cycleourcity.scout.calibration.ScoutCalibrationManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.calibration.SensorCalibrator;
+import pt.ulisboa.tecnico.cycleourcity.scout.calibration.exceptions.NotYetCalibratedException;
 import pt.ulisboa.tecnico.cycleourcity.scout.config.ScoutConfigManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.config.exceptions.NotInitializedException;
 import pt.ulisboa.tecnico.cycleourcity.scout.learning.PavementType;
@@ -57,6 +59,7 @@ public class MainActivity extends ActionBarActivity {
     //Adaptive Offloading
     private AdaptiveOffloadingManager offloadingManager;
 
+    private boolean isSensing = false;
 
     private ServiceConnection funfManagerConn = new ServiceConnection() {
         @Override
@@ -91,6 +94,7 @@ public class MainActivity extends ActionBarActivity {
                         if(pipeline.isEnabled()) {
                             startSession.setEnabled(false);
                             stopSession.setEnabled(true);
+                            isSensing = true;
                         }else
                             Toast.makeText(MainActivity.this, "Unable to start sensing pipeline.", Toast.LENGTH_SHORT).show();
 
@@ -112,7 +116,7 @@ public class MainActivity extends ActionBarActivity {
                         if(!pipeline.isEnabled()) {
                             startSession.setEnabled(true);
                             stopSession.setEnabled(false);
-                            //pipeline.onRun(ScoutPipeline.ACTION_PROFILE, null);
+                            isSensing = false;
                         }else
                             Toast.makeText(MainActivity.this, "Unable to stop sensing pipeline.", Toast.LENGTH_SHORT).show();
 
@@ -133,7 +137,6 @@ public class MainActivity extends ActionBarActivity {
             funfManager = null;
         }
     };
-    private Button nProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -201,7 +204,14 @@ public class MainActivity extends ActionBarActivity {
         tagText = (EditText) findViewById(R.id.tag);
 
         //Check if calibrated
-        checkIfCalibrated();
+        try {
+            ScoutCalibrationManager.initScoutCalibrationManager(
+                    getSharedPreferences(SensorCalibrator.PREFERENCES_NAME,MODE_PRIVATE));
+        } catch (NotYetCalibratedException e) {
+            Log.e(getClass().getSimpleName(), "The application must be calibrated.");
+            Intent intent = new Intent(this, CalibrateActivity.class);
+            startActivity(intent);
+        }
 
 
         //Profiling
@@ -226,6 +236,14 @@ public class MainActivity extends ActionBarActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+
+        if(isSensing){
+            Toast.makeText(MainActivity.this,
+                    "Please terminate the sensing session first.", Toast.LENGTH_SHORT).show();
+
+            return true;
+        }
+
 
         Intent intent;
         switch (id){
@@ -259,16 +277,5 @@ public class MainActivity extends ActionBarActivity {
 
     public static interface EnergyProfileUpdateCallback{
         public void updateEnergyConsumption(int capacity, long iddleEnergy, long sensingEnergy);
-    }
-
-    private void checkIfCalibrated(){
-        SharedPreferences prefs = getSharedPreferences(SensorCalibrator.PREFERENCES_NAME, MODE_PRIVATE);
-
-        if(prefs == null ||
-                !prefs.getBoolean(LinearAccelerationCalibrator.LinearAccelerationCalibrationKeys.CALIBRATED, false)){
-            Intent intent = new Intent(this, CalibrateActivity.class);
-            startActivity(intent);
-
-        }
     }
 }

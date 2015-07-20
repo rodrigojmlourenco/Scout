@@ -1,7 +1,5 @@
 package pt.ulisboa.tecnico.cycleourcity.scout.pipeline;
 
-import android.util.Log;
-
 import com.google.gson.JsonObject;
 import com.ideaimpl.patterns.pipeline.PipelineContext;
 import com.ideaimpl.patterns.pipeline.Stage;
@@ -101,7 +99,6 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
                 }
 
                 if(validSamples.isEmpty()){
-                    if(VERBOSE) Log.w(LOG_TAG, "Scout is not fixed to a location yet! Skipping the next stages...");
                     ctx.addError("Scout is not fixed to a location yet!");
                     ctx.setInput(null);
                 }
@@ -145,8 +142,6 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
                 mergedSample.add(SensingUtils.PressureKeys.PREVIOUS_PRESSURE, prevPressure);
                 mergedSample.add(SensingUtils.LocationKeys.LOCATION, location);
 
-                if(VERBOSE) Log.d(LOG_TAG, samplingSize+" pressure samples have been merged into one.");
-
                 return mergedSample;
             }
 
@@ -184,7 +179,7 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
 
                     ctx.setInput(output);
                 }catch (NullPointerException e){
-                    Log.e("PFX", String.valueOf(input[0]));
+                    e.printStackTrace();
                 }
             }
         }
@@ -205,8 +200,6 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
                         input.get(SensingUtils.PressureKeys.PRESSURE).getAsFloat());
 
                 input.addProperty(SensingUtils.PressureKeys.ALTITUDE, altitude);
-
-                if(VERBOSE) Log.d(LOG_TAG, "Altitude has been successfully derived.");
             }
         }
 
@@ -263,8 +256,6 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
                         //OPTIONAL: reordering for readability (location at the tail)
                         currentSample.remove(SensingUtils.LocationKeys.LOCATION);
                         currentSample.add(SensingUtils.LocationKeys.LOCATION, to);
-
-                        if(VERBOSE) Log.d(LOG_TAG, "Slope has been successfully been derived.");
                     }
                 }
             }
@@ -339,8 +330,7 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
                 for(JsonObject featureVector : input)
                     if(featureVector != null)
                         storage.storeComplexPressureTestValue(TEST_ID, featureVector);
-                    else if(VERBOSE)
-                        Log.w(LOG_TAG, TAG+"No features to store");
+
             }
         }
     }

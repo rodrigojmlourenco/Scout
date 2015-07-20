@@ -1,9 +1,6 @@
 package pt.ulisboa.tecnico.cycleourcity.scout.calibration;
 
 import android.content.SharedPreferences;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.util.Log;
 
 import com.google.gson.JsonObject;
@@ -131,14 +128,14 @@ public class LinearAccelerationCalibrator implements SensorCalibrator{
     @Override
     public void storeOffsets(SharedPreferences preferences) {
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putBoolean(LinearAccelerationCalibrationKeys.CALIBRATED, true);
-        editor.putFloat(LinearAccelerationCalibrationKeys.X_OFFSET, (float) xMean);
-        editor.putFloat(LinearAccelerationCalibrationKeys.Y_OFFSET, (float) yMean);
-        editor.putFloat(LinearAccelerationCalibrationKeys.Z_OFFSET, (float) zMean);
+        editor.putBoolean(CalibrationKeys.CALIBRATED, true);
+        editor.putFloat(CalibrationKeys.X_OFFSET, (float) xMean);
+        editor.putFloat(CalibrationKeys.Y_OFFSET, (float) yMean);
+        editor.putFloat(CalibrationKeys.Z_OFFSET, (float) zMean);
         editor.commit();
     }
 
-    public static interface LinearAccelerationCalibrationKeys{
+    public static interface CalibrationKeys {
         public final static String
                 CALIBRATED = "LinearAcceleration",
                 X_OFFSET = "xOffset",

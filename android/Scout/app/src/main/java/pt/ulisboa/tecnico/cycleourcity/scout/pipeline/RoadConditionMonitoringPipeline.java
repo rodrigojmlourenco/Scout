@@ -3,11 +3,14 @@ package pt.ulisboa.tecnico.cycleourcity.scout.pipeline;
 import android.opengl.Matrix;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.ideaimpl.patterns.pipeline.PipelineContext;
 import com.ideaimpl.patterns.pipeline.Stage;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import pt.ulisboa.tecnico.cycleourcity.scout.learning.PavementType;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils;
@@ -29,6 +32,10 @@ import pt.ulisboa.tecnico.cycleourcity.scout.storage.ScoutStorageManager;
  */
 public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
 
+    //Logging
+    private final String LOG_TAG = "RoadConditionMonitoring";
+    private final boolean VERBOSE = true;
+
     public final static int SENSOR_TYPE = SensingUtils.LINEAR_ACCELERATION;
 
     public RoadConditionMonitoringPipeline(ConfigurationCaretaker caretaker) {
@@ -40,15 +47,23 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
 
         PipelineConfiguration configuration = new PipelineConfiguration();
 
+        configuration.addStage(new RoadConditionMonitoringStages.ValidationStage());
+
         configuration.addStage(new RoadConditionMonitoringStages.StoreRawValuesStage());            //TESTING
+
+        configuration.addStage(new RoadConditionMonitoringStages.NormalizationStage());
+        configuration.addStage(new RoadConditionMonitoringStages.StoreNormalizedValuesStage());     //TESTING
+
         configuration.addStage(new RoadConditionMonitoringStages.ProjectionStage());
         configuration.addStage(new RoadConditionMonitoringStages.StoreProjectedValuesStage());      //TESTING
+
         configuration.addStage(new RoadConditionMonitoringStages.OverkillZFeatureExtractionStage());//LEARNING
         configuration.addStage(new RoadConditionMonitoringStages.TagForLearningStage());            //LEARNING
         configuration.addStage(new RoadConditionMonitoringStages.StoreFeatureVectorStage());
 
         configuration.addFinalStage(new CommonStages.FeatureStorageStage(storage));
         configuration.addFinalStage(new RoadConditionMonitoringStages.FinalizeStage());
+
         return configuration;
     }
 
@@ -60,6 +75,71 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
     public static interface RoadConditionMonitoringStages{
 
         public final String LOG_TAG = "RoadConditionMonitoring";
+
+        public static class ValidationStage implements Stage {
+
+            private boolean validSample(JsonObject sample){
+                return sample.has(SensingUtils.MotionKeys.LOCATION) &&
+                        ! (sample.get(SensingUtils.MotionKeys.LOCATION) instanceof JsonNull) &&
+                        sample.has(SensingUtils.MotionKeys.ROTATION) &&
+                        ! (sample.get(SensingUtils.MotionKeys.ROTATION) instanceof JsonNull) &&
+                        sample.has(SensingUtils.MotionKeys.CALIBRATION) &&
+                        ! (sample.get(SensingUtils.MotionKeys.CALIBRATION) instanceof JsonNull);
+            }
+
+            @Override
+            public void execute(PipelineContext pipelineContext) {
+                SensorPipelineContext ctx = (SensorPipelineContext) pipelineContext;
+                List<JsonObject> validSamples = new ArrayList<>();
+
+                for(JsonObject sample : ctx.getInput())
+                    if(validSample(sample)) validSamples.add(sample);
+
+                if(validSamples.isEmpty()) {
+                    String error = "There are no complete samples in this iteration";
+                    ctx.addError(error);
+                }else{
+                    JsonObject[] validated = new JsonObject[validSamples.size()];
+                    validSamples.toArray(validated);
+                    ctx.setInput(validated);
+                }
+            }
+        }
+
+        public static class NormalizationStage implements Stage {
+
+            private boolean normalizeSample(JsonObject sample){
+
+                JsonObject offsets =
+                        (JsonObject) sample.remove(SensingUtils.MotionKeys.CALIBRATION);
+
+                float   x, y, z,
+                        xOffset, yOffset, zOffset;
+
+                x = sample.remove(SensingUtils.MotionKeys.X).getAsFloat();
+                y = sample.remove(SensingUtils.MotionKeys.Y).getAsFloat();
+                z = sample.remove(SensingUtils.MotionKeys.Z).getAsFloat();
+
+                xOffset = offsets.get(SensingUtils.MotionKeys.X).getAsFloat();
+                yOffset = offsets.get(SensingUtils.MotionKeys.Y).getAsFloat();
+                zOffset = offsets.get(SensingUtils.MotionKeys.Z).getAsFloat();
+
+                sample.addProperty(SensingUtils.MotionKeys.X, x - xOffset);
+                sample.addProperty(SensingUtils.MotionKeys.Y, y - yOffset);
+                sample.addProperty(SensingUtils.MotionKeys.Z, z - zOffset);
+
+                return false;
+            }
+
+            @Override
+            public void execute(PipelineContext pipelineContext) {
+                SensorPipelineContext ctx = (SensorPipelineContext) pipelineContext;
+
+                for(JsonObject sample : ctx.getInput())
+                    normalizeSample(sample);
+
+            }
+        }
 
         public static class ProjectionStage implements Stage {
 
@@ -92,11 +172,8 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
 
             private JsonObject projectToAbsoluteCoordinates(JsonObject sample) {
 
-                if(!sample.has("rotation") || sample.get("rotation")==null)
-                    return null;
-
                 try {
-                    JsonObject rotationObj = sample.remove("rotation").getAsJsonObject();
+                    JsonObject rotationObj = sample.remove(SensingUtils.MotionKeys.ROTATION).getAsJsonObject();
                     float[] IR = new float[16];
 
                     IR = gson.fromJson(
@@ -131,7 +208,7 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
                 JsonObject[] input = ctx.getInput();
 
                 if(input.length == 1 && input[0]!=null) try {
-                    storage.store(""+SensingUtils.LINEAR_ACCELERATION, input[0]);
+                    storage.store(String.valueOf(SensingUtils.LINEAR_ACCELERATION), input[0]);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -212,23 +289,20 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
                 double[] zValues = new double[input.length];
                 JsonObject featureVector=null, location = null;
 
+                /*
                 try {
                     if (input[0] != null && input[0].has(SensingUtils.LocationKeys.LOCATION))
                         location = (JsonObject) input[0].get(SensingUtils.LocationKeys.LOCATION);
                 }catch (ClassCastException e){
                     e.printStackTrace();
                 }
+                */
+                location = (JsonObject) input[0].get(SensingUtils.LocationKeys.LOCATION);
 
-                try {
+                for (JsonObject sample : input)
+                    zValues[i++] = sample.get(SensingUtils.MotionKeys.PROJECTED_Z).getAsFloat();
 
-                    for (JsonObject sample : input)
-                        zValues[i++] = sample.get(SensingUtils.MotionKeys.PROJECTED_Z).getAsFloat();
-
-                    featureVector = constructFeatureVector(zValues, location);
-
-                }catch (NullPointerException e){
-                    e.printStackTrace();
-                }
+                featureVector = constructFeatureVector(zValues, location);
 
                 JsonObject[] output = new JsonObject[1];
                 output[0] = featureVector;
@@ -278,7 +352,7 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
             public final static String TEST_ID = "raw";
 
             public StoreRawValuesStage() {
-                super(TEST_ID);
+                super(this.TEST_ID);
             }
         }
 
@@ -287,7 +361,7 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
             public final static String TEST_ID = "normalized";
 
             public StoreNormalizedValuesStage() {
-                super(TEST_ID);
+                super(this.TEST_ID);
             }
         }
 
@@ -296,7 +370,7 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
             public final static String TEST_ID = "projected";
 
             public StoreProjectedValuesStage() {
-                super(TEST_ID);
+                super(this.TEST_ID);
             }
         }
 

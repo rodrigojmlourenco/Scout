@@ -10,7 +10,7 @@ import com.google.gson.JsonObject;
  */
 public interface SensorCalibrator {
 
-    public final static String PREFERENCES_NAME = "CalibrationValues";
+    public final static String PREFERENCES_NAME = "accelerationOffsets";
 
     // The total sample size for each state measurement.
     public final static int SAMPLE_SIZE = 1024;

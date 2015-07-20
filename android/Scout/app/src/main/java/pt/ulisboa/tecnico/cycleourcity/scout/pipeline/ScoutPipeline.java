@@ -9,6 +9,9 @@ import edu.mit.media.funf.FunfManager;
 import edu.mit.media.funf.json.IJsonObject;
 import edu.mit.media.funf.pipeline.BasicPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.ScoutApplication;
+import pt.ulisboa.tecnico.cycleourcity.scout.calibration.ScoutCalibrationManager;
+import pt.ulisboa.tecnico.cycleourcity.scout.calibration.exceptions.NotYetCalibratedException;
+import pt.ulisboa.tecnico.cycleourcity.scout.calibration.exceptions.UninitializedException;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.MobileSensing;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exceptions.MobileSensingException;
@@ -49,11 +52,19 @@ public class ScoutPipeline extends BasicPipeline {
     //  Test - Storage for graph creation
     private EvaluationSupportStorage evaluationStorage = EvaluationSupportStorage.getInstance();
 
+    private ScoutCalibrationManager calibrationManager;
+
     public ScoutPipeline() throws AdaptiveOffloadingException {
         super();
         storage = ScoutStorageManager.getInstance();
         offloadingManager = AdaptiveOffloadingManager.getInstance(ScoutApplication.getContext());
         offloadingManager.setDecisionEngineApathy(OffloadingDecisionEngine.RECOMMENDED_APATHY);
+
+        try {
+            calibrationManager = ScoutCalibrationManager.getInstance();
+        } catch (UninitializedException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -80,7 +91,7 @@ public class ScoutPipeline extends BasicPipeline {
         ConfigurationCaretaker roadSlopeCaretaker = new ConfigurationCaretaker();
         roadSlopeCaretaker.setOriginalPipelineConfiguration(roadSlopeConfiguration);
         RoadSlopeMonitoringPipeline sPipeline = new RoadSlopeMonitoringPipeline(roadSlopeCaretaker);
-        mPipeline.addSensorProcessingPipeline(sPipeline);
+        //mPipeline.addSensorProcessingPipeline(sPipeline);
 
         //Scout Profiling
         //offloadingManager.validatePipeline(rPipeline);
@@ -162,6 +173,11 @@ public class ScoutPipeline extends BasicPipeline {
                 break;
             case SensingUtils.ROTATION_VECTOR:
                 geoTagger.pushOrientation(jsonData);
+                break;
+            case SensingUtils.LINEAR_ACCELERATION:
+                geoTagger.tagSample(jsonData);
+                calibrationManager.tagLinearAccelerationOffsets(jsonData);
+                mPipeline.pushSensorSample(jsonData);
                 break;
             default:
                 geoTagger.tagSample(jsonData);
