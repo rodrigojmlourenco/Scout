@@ -3,9 +3,8 @@ package pt.ulisboa.tecnico.cycleourcity.scout;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.location.Geocoder;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -15,22 +14,19 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import com.androidplot.xy.SimpleXYSeries;
-import com.androidplot.xy.XYPlot;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import edu.mit.media.funf.FunfManager;
 import edu.mit.media.funf.pipeline.BasicPipeline;
+import pt.ulisboa.tecnico.cycleourcity.scout.calibration.LinearAccelerationCalibrator;
+import pt.ulisboa.tecnico.cycleourcity.scout.calibration.SensorCalibrator;
 import pt.ulisboa.tecnico.cycleourcity.scout.config.ScoutConfigManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.config.exceptions.NotInitializedException;
 import pt.ulisboa.tecnico.cycleourcity.scout.learning.PavementType;
 import pt.ulisboa.tecnico.cycleourcity.scout.logging.ScoutLogger;
-import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.state.ScoutState;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.AdaptiveOffloadingManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.pipeline.ScoutPipeline;
 
@@ -95,8 +91,6 @@ public class MainActivity extends ActionBarActivity {
                         if(pipeline.isEnabled()) {
                             startSession.setEnabled(false);
                             stopSession.setEnabled(true);
-                            //pipeline.onRun(ScoutPipeline.ACTION_PROFILE, null);
-                            startRepeatingTask();
                         }else
                             Toast.makeText(MainActivity.this, "Unable to start sensing pipeline.", Toast.LENGTH_SHORT).show();
 
@@ -118,7 +112,6 @@ public class MainActivity extends ActionBarActivity {
                         if(!pipeline.isEnabled()) {
                             startSession.setEnabled(true);
                             stopSession.setEnabled(false);
-                            stopRepeatingTask();
                             //pipeline.onRun(ScoutPipeline.ACTION_PROFILE, null);
                         }else
                             Toast.makeText(MainActivity.this, "Unable to stop sensing pipeline.", Toast.LENGTH_SHORT).show();
@@ -207,8 +200,8 @@ public class MainActivity extends ActionBarActivity {
 
         tagText = (EditText) findViewById(R.id.tag);
 
-        //Background UI updating
-        mHandler = new Handler();
+        //Check if calibrated
+        checkIfCalibrated();
 
 
         //Profiling
@@ -223,6 +216,7 @@ public class MainActivity extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
         return true;
     }
 
@@ -233,9 +227,16 @@ public class MainActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        Intent intent;
+        switch (id){
+            case R.id.action_settings:
+                intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.action_calibrate:
+                intent = new Intent(this, CalibrateActivity.class);
+                startActivity(intent);
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -248,8 +249,6 @@ public class MainActivity extends ActionBarActivity {
         funfManager.disablePipeline(PIPELINE_NAME);
         unbindService(funfManagerConn);
 
-        stopRepeatingTask();
-
         offloadingManager.onDestroy();
 
     }
@@ -257,103 +256,19 @@ public class MainActivity extends ActionBarActivity {
     /**********************************************************************************************
      * UI update Async
      **********************************************************************************************/
-    private int mInterval = 1000; //millis
-    private Handler mHandler;
-
-    Runnable uiUpdate = new Runnable() {
-
-        private ScoutState scoutState = ScoutState.getInstance();
-        private Geocoder geoDecoder = new Geocoder(ScoutApplication.getContext());
-
-        @Override
-        public void run() {
-
-            String address = "Unknown Location";
-            double lat, lon;
-            lat = scoutState.getLocationState().getLatitude();
-            lon = scoutState.getLocationState().getLongitude();
-
-
-            /*
-            try {
-                List<Address> addresses = geoDecoder.getFromLocation(lat, lon, 1);
-
-                if(!addresses.isEmpty())
-
-                    address = addresses.get(0).getThoroughfare();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-
-            locationView.setText(address);
-            speedView.setText(String.valueOf(scoutState.getLocationState().getPressureAltitude()));
-            */
-
-            //travelStateView.setText(scoutState.getMotionState().getTravelState());
-            //slopeView.setText(String.valueOf(scoutState.getLocationState().getSlope()));
-            //altitudeView.setText(String.valueOf(scoutState.getLocationState().getAltitude()));
-
-            /*
-            Location last = scoutState.getLocationState().getLastLocation();
-            if(scoutState.getLocationState().isReadyState()) {
-                Date date = new Date(last.getTimestamp());
-
-                /*
-                Log.w("PLOT", date.toGMTString()+" : "+last.getAltitude());
-                Log.e("PLOT", date.toGMTString()+" : "+scoutState.getLocationState().getAverageAltitude());
-
-                if(pressureElevationSeries.size() > 60){
-                    gpsElevationSeries.removeFirst();
-                    meanElevationSeries.removeFirst();
-                    pressureElevationSeries.removeFirst();
-                }
-
-                gpsElevationSeries.addLast(null, last.getAltitude());
-                meanElevationSeries.addLast(null, scoutState.getLocationState().getAverageAltitude());
-                pressureElevationSeries.addLast(null, scoutState.getLocationState().getPressureAltitude());
-                //
-
-                if(pressureElevationSeries.size() > 60){
-                    pressureElevationSeries.removeFirst();
-                }
-
-                pressureElevationSeries.addLast(null, scoutState.getLocationState().getPressureAltitude());
-
-                elevationPlot.redraw();
-            }else{
-
-                if(pressureElevationSeries.size() > 60){
-                    pressureElevationSeries.removeFirst();
-                }
-
-                pressureElevationSeries.addLast(null, scoutState.getLocationState().getPressureAltitude());
-
-                elevationPlot.redraw();
-            }
-
-            double MILLIS2UNIT = (double)1/1000000;
-            iddleEnergyTextView.setText("Remaining Battery: "+offloadingManager.getRemainingBattery()+"%");
-            sensingEnergyTextView.setText("Average Energy Consumption: " +offloadingManager.getAverageCurrent()+ "mA\n");
-
-            mHandler.postDelayed(this, mInterval);
-            */
-        }
-
-    };
-
-    void startRepeatingTask(){
-        mHandler.postDelayed(uiUpdate,mInterval);
-    }
-
-    void stopRepeatingTask() {
-        mHandler.removeCallbacks(uiUpdate);
-    }
 
     public static interface EnergyProfileUpdateCallback{
         public void updateEnergyConsumption(int capacity, long iddleEnergy, long sensingEnergy);
     }
 
+    private void checkIfCalibrated(){
+        SharedPreferences prefs = getSharedPreferences(SensorCalibrator.PREFERENCES_NAME, MODE_PRIVATE);
 
+        if(prefs == null ||
+                !prefs.getBoolean(LinearAccelerationCalibrator.LinearAccelerationCalibrationKeys.CALIBRATED, false)){
+            Intent intent = new Intent(this, CalibrateActivity.class);
+            startActivity(intent);
+
+        }
+    }
 }
