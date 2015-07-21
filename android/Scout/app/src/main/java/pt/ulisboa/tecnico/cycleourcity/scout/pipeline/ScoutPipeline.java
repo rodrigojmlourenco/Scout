@@ -70,19 +70,25 @@ public class ScoutPipeline extends BasicPipeline {
         mPipeline = new MobileSensing();
         mPipeline.setWindowSize(3);
 
+        /* DEPRECATED
         PipelineConfiguration roadConditionMonitoringConfiguration =
                 RoadConditionMonitoringPipeline.generateRoadConditionMonitoringPipelineConfiguration();
         ConfigurationCaretaker roadConditionMonitoringCaretaker = new ConfigurationCaretaker();
         roadConditionMonitoringCaretaker.setOriginalPipelineConfiguration(roadConditionMonitoringConfiguration);
-        RoadConditionMonitoringPipeline rPipeline = new RoadConditionMonitoringPipeline(roadConditionMonitoringCaretaker);
+        RoadConditionMonitoringPipeline rPipeline = new RoadConditionMonitoringPipeline(roadConditionMonitoringCaretaker);*/
+        RoadConditionMonitoringPipeline rPipeline = new RoadConditionMonitoringPipeline(
+                RoadConditionMonitoringPipeline.generateRoadConditionMonitoringPipelineConfiguration());
         mPipeline.addSensorProcessingPipeline(rPipeline);
 
 
+        /* DEPRECATED
         PipelineConfiguration roadSlopeConfiguration =
                 RoadSlopeMonitoringPipeline.generateRoadSlopeMonitoringPipelineConfiguration(true);
         ConfigurationCaretaker roadSlopeCaretaker = new ConfigurationCaretaker();
         roadSlopeCaretaker.setOriginalPipelineConfiguration(roadSlopeConfiguration);
-        RoadSlopeMonitoringPipeline sPipeline = new RoadSlopeMonitoringPipeline(roadSlopeCaretaker);
+        RoadSlopeMonitoringPipeline sPipeline = new RoadSlopeMonitoringPipeline(roadSlopeCaretaker);*/
+        RoadSlopeMonitoringPipeline sPipeline = new RoadSlopeMonitoringPipeline(
+                RoadSlopeMonitoringPipeline.generateRoadSlopeMonitoringPipelineConfiguration(true));
         mPipeline.addSensorProcessingPipeline(sPipeline);
 
         //Scout Profiling
@@ -152,18 +158,18 @@ public class ScoutPipeline extends BasicPipeline {
         int sensorType;
         try {
             sensorType = SensingUtils.getSensorType(jsonConfig);
-            jsonData.addProperty(SensingUtils.SENSOR_TYPE, sensorType);
-            jsonData.addProperty(SensingUtils.SCOUT_TIME, System.nanoTime());
+            jsonData.addProperty(SensingUtils.GeneralFields.SENSOR_TYPE, sensorType);
+            jsonData.addProperty(SensingUtils.GeneralFields.SCOUT_TIME, System.nanoTime());
         } catch (MobileSensingException e) {
             e.printStackTrace();
             return;
         }
 
         switch (sensorType){
-            case SensingUtils.LOCATION:
+            case SensingUtils.Sensors.LOCATION:
                 geoTagger.pushLocation(jsonData);
                 break;
-            case SensingUtils.ROTATION_VECTOR:
+            case SensingUtils.Sensors.ROTATION_VECTOR:
                 geoTagger.pushOrientation(jsonData);
                 break;
             default:

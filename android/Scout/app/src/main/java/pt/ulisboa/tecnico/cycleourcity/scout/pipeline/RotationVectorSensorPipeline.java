@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.cycleourcity.scout.pipeline;
 
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.PipelineConfiguration;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.ConfigurationCaretaker;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.FeatureExtractor;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.SensorProcessingPipeline;
@@ -13,7 +14,7 @@ public class RotationVectorSensorPipeline extends SensorProcessingPipeline imple
     //Logging
     private final String LOG_TAG = this.getClass().getSimpleName();
 
-    public RotationVectorSensorPipeline(ConfigurationCaretaker caretaker) {
-        super(SensingUtils.ROTATION_VECTOR, caretaker);
+    public RotationVectorSensorPipeline(PipelineConfiguration configuration) {
+        super(SensingUtils.Sensors.ROTATION_VECTOR, configuration);
     }
 }

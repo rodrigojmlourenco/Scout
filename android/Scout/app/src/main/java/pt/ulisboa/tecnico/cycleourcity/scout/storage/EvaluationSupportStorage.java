@@ -119,7 +119,7 @@ public class EvaluationSupportStorage {
 
     private String parseAccelerometerSample(JsonObject sample){
 
-        return  sample.get(SensingUtils.SCOUT_TIME).getAsString()+" || "+
+        return  sample.get(SensingUtils.GeneralFields.SCOUT_TIME).getAsString()+" || "+
                 sample.get(SensingUtils.MotionKeys.X).getAsString()+" || "+
                 sample.get(SensingUtils.MotionKeys.Y).getAsString()+" || "+
                 sample.get(SensingUtils.MotionKeys.Z).getAsString()+"\n";
@@ -128,7 +128,7 @@ public class EvaluationSupportStorage {
 
     private String parseSimplePressureSample(JsonObject sample){
 
-        return  sample.get(SensingUtils.SCOUT_TIME).getAsString()+" || "+
+        return  sample.get(SensingUtils.GeneralFields.SCOUT_TIME).getAsString()+" || "+
                 sample.get(SensingUtils.PressureKeys.PRESSURE).getAsString()+" || "+
                 (sample.has(SensingUtils.PressureKeys.VARIANCE) ?
                         sample.get(SensingUtils.PressureKeys.VARIANCE).getAsString(): "n/a")+" || "+
@@ -140,7 +140,7 @@ public class EvaluationSupportStorage {
 
     private String parseComplexPressureSample(JsonObject sample){
 
-        return  sample.get(SensingUtils.SCOUT_TIME).getAsString()+" || "+
+        return  sample.get(SensingUtils.GeneralFields.SCOUT_TIME).getAsString()+" || "+
                 sample.get(SensingUtils.PressureKeys.PRESSURE).getAsString()+" || "+
                 sample.get(SensingUtils.PressureKeys.ALTITUDE).getAsString()+" || "+
                 (sample.has(SensingUtils.PressureKeys.TRAVELLED_DISTANCE) ?

@@ -73,7 +73,7 @@ public class ScoutStorageManager implements StorageManager{
 
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        final double timestamp = values.get(SensingUtils.TIMESTAMP).getAsDouble();
+        final double timestamp = values.get(SensingUtils.GeneralFields.TIMESTAMP).getAsDouble();
         String value = values.toString();
 
         if (timestamp == 0L || key == null || value == null) {
@@ -94,6 +94,7 @@ public class ScoutStorageManager implements StorageManager{
         return null;
     }
 
+    /*
     @Override
     public void archive() throws NothingToArchiveException{
 
@@ -120,6 +121,7 @@ public class ScoutStorageManager implements StorageManager{
         logger.log(ScoutLogger.INFO, LOG_TAG, "Samples were successfully archived");
         //setHandler(null); // free system resources
     }
+    */
 
     @Override
     public void archive(final String tag) throws NothingToArchiveException{

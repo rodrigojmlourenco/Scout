@@ -47,14 +47,16 @@ public class ActiveGeoTagger {
         this.geoHistory = new History();
 
         //Location Sensor Pipeline
-        ConfigurationCaretaker locationCaretaker = new ConfigurationCaretaker();
-        locationCaretaker.setOriginalPipelineConfiguration(geoTaggingLocationConfiguration());
-        locationPipeline = new LocationSensorPipeline(locationCaretaker);
+        //ConfigurationCaretaker locationCaretaker = new ConfigurationCaretaker();
+        //locationCaretaker.setOriginalPipelineConfiguration(geoTaggingLocationConfiguration());
+        //locationPipeline = new LocationSensorPipeline(locationCaretaker);
+        locationPipeline = new LocationSensorPipeline(geoTaggingLocationConfiguration());
 
         //Orientation Sensor Pipeline
-        ConfigurationCaretaker rotationVectorCaretaker = new ConfigurationCaretaker();
-        rotationVectorCaretaker.setOriginalPipelineConfiguration(getRotationVectorConfiguration());
-        rotationVectorPipeline = new RotationVectorSensorPipeline(rotationVectorCaretaker);
+        //ConfigurationCaretaker rotationVectorCaretaker = new ConfigurationCaretaker();
+        //rotationVectorCaretaker.setOriginalPipelineConfiguration(getRotationVectorConfiguration());
+        //rotationVectorPipeline = new RotationVectorSensorPipeline(rotationVectorCaretaker);
+        rotationVectorPipeline = new RotationVectorSensorPipeline(getRotationVectorConfiguration());
     }
 
     public static ActiveGeoTagger getInstance(){
@@ -384,10 +386,6 @@ public class ActiveGeoTagger {
 
     protected interface RotationStages {
 
-        public static int HIGH_ACCURACY     = 3;
-        public static int MEDIUM_ACCURACY   = 2;
-        public static int LOW_ACCURACY      = 1;
-
         class AdmissionControlStage implements Stage{
 
             private final String LOG_TAG = "ActiveGeoTagger";
@@ -403,8 +401,8 @@ public class ActiveGeoTagger {
 
                 int accuracy;
                 for(JsonObject sample : input){
-                    accuracy = sample.get(SensingUtils.ACCURACY).getAsInt();
-                    if(accuracy >= HIGH_ACCURACY)
+                    accuracy = sample.get(SensingUtils.GeneralFields.ACCURACY).getAsInt();
+                    if(accuracy >= SensingUtils.GeneralFields.HIGH_ACCURACY)
                         validSamples.add(sample);
                     else
                         invalidSamples++;
@@ -432,7 +430,7 @@ public class ActiveGeoTagger {
                     xSinTheta += sample.get(RotationVectorKeys.X_SIN_THETA_OVER2).getAsFloat();
                     ySinTheta += sample.get(RotationVectorKeys.Y_SIN_THETA_OVER2).getAsFloat();
                     zSinTheta += sample.get(RotationVectorKeys.Z_SIN_THETA_OVER2).getAsFloat();
-                    scoutTime += sample.get(SensingUtils.SCOUT_TIME).getAsLong();
+                    scoutTime += sample.get(SensingUtils.GeneralFields.SCOUT_TIME).getAsLong();
                 }
 
                 cosTheta /= collection.size();
@@ -442,12 +440,12 @@ public class ActiveGeoTagger {
                 scoutTime /= collection.size();
 
                 JsonObject mergedSample = new JsonObject();
-                mergedSample.addProperty(SensingUtils.SENSOR_TYPE, SensingUtils.ROTATION_VECTOR);
+                mergedSample.addProperty(SensingUtils.GeneralFields.SENSOR_TYPE, SensingUtils.Sensors.ROTATION_VECTOR);
                 mergedSample.addProperty(RotationVectorKeys.COS_THETA_OVER2, cosTheta);
                 mergedSample.addProperty(RotationVectorKeys.X_SIN_THETA_OVER2, xSinTheta);
                 mergedSample.addProperty(RotationVectorKeys.Y_SIN_THETA_OVER2, ySinTheta);
                 mergedSample.addProperty(RotationVectorKeys.Z_SIN_THETA_OVER2, zSinTheta);
-                mergedSample.addProperty(SensingUtils.SCOUT_TIME, scoutTime);
+                mergedSample.addProperty(SensingUtils.GeneralFields.SCOUT_TIME, scoutTime);
 
                 return  mergedSample;
             }

@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.ideaimpl.patterns.pipeline.PipelineContext;
 import com.ideaimpl.patterns.pipeline.Stage;
 
+import java.nio.channels.Pipe;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,8 +39,8 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
 
     private RoadSlopeMonitoringState state;
 
-    public RoadSlopeMonitoringPipeline(ConfigurationCaretaker caretaker) {
-        super(SensingUtils.PRESSURE, caretaker);
+    public RoadSlopeMonitoringPipeline(PipelineConfiguration configuration) {
+        super(SensingUtils.Sensors.PRESSURE, configuration);
         this.state = new RoadSlopeMonitoringState();
     }
 
@@ -193,15 +194,15 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
                 JsonObject mergedSample = new JsonObject();
                 double averagePressure = 0, variance = 0, stdDev = 0;
                 int samplingSize = pressures.length;
-                String locationTimestamp = location.get(SensingUtils.TIMESTAMP).getAsString();
+                String locationTimestamp = location.get(SensingUtils.GeneralFields.TIMESTAMP).getAsString();
 
                 stdDev = StatisticalMetrics.calculateMean(pressures);
                 variance = StatisticalMetrics.calculateVariance(pressures);
                 averagePressure = StatisticalMetrics.calculateMean(pressures);
 
-                mergedSample.addProperty(SensingUtils.SENSOR_TYPE, SensingUtils.PRESSURE);
-                mergedSample.addProperty(SensingUtils.TIMESTAMP, locationTimestamp);
-                mergedSample.addProperty(SensingUtils.SCOUT_TIME, System.nanoTime());
+                mergedSample.addProperty(SensingUtils.GeneralFields.SENSOR_TYPE, SensingUtils.Sensors.PRESSURE);
+                mergedSample.addProperty(SensingUtils.GeneralFields.TIMESTAMP, locationTimestamp);
+                mergedSample.addProperty(SensingUtils.GeneralFields.SCOUT_TIME, System.nanoTime());
                 mergedSample.addProperty(SensingUtils.PressureKeys.PRESSURE, averagePressure);
                 mergedSample.addProperty(SensingUtils.PressureKeys.VARIANCE, variance);
                 mergedSample.addProperty(SensingUtils.PressureKeys.STDEV, stdDev);

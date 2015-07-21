@@ -43,17 +43,16 @@ import pt.ulisboa.tecnico.cycleourcity.scout.storage.ScoutStorageManager;
 public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
 
     private ScoutCalibrationManager calibrationManager = null;
-    public final static int SENSOR_TYPE = SensingUtils.LINEAR_ACCELERATION;
+    public final static int SENSOR_TYPE = SensingUtils.Sensors.LINEAR_ACCELERATION;
 
-    public RoadConditionMonitoringPipeline(ConfigurationCaretaker caretaker) {
-        super(SENSOR_TYPE, caretaker);
+    public RoadConditionMonitoringPipeline(PipelineConfiguration configuration) {
+        super(SENSOR_TYPE, configuration);
 
         try{
             calibrationManager = ScoutCalibrationManager.getInstance();
         } catch (UninitializedException e) {
             e.printStackTrace();
         }
-
     }
 
     @Override
@@ -298,7 +297,7 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
                 JsonObject[] input = ctx.getInput();
 
                 if(input.length == 1 && input[0]!=null) try {
-                    storage.store(String.valueOf(SensingUtils.LINEAR_ACCELERATION), input[0]);
+                    storage.store(String.valueOf(SensingUtils.Sensors.LINEAR_ACCELERATION), input[0]);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -369,9 +368,9 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
                 rangeCrossings  = TimeDomainMetrics.countZeroCrossings(values, range);
 
                 //Base Properties
-                featureVector.addProperty(SensingUtils.SENSOR_TYPE, RoadConditionMonitoringPipeline.SENSOR_TYPE);
-                featureVector.addProperty(SensingUtils.TIMESTAMP, location.get(SensingUtils.TIMESTAMP).getAsString());
-                featureVector.addProperty(SensingUtils.SCOUT_TIME, System.nanoTime());
+                featureVector.addProperty(SensingUtils.GeneralFields.SENSOR_TYPE, RoadConditionMonitoringPipeline.SENSOR_TYPE);
+                featureVector.addProperty(SensingUtils.GeneralFields.TIMESTAMP, location.get(SensingUtils.GeneralFields.TIMESTAMP).getAsString());
+                featureVector.addProperty(SensingUtils.GeneralFields.SCOUT_TIME, System.nanoTime());
 
                 //Feature Properties
                 featureVector.addProperty(SensingUtils.FeatureVectorKeys.NUM_SAMPLES, numSamples);
