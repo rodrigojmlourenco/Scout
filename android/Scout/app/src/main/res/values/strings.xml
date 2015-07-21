@@ -13,27 +13,36 @@
          "version":1,
          "data":[
 
-
+            <!-- Active Processing -->
             {
                 "@type":"edu.mit.media.funf.probe.builtin.LocationProbe",
+                "@schedule": {"interval":15, "duration":0, "strict":true}
+            },
+            {
+                "@type":"edu.mit.media.funf.probe.builtin.RotationVectorSensorProbe",
                 "@schedule": {"interval":1, "duration":0, "strict":true}
-            }
-            ,
+            },
+            <!-- Passive Processing -->
             {
                 "@type":"edu.mit.media.funf.probe.builtin.PressureSensorProbe",
                 "@schedule": {"interval":1, "duration":0, "strict":true}
-            }
-            ,
+            },
             {
-                "@type":"edu.mit.media.funf.probe.builtin.AccelerometerSensorProbe",
-                "@schedule": {"interval":1, "duration":0, "strict":true},
-                "sensorDelay": "NORMAL"
+                "@type":"edu.mit.media.funf.probe.builtin.LinearAccelerationSensorProbe",
+                "@schedule": {"interval":1, "duration":0, "strict":true}
             }
-            <!--,
+
+            <!--
+
             {
                 "@type":"edu.mit.media.funf.probe.builtin.GravitySensorProbe",
                 "@schedule": {"interval":1, "duration":0, "strict":true}
-            }-->
+            },
+
+
+
+            -->
+
          ]
         }
     </string>
@@ -44,4 +53,55 @@
     <string name="slopeTag">Slope:</string>
     <string name="notImplemented">Not Implemented Yet</string>
     <string name="travelStateTag">Travel State:</string>
+
+    <!-- Menu -->
+    <string name="calibrate_action">Calibrate</string>
+    <string name="title_activity_calibrate">Calibrate</string>
+
+    <string name="hello_world">Hello world!</string>
+
+
+    <!-- Calibration Activity -->
+    <string name="calibrate_name">Calibrate</string>
+    <string name="start_calibration">Start Calibration</string>
+    <string name="stop_calibration">Stop Calibration</string>
+    <string name="restart_calibration">Restart Calibration</string>
+    <string name="help_calibration">Hold the device in the described orientation until the device vibrates</string>
+    <string name="step0_calibration">Please rest the device on a flat surface.</string>
+    <string name="error_calibration">Unable to calibrate, please rest the device on a flat surface.</string>
+    <string name="step1_calibration">Only 5 more to go... Invert the device 180 degrees.</string>
+    <string name="step2_calibration">Only 4 more to go... Rotate the device 90 degrees clock-wise</string>
+    <string name="step3_calibration">Only 3 more to go... Rotate the device 180 degrees clock-wise</string>
+    <string name="step4_calibration">Only 2 more to go... Set the phone down face-up</string>
+    <string name="step5_calibration">Only 1 more to go... Set the phone down face-down</string>
+    <string name="finished_calibration">Calibration completed...</string>
+
+    <string name="frequency_label">Frequency:</string>
+    <string name="default_value">0.000</string>
+    <string name="default_value_mean_filter">1.0</string>
+    <string name="default_value_low_pass_filter">0.5</string>
+    <string name="x_axis_label">X-Axis</string>
+    <string name="max_label">Max:</string>
+    <string name="max_amp_label">Max Amp:</string>
+    <string name="min_label">Min:</string>
+    <string name="var_label">Var:</string>
+    <string name="mean_label">Mean:</string>
+    <string name="axis_label">Axis</string>
+    <string name="positive_label">Positive</string>
+    <string name="negative_label">Negative</string>
+    <string name="noise_label">Noise</string>
+    <string name="rms_label">RMS:</string>
+    <string name="plot_label">Plot</string>
+    <string name="vector_label">Vector</string>
+    <string name="done_label">Done</string>
+    <string name="label_mean_filter">Mean Filter</string>
+    <string name="label_filter_active">Filter Active</string>
+    <string name="label_time_constant">Time Constant</string>
+    <string name="accelerometer_name">Accelerometer</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+
+    <!-- Settings Activity -->
+    <string name="clear_data_settings">Clear Data</string>
+    <string name="cleared_data_settings">Scout\'s internal data has been cleared</string>
+
 </resources>

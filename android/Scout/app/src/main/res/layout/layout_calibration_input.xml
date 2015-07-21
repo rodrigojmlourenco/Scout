@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ff736f70">
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/step0_calibration"
+        android:textColor="#FFF"
+        android:id="@+id/calibrationHelper"
+        android:textIsSelectable="true"
+        android:textSize="18dp"
+        android:gravity="center"
+        android:textAlignment="center" />
+
+    <RelativeLayout
+        android:id="@+id/layout_display_phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp">
+
+        <ImageView
+            android:id="@+id/imageViewPhone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/phone" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/layout_statistics"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/layout_display_phone" >
+
+        <ScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true" >
+
+            <TableLayout
+                android:id="@+id/table_statistics_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TableRow
+                    android:id="@+id/table_statistics_left_row_0"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="2dip" >
+
+                    <TextView
+                        android:id="@+id/textView8"
+                        android:layout_width="110dp"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:text="Acceleration:  "
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#FFF" />
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="20dp"
+                        android:layout_weight="1" >
+
+                        <TextView
+                            android:id="@+id/label_x_axis"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentLeft="true"
+                            android:text="X:"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:textColor="#FFF" />
+
+                        <TextView
+                            android:id="@+id/value_x_axis"
+                            android:layout_width="40dp"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@+id/label_x_axis"
+                            android:text="0.00"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:textColor="#FFF" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" >
+
+                        <TextView
+                            android:id="@+id/label_y_axis"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentLeft="true"
+                            android:text="Y:"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:textColor="#FFF" />
+
+                        <TextView
+                            android:id="@+id/value_y_axis"
+                            android:layout_width="40dp"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@+id/label_y_axis"
+                            android:text="0.00"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:textColor="#FFF" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="20dp"
+                        android:layout_weight="1" >
+
+                        <TextView
+                            android:id="@+id/label_z_axis"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentLeft="true"
+                            android:text="Z:"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:textColor="#FFF" />
+
+                        <TextView
+                            android:id="@+id/value_z_axis"
+                            android:layout_width="40dp"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@+id/label_z_axis"
+                            android:text="0.00"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:textColor="#FFF" />
+                    </RelativeLayout>
+                </TableRow>
+
+            </TableLayout>
+
+        </ScrollView>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rotation_statistics"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/layout_statistics" >
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true" >
+
+            <TableLayout
+                android:id="@+id/tableLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TableRow
+                    android:id="@+id/tableRow"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="2dip" >
+
+                    <TextView
+                        android:id="@+id/textView9"
+                        android:layout_width="110dp"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:text="Rotation:  "
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#FFF" />
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="20dp"
+                        android:layout_weight="1" >
+
+                        <TextView
+                            android:id="@+id/textView2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentLeft="true"
+                            android:text="X:"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:textColor="#FFF" />
+
+                        <TextView
+                            android:id="@+id/rotationXAxis"
+                            android:layout_width="40dp"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@+id/textView2"
+                            android:text="0.00"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:textColor="#FFF" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" >
+
+                        <TextView
+                            android:id="@+id/textView4"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentLeft="true"
+                            android:text="Y:"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:textColor="#FFF" />
+
+                        <TextView
+                            android:id="@+id/rotationYAxis"
+                            android:layout_width="40dp"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@+id/textView4"
+                            android:text="0.00"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:textColor="#FFF" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="20dp"
+                        android:layout_weight="1" >
+
+                        <TextView
+                            android:id="@+id/textView6"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentLeft="true"
+                            android:text="Z:"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:textColor="#FFF" />
+
+                        <TextView
+                            android:id="@+id/rotationZAxis"
+                            android:layout_width="40dp"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@+id/textView6"
+                            android:text="0.00"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:textColor="#FFF" />
+                    </RelativeLayout>
+
+                </TableRow>
+
+            </TableLayout>
+        </RelativeLayout>
+    </RelativeLayout>
+
+
+    <!-- TODO
+<RelativeLayout
+    android:id="@+id/layout_gauge"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/layout_statistics" >
+
+
+    <com.kircherelectronics.accelerationexplorer.gauge.GaugeAcceleration
+        android:id="@+id/gauge_acceleration"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_centerHorizontal="true" />
+
+    </RelativeLayout>
+    -->
+
+</RelativeLayout>

@@ -1,15 +1,10 @@
 package pt.ulisboa.tecnico.cycleourcity.scout;
 
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.Color;
-import android.location.Address;
-import android.location.Geocoder;
-import android.os.BatteryManager;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -18,33 +13,23 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.androidplot.xy.BoundaryMode;
-import com.androidplot.xy.LineAndPointFormatter;
-import com.androidplot.xy.SimpleXYSeries;
-import com.androidplot.xy.XYPlot;
-
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import edu.mit.media.funf.FunfManager;
 import edu.mit.media.funf.pipeline.BasicPipeline;
+import pt.ulisboa.tecnico.cycleourcity.scout.calibration.LinearAccelerationCalibrator;
+import pt.ulisboa.tecnico.cycleourcity.scout.calibration.ScoutCalibrationManager;
+import pt.ulisboa.tecnico.cycleourcity.scout.calibration.SensorCalibrator;
+import pt.ulisboa.tecnico.cycleourcity.scout.calibration.exceptions.NotYetCalibratedException;
 import pt.ulisboa.tecnico.cycleourcity.scout.config.ScoutConfigManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.config.exceptions.NotInitializedException;
+import pt.ulisboa.tecnico.cycleourcity.scout.learning.PavementType;
 import pt.ulisboa.tecnico.cycleourcity.scout.logging.ScoutLogger;
-import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.state.ScoutState;
-import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.state.data.Location;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.AdaptiveOffloadingManager;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ScoutProfiler;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.CPUStatsProfiler;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.EnergyProfiler;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.NetworkProfiler;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.TrafficStatsProfiler;
 import pt.ulisboa.tecnico.cycleourcity.scout.pipeline.ScoutPipeline;
 
 public class MainActivity extends ActionBarActivity {
@@ -53,17 +38,11 @@ public class MainActivity extends ActionBarActivity {
 
 
     //UI
-    private Button startSession, stopSession, saveSession, eProfile, cProfile, tProfile;
+    private Button startSession, stopSession, saveSession;
     private EditText tagText;
 
-    private TextView
-            locationView,
-            speedView;
-
-    //Plotting
-    private XYPlot elevationPlot;
-    private SimpleXYSeries gpsElevationSeries = null, meanElevationSeries, pressureElevationSeries;
-
+    //Pavement Type
+    private RadioGroup pavementTypeGroup;
 
 
     //Funf
@@ -80,6 +59,7 @@ public class MainActivity extends ActionBarActivity {
     //Adaptive Offloading
     private AdaptiveOffloadingManager offloadingManager;
 
+    private boolean isSensing = false;
 
     private ServiceConnection funfManagerConn = new ServiceConnection() {
         @Override
@@ -114,8 +94,7 @@ public class MainActivity extends ActionBarActivity {
                         if(pipeline.isEnabled()) {
                             startSession.setEnabled(false);
                             stopSession.setEnabled(true);
-                            pipeline.onRun(ScoutPipeline.ACTION_PROFILE, null);
-                            startRepeatingTask();
+                            isSensing = true;
                         }else
                             Toast.makeText(MainActivity.this, "Unable to start sensing pipeline.", Toast.LENGTH_SHORT).show();
 
@@ -137,8 +116,7 @@ public class MainActivity extends ActionBarActivity {
                         if(!pipeline.isEnabled()) {
                             startSession.setEnabled(true);
                             stopSession.setEnabled(false);
-                            stopRepeatingTask();
-                            pipeline.onRun(ScoutPipeline.ACTION_PROFILE, null);
+                            isSensing = false;
                         }else
                             Toast.makeText(MainActivity.this, "Unable to stop sensing pipeline.", Toast.LENGTH_SHORT).show();
 
@@ -159,7 +137,6 @@ public class MainActivity extends ActionBarActivity {
             funfManager = null;
         }
     };
-    private Button nProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -196,89 +173,49 @@ public class MainActivity extends ActionBarActivity {
         startSession.setEnabled(false);
         stopSession.setEnabled(false);
 
+        //Pavement Type Group
+        final PavementType pavementType = PavementType.getInstance();
+        pavementTypeGroup = (RadioGroup) findViewById(R.id.pavementTypeGroup);
+        pavementTypeGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                PavementType.Pavements pavement;
+
+                switch (checkedId){
+                    case R.id.isAsphalt:
+                        pavement = PavementType.Pavements.asphalt;
+                        break;
+                    case R.id.isCobblestone:
+                        pavement = PavementType.Pavements.cobblestone;
+                        break;
+                    case R.id.isGravel:
+                        pavement = PavementType.Pavements.gravel;
+                        break;
+                    default:
+                        pavement = PavementType.Pavements.undefined;
+                }
+
+                pavementType.setPavementType(pavement);
+            }
+        });
+
+
         tagText = (EditText) findViewById(R.id.tag);
 
-        //Background UI updating
-        mHandler = new Handler();
-        locationView = (TextView) findViewById(R.id.locationValue);
-        speedView = (TextView) findViewById(R.id.speedValue);
-        //slopeView = (TextView) findViewById(R.id.slopeValue);
-        //altitudeView = (TextView) findViewById(R.id.altitudeValue);
-        //travelStateView = (TextView) findViewById(R.id.travelStateValue);
-
-        //Plotting
-        elevationPlot = (XYPlot) findViewById(R.id.elevationPlot);
-
-        gpsElevationSeries = new SimpleXYSeries("GPS Altitude");
-        gpsElevationSeries.useImplicitXVals(); //Maybe not (Use index value as xVal, instead of explicit, user provided xVals.)
-        meanElevationSeries = new SimpleXYSeries("Scout Mean Altitude");
-        meanElevationSeries.useImplicitXVals();
-        pressureElevationSeries = new SimpleXYSeries("Scout Pressure Altitude");
-        pressureElevationSeries.useImplicitXVals();
-
-        elevationPlot.setRangeBoundaries(100, 300, BoundaryMode.AUTO);
-        elevationPlot.setDomainBoundaries(0, 60, BoundaryMode.FIXED);
-
-        elevationPlot.addSeries(gpsElevationSeries, new LineAndPointFormatter(Color.BLUE, Color.TRANSPARENT, Color.TRANSPARENT, null));
-        elevationPlot.addSeries(meanElevationSeries, new LineAndPointFormatter(Color.RED, Color.TRANSPARENT, Color.TRANSPARENT, null));
-        elevationPlot.addSeries(pressureElevationSeries, new LineAndPointFormatter(Color.YELLOW, Color.TRANSPARENT, Color.TRANSPARENT, null));
+        //Check if calibrated
+        try {
+            ScoutCalibrationManager.initScoutCalibrationManager(
+                    getSharedPreferences(SensorCalibrator.PREFERENCES_NAME,MODE_PRIVATE));
+        } catch (NotYetCalibratedException e) {
+            Log.e(getClass().getSimpleName(), "The application must be calibrated.");
+            Intent intent = new Intent(this, CalibrateActivity.class);
+            startActivity(intent);
+        }
 
 
         //Profiling
         offloadingManager = AdaptiveOffloadingManager.getInstance(getApplicationContext());
-
-        boolean eIsProfiling = false;
-        final EnergyProfiler eProf = new EnergyProfiler(
-                getApplicationContext(),
-                getSharedPreferences(EnergyProfiler.PREFS_NAME,Context.MODE_PRIVATE));
-        eProfile = (Button) findViewById(R.id.eProfile);
-        eProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                eProf.profile();
-                Toast.makeText(getApplicationContext(), eProf.dumpInfo(), Toast.LENGTH_LONG).show();
-
-            }
-        });
-
-        cProfile = (Button) findViewById(R.id.cProfile);
-        cProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CPUStatsProfiler cProf = new CPUStatsProfiler(getApplicationInfo().uid);
-                cProf.profile();
-                Toast.makeText(getApplicationContext(), cProf.dumpInfo(), Toast.LENGTH_LONG).show();
-
-
-            }
-        });
-
-        tProfile = (Button) findViewById(R.id.tProfile);
-        tProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TrafficStatsProfiler tProf = new TrafficStatsProfiler(getApplicationContext(), getApplicationInfo().uid);
-                tProf.profile();
-                Toast.makeText(getApplicationContext(), tProf.dumpInfo(), Toast.LENGTH_LONG).show();
-            }
-        });
-
-        nProfile = (Button) findViewById(R.id.nProfiler);
-        nProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NetworkProfiler nProf = new NetworkProfiler(getApplicationContext());
-                nProf.profile();
-                Toast.makeText(getApplicationContext(), nProf.dumpInfo(), Toast.LENGTH_LONG).show();
-            }
-        });
-
-        //UI profiling
-        iddleEnergyTextView = (TextView) findViewById(R.id.iddleEnergy);
-        sensingEnergyTextView = (TextView) findViewById(R.id.sensingEnergy);
-
-
 
         // Bind to the service, to create the connection with FunfManager
         bindService(new Intent(this, FunfManager.class), funfManagerConn, BIND_AUTO_CREATE);
@@ -289,6 +226,7 @@ public class MainActivity extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
         return true;
     }
 
@@ -299,9 +237,24 @@ public class MainActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if(isSensing){
+            Toast.makeText(MainActivity.this,
+                    "Please terminate the sensing session first.", Toast.LENGTH_SHORT).show();
+
             return true;
+        }
+
+
+        Intent intent;
+        switch (id){
+            case R.id.action_settings:
+                intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.action_calibrate:
+                intent = new Intent(this, CalibrateActivity.class);
+                startActivity(intent);
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -314,8 +267,6 @@ public class MainActivity extends ActionBarActivity {
         funfManager.disablePipeline(PIPELINE_NAME);
         unbindService(funfManagerConn);
 
-        stopRepeatingTask();
-
         offloadingManager.onDestroy();
 
     }
@@ -323,104 +274,8 @@ public class MainActivity extends ActionBarActivity {
     /**********************************************************************************************
      * UI update Async
      **********************************************************************************************/
-    private int mInterval = 1000; //millis
-    private Handler mHandler;
-
-    Runnable uiUpdate = new Runnable() {
-
-        private ScoutState scoutState = ScoutState.getInstance();
-        private Geocoder geoDecoder = new Geocoder(ScoutApplication.getContext());
-
-        @Override
-        public void run() {
-
-            String address = "Unknown Location";
-            double lat, lon;
-            lat = scoutState.getLocationState().getLatitude();
-            lon = scoutState.getLocationState().getLongitude();
-
-
-            try {
-                List<Address> addresses = geoDecoder.getFromLocation(lat, lon, 1);
-
-                if(!addresses.isEmpty())
-
-                    address = addresses.get(0).getThoroughfare();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-
-            locationView.setText(address);
-            speedView.setText(String.valueOf(scoutState.getLocationState().getPressureAltitude()));
-
-            //travelStateView.setText(scoutState.getMotionState().getTravelState());
-            //slopeView.setText(String.valueOf(scoutState.getLocationState().getSlope()));
-            //altitudeView.setText(String.valueOf(scoutState.getLocationState().getAltitude()));
-
-            Location last = scoutState.getLocationState().getLastLocation();
-            if(scoutState.getLocationState().isReadyState()) {
-                Date date = new Date(last.getTimestamp());
-
-                /*
-                Log.w("PLOT", date.toGMTString()+" : "+last.getAltitude());
-                Log.e("PLOT", date.toGMTString()+" : "+scoutState.getLocationState().getAverageAltitude());
-
-                if(pressureElevationSeries.size() > 60){
-                    gpsElevationSeries.removeFirst();
-                    meanElevationSeries.removeFirst();
-                    pressureElevationSeries.removeFirst();
-                }
-
-                gpsElevationSeries.addLast(null, last.getAltitude());
-                meanElevationSeries.addLast(null, scoutState.getLocationState().getAverageAltitude());
-                pressureElevationSeries.addLast(null, scoutState.getLocationState().getPressureAltitude());
-                */
-
-                if(pressureElevationSeries.size() > 60){
-                    pressureElevationSeries.removeFirst();
-                }
-
-                pressureElevationSeries.addLast(null, scoutState.getLocationState().getPressureAltitude());
-
-                elevationPlot.redraw();
-            }else{
-
-                if(pressureElevationSeries.size() > 60){
-                    pressureElevationSeries.removeFirst();
-                }
-
-                pressureElevationSeries.addLast(null, scoutState.getLocationState().getPressureAltitude());
-
-                elevationPlot.redraw();
-            }
-
-            double MILLIS2UNIT = (double)1/1000000;
-            iddleEnergyTextView.setText("Remaining Battery: "+offloadingManager.getRemainingBattery()+"%");
-            sensingEnergyTextView.setText("Average Energy Consumption: " +offloadingManager.getAverageCurrent()+ "mA\n");
-
-            mHandler.postDelayed(this, mInterval);
-        }
-    };
-
-    void startRepeatingTask(){
-        mHandler.postDelayed(uiUpdate,mInterval);
-    }
-
-    void stopRepeatingTask() {
-        mHandler.removeCallbacks(uiUpdate);
-    }
 
     public static interface EnergyProfileUpdateCallback{
         public void updateEnergyConsumption(int capacity, long iddleEnergy, long sensingEnergy);
     }
-
-    /*
-     * Profiling in the UI
-     */
-    private TextView iddleEnergyTextView, sensingEnergyTextView;
-
-
-
 }

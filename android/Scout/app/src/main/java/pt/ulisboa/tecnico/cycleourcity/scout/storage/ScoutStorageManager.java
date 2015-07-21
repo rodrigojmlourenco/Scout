@@ -4,17 +4,13 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
-import android.util.Log;
 
 import com.google.gson.JsonObject;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Queue;
@@ -23,9 +19,9 @@ import edu.mit.media.funf.storage.NameValueDatabaseHelper;
 import pt.ulisboa.tecnico.cycleourcity.scout.ScoutApplication;
 import pt.ulisboa.tecnico.cycleourcity.scout.logging.ScoutLogger;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils;
-import pt.ulisboa.tecnico.cycleourcity.scout.storage.gpx.GPXBuilder;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.archive.ScoutArchive;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.exceptions.NothingToArchiveException;
+import pt.ulisboa.tecnico.cycleourcity.scout.storage.gpx.GPXBuilder;
 
 /**
  * Created by rodrigo.jm.lourenco on 30/03/2015.
@@ -44,6 +40,7 @@ public class ScoutStorageManager implements StorageManager{
 
     private NameValueDatabaseHelper dbHelper;
     private ScoutArchive archive;
+    private SQLiteDatabase database;
 
     private ScoutStorageManager(){
         Context ctx = ScoutApplication.getContext();
@@ -55,15 +52,9 @@ public class ScoutStorageManager implements StorageManager{
         return INSTANCE;
     }
 
-    private File getApplicationFolder(){
+    protected static File getApplicationFolder(){
         File dir = new File(Environment.getExternalStorageDirectory(), NAME);
-
-        //Debugging
-        if (!dir.mkdirs()) {
-            logger.log(ScoutLogger.INFO, LOG_TAG, "Directory '"+dir.getAbsolutePath()+"'not created");
-        }else
-            logger.log(ScoutLogger.INFO, LOG_TAG, "Directory '"+dir.getAbsolutePath()+"' created");
-
+        dir.mkdirs();
         return dir;
     }
 
@@ -82,7 +73,7 @@ public class ScoutStorageManager implements StorageManager{
 
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        final double timestamp = values.get(SensingUtils.TIMESTAMP).getAsDouble();
+        final double timestamp = values.get(SensingUtils.GeneralFields.TIMESTAMP).getAsDouble();
         String value = values.toString();
 
         if (timestamp == 0L || key == null || value == null) {
@@ -96,8 +87,6 @@ public class ScoutStorageManager implements StorageManager{
         cv.put(NameValueDatabaseHelper.COLUMN_TIMESTAMP, timestamp);
         db.insertOrThrow(NameValueDatabaseHelper.DATA_TABLE.name, "", cv);
         empty = false;
-
-
     }
 
     @Override
@@ -105,6 +94,7 @@ public class ScoutStorageManager implements StorageManager{
         return null;
     }
 
+    /*
     @Override
     public void archive() throws NothingToArchiveException{
 
@@ -114,7 +104,7 @@ public class ScoutStorageManager implements StorageManager{
         File dbFile = new File(db.getPath());
         db.close();
 
-        logger.log(ScoutLogger.DEBUG, LOG_TAG, "dbFile created at '"+dbFile.getAbsolutePath()+"'.");
+        logger.log(ScoutLogger.DEBUG, LOG_TAG, "dbFile created at '" + dbFile.getAbsolutePath() + "'.");
 
         if (archive.add(dbFile, "something")){
             dbFile.delete();
@@ -125,13 +115,16 @@ public class ScoutStorageManager implements StorageManager{
             }
         }
 
+
+
         dbHelper.getWritableDatabase(); // Build new database
         logger.log(ScoutLogger.INFO, LOG_TAG, "Samples were successfully archived");
         //setHandler(null); // free system resources
     }
+    */
 
     @Override
-    public void archive(String tag) throws NothingToArchiveException{
+    public void archive(final String tag) throws NothingToArchiveException{
 
         if(empty) throw new NothingToArchiveException();
 
@@ -139,7 +132,7 @@ public class ScoutStorageManager implements StorageManager{
         File dbFile = new File(db.getPath());
         db.close();
 
-        logger.log(ScoutLogger.DEBUG, LOG_TAG, "dbFile created at '"+dbFile.getAbsolutePath()+"'.");
+        logger.log(ScoutLogger.DEBUG, LOG_TAG, "dbFile created at '" + dbFile.getAbsolutePath() + "'.");
 
         if (archive.add(dbFile, tag)){
             dbFile.delete();
@@ -150,11 +143,21 @@ public class ScoutStorageManager implements StorageManager{
             }
         }
 
+        //WEKA - LEARNING
+        //wekaStorage.archive(tag);
+        //wekaStorage.clear();
 
 
         dbHelper.getWritableDatabase(); // Build new database
         logger.log(ScoutLogger.INFO, LOG_TAG, "Samples were successfully archived");
         //setHandler(null); // free system resources
+
+        //TESTING
+        //graphValuesStorage.archive(tag);
+        //graphValuesStorage.clearAllTests();
+
+
+
     }
 
     public void archiveGPXTrack(String tag){
