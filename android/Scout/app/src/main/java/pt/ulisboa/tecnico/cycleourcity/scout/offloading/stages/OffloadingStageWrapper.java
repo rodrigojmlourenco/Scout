@@ -1,7 +1,5 @@
 package pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages;
 
-import android.util.Log;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.ideaimpl.patterns.pipeline.PipelineContext;
@@ -12,13 +10,12 @@ import org.apache.commons.collections4.queue.CircularFifoQueue;
 import java.util.UUID;
 
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.SensorPipelineContext;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.PipelinePartitionEngine;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.StageProfiler;
 
 /**
  * Created by rodrigo.jm.lourenco on 31/05/2015.
  */
-public class ProfilingStageWrapper implements Stage {
+public class OffloadingStageWrapper implements Stage {
 
     private final Stage stage;
     private final UUID identifier;
@@ -27,7 +24,7 @@ public class ProfilingStageWrapper implements Stage {
     private CircularFifoQueue<DataProfileInfo> dataSizes;
     private StageProfiler profiler = StageProfiler.getInstance();
 
-    public ProfilingStageWrapper(Stage stage){
+    public OffloadingStageWrapper(Stage stage){
         this.stage = stage;
         identifier = profiler.registerStage(this);
         dataSizes = new CircularFifoQueue<>(StageProfiler.NUM_PROFILING_SAMPLES);

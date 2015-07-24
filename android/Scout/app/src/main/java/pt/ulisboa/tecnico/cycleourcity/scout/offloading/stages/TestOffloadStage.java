@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages;
 
+import android.util.Log;
+
 import com.ideaimpl.patterns.pipeline.PipelineContext;
 import com.ideaimpl.patterns.pipeline.Stage;
 
@@ -10,6 +12,7 @@ import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.SensorPipeli
  */
 public class TestOffloadStage implements Stage {
 
+    protected final String LOG_TAG = "TestStage";
     private final int wait;
 
     public TestOffloadStage(int wait){
@@ -19,6 +22,9 @@ public class TestOffloadStage implements Stage {
 
     @Override
     public void execute(PipelineContext pipelineContext) {
+
         for(int i=0; i < this.wait; i++ );
+
+        Log.d(LOG_TAG, "waited for "+wait);
     }
 }

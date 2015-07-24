@@ -3,7 +3,7 @@ package pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler;
 import java.util.HashMap;
 import java.util.UUID;
 
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.ProfilingStageWrapper;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.OffloadingStageWrapper;
 
 /**
  * Created by rodrigo.jm.lourenco on 31/05/2015.
@@ -14,7 +14,7 @@ public class StageProfiler {
 
     private static StageProfiler STAGE_PROFILER = null;
 
-    private HashMap<UUID, ProfilingStageWrapper> stages;
+    private HashMap<UUID, OffloadingStageWrapper> stages;
 
     private StageProfiler(){
         stages = new HashMap<>();
@@ -33,7 +33,7 @@ public class StageProfiler {
         return STAGE_PROFILER;
     }
 
-    public UUID registerStage(ProfilingStageWrapper stage){
+    public UUID registerStage(OffloadingStageWrapper stage){
         UUID id = UUID.randomUUID();
         this.stages.put(id, stage);
         return  id;

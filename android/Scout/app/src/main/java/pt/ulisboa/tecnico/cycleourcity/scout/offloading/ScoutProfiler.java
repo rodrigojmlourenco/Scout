@@ -24,14 +24,14 @@ import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.Energ
  * <br>
  * This component is coordinated and made available to other components by the AdaptiveOffloadingManager.
  *
- * @see OffloadingDecisionEngine
+ * @see DecisionEngine
  *
  */
 public class ScoutProfiler {
 
     //TODO: remover antes da release
-    public static boolean VERBOSE = true;
-    private final String LOG_TAG = AdaptiveOffloadingManager.LOG_TAG;
+    public static boolean VERBOSE = false;
+    public final String LOG_TAG = AdaptiveOffloadingManager.LOG_TAG;
     public final String NAME_TAG = this.getClass().getSimpleName();
 
     //Sync Locks
@@ -48,6 +48,7 @@ public class ScoutProfiler {
 
     //Execution Rate
     public static final int DEFAULT_PROFILING_RATE = 1*1000;//ms
+
     private int profilingRate = DEFAULT_PROFILING_RATE;
     private ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
     private Future executorHandler;

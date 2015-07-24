@@ -12,9 +12,14 @@ import pt.ulisboa.tecnico.cycleourcity.scout.ScoutApplication;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.MobileSensing;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exceptions.MobileSensingException;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.PipelineConfiguration;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.SensorProcessingPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.AdaptiveOffloadingManager;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.OffloadingDecisionEngine;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.DecisionEngine;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.AdaptiveOffloadingException;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.ConfigurationTaggingStage;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.OffloadingStageWrapper;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.TestStages;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.EvaluationSupportStorage;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.LearningSupportStorage;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.ScoutStorageManager;
@@ -51,7 +56,7 @@ public class ScoutPipeline extends BasicPipeline {
         super();
         storage = ScoutStorageManager.getInstance();
         offloadingManager = AdaptiveOffloadingManager.getInstance(ScoutApplication.getContext());
-        offloadingManager.setDecisionEngineApathy(OffloadingDecisionEngine.NO_APATHY);
+        offloadingManager.setDecisionEngineApathy(DecisionEngine.NO_APATHY);
     }
 
 
@@ -65,32 +70,37 @@ public class ScoutPipeline extends BasicPipeline {
         mPipeline = new MobileSensing();
         mPipeline.setWindowSize(3);
 
-        /* DEPRECATED
-        PipelineConfiguration roadConditionMonitoringConfiguration =
-                RoadConditionMonitoringPipeline.generateRoadConditionMonitoringPipelineConfiguration();
-        ConfigurationCaretaker roadConditionMonitoringCaretaker = new ConfigurationCaretaker();
-        roadConditionMonitoringCaretaker.setOriginalPipelineConfiguration(roadConditionMonitoringConfiguration);
-        RoadConditionMonitoringPipeline rPipeline = new RoadConditionMonitoringPipeline(roadConditionMonitoringCaretaker);*/
+        /* Commented for Testing purposes
         RoadConditionMonitoringPipeline rPipeline = new RoadConditionMonitoringPipeline(
                 RoadConditionMonitoringPipeline.generateRoadConditionMonitoringPipelineConfiguration());
         mPipeline.addSensorProcessingPipeline(rPipeline);
 
 
-        /* DEPRECATED
-        PipelineConfiguration roadSlopeConfiguration =
-                RoadSlopeMonitoringPipeline.generateRoadSlopeMonitoringPipelineConfiguration(true);
-        ConfigurationCaretaker roadSlopeCaretaker = new ConfigurationCaretaker();
-        roadSlopeCaretaker.setOriginalPipelineConfiguration(roadSlopeConfiguration);
-        RoadSlopeMonitoringPipeline sPipeline = new RoadSlopeMonitoringPipeline(roadSlopeCaretaker);*/
         RoadSlopeMonitoringPipeline sPipeline = new RoadSlopeMonitoringPipeline(
                 RoadSlopeMonitoringPipeline.generateRoadSlopeMonitoringPipelineConfiguration(true));
         mPipeline.addSensorProcessingPipeline(sPipeline);
+        */
+
+
+        PipelineConfiguration pc1 = new PipelineConfiguration();
+        pc1.addStage(new OffloadingStageWrapper(new TestStages.Test6000Stage()));
+        pc1.addStage(new OffloadingStageWrapper(new TestStages.Test4000Stage()));
+        pc1.addFinalStage(new ConfigurationTaggingStage());
+        SensorProcessingPipeline p1 = new SensorProcessingPipeline(SensingUtils.Sensors.LINEAR_ACCELERATION, pc1) {};
+
+        PipelineConfiguration pc2 = new PipelineConfiguration();
+        pc2.addStage(new OffloadingStageWrapper(new TestStages.Test6000Stage()));
+        pc2.addStage(new OffloadingStageWrapper(new TestStages.Test5000Stage()));
+        pc2.addFinalStage(new ConfigurationTaggingStage());
+        SensorProcessingPipeline p2 = new SensorProcessingPipeline(SensingUtils.Sensors.PRESSURE, pc2) {};
+
 
         //Scout Profiling
-        //offloadingManager.validatePipeline(lPipeline);
-        //offloadingManager.validatePipeline(pPipeline);
-        //offloadingManager.validatePipeline(aPipeline);
+        offloadingManager.validatePipeline(p1);
+        mPipeline.addSensorProcessingPipeline(p1);
 
+        offloadingManager.validatePipeline(p2);
+        mPipeline.addSensorProcessingPipeline(p2);
 
         isInstantiated = true;
     }

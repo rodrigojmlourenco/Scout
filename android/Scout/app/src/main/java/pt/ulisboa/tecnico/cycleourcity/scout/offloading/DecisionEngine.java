@@ -7,14 +7,18 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.StageProfiler;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.AdaptivePipeline;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.AdaptiveOffloadingException;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.OverearlyOffloadException;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.exceptions.NoAdaptivePipelineValidatedException;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.exceptions.NothingToOffloadException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.EnergyProfiler;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.MockupBatteryProfiler;
 
 /**
  * Created by rodrigo.jm.lourenco on 01/06/2015.
  */
-public class OffloadingDecisionEngine {
+public class DecisionEngine {
 
     //Debugging
     public static boolean VERBOSE = true;
@@ -28,9 +32,10 @@ public class OffloadingDecisionEngine {
     private static int ATTEMPT_OFFLOAD_INTERVAL = OFFLOAD_ATTEMPT_DEFAULT_INTERVAL;
 
     private ScoutProfiler appProfiler;
+
     private Future executorHandler;
     private ScheduledExecutorService engineExecutor;
-    private AdaptiveOffloadingManager.OffloadingObserver observer;
+    //private AdaptiveOffloadingManager.OffloadingObserver observer;
 
     //Apathy
     private float apathy;
@@ -43,13 +48,22 @@ public class OffloadingDecisionEngine {
     private int offloadingAttempts  = 0;
     private int performedOffloads   = 0;
 
-    private static OffloadingDecisionEngine ENGINE = null;
-    private OffloadingDecisionEngine(final ScoutProfiler appProfiler){
+    //
+    private PartitionEngine partitionEngine;
+
+    private static DecisionEngine ENGINE = null;
+
+    private final OffloadTracker offloadingTracker;
+
+    protected DecisionEngine(final ScoutProfiler appProfiler){
 
         this.appProfiler = appProfiler;
         engineExecutor = Executors.newSingleThreadScheduledExecutor();
 
         apathy = RECOMMENDED_APATHY;
+
+        offloadingTracker  = new OffloadTracker();
+        partitionEngine = new PartitionEngine(offloadingTracker);
     }
 
     /**
@@ -84,7 +98,16 @@ public class OffloadingDecisionEngine {
 
                         performedOffloads++;
 
-                        observer.notifyTimeOffloadOpportunity();
+                        try {
+                            partitionEngine.offloadMostExpensiveStage();
+                        } catch (NoAdaptivePipelineValidatedException e) {
+                            e.printStackTrace();
+                        } catch (NothingToOffloadException e) {
+                            e.printStackTrace();
+                        } catch (OverearlyOffloadException e) {
+                            e.printStackTrace();
+                        }
+
                     }else {
                         if (VERBOSE) Log.d(LOG_TAG, NAME_TAG + " has deemed computation offloading unnecessary.");
                         OffloadingLogger.log(appProfiler.NAME_TAG, appProfiler.dumpInfo());
@@ -107,18 +130,20 @@ public class OffloadingDecisionEngine {
         }
     }
 
+    public OffloadTracker getOffloadingTracker(){ return offloadingTracker; }
 
 
     protected void destroy(){
         engineExecutor.shutdownNow();
     }
 
-    protected static OffloadingDecisionEngine getInstance(ScoutProfiler appProfiler,
+    /*
+    protected static DecisionEngine getInstance(ScoutProfiler appProfiler,
                                                           AdaptiveOffloadingManager.OffloadingObserver observer){
         if(ENGINE==null){
-            synchronized (OffloadingDecisionEngine.class){
+            synchronized (DecisionEngine.class){
                 if(ENGINE==null) {
-                    ENGINE = new OffloadingDecisionEngine(appProfiler);
+                    ENGINE = new DecisionEngine(appProfiler);
                     ENGINE.setObserver(observer);
                 }
             }
@@ -126,17 +151,13 @@ public class OffloadingDecisionEngine {
 
         return ENGINE;
     }
+    */
 
-    private void setObserver(AdaptiveOffloadingManager.OffloadingObserver observer){
-        this.observer = observer;
-    }
-
-
-    public boolean isTimeToOffload(int capacity, float energy){
+    private boolean isTimeToOffload(int capacity, float energy){
         return isTimeToOffload(capacity, energy, apathy);
     }
 
-    public boolean isTimeToOffload(int capacity, float energy, float priority){
+    private boolean isTimeToOffload(int capacity, float energy, float priority){
         float capacityPercentage = (float)capacity/100;
         return (1-capacityPercentage)*energy >= capacityPercentage*priority;
     }
@@ -163,11 +184,35 @@ public class OffloadingDecisionEngine {
     public String dumpOffloadInfo(int battery, long current, boolean offload){
         return "{name: \""+NAME_TAG+"\", "+
                 "offloadInfo: {"+
-                    "battery: "+battery+", "+
-                    "current: "+current+", "+
-                    "isOpportunity: "+(offload ? "true" : "false")+", "+
-                    "timestamp: "+System.nanoTime()+"}"+
+                "battery: "+battery+", "+
+                "current: "+current+", "+
+                "isOpportunity: "+(offload ? "true" : "false")+", "+
+                "timestamp: "+System.nanoTime()+"}"+
                 "}";
     }
 
+
+    /*
+    ************************************************************************
+    * Pipeline Partition Engine                                            *
+    ************************************************************************
+    */
+    protected void validatePipeline(AdaptivePipeline pipeline) throws AdaptiveOffloadingException {
+        partitionEngine.validatePipeline(pipeline);
+    }
+
+    protected void clearState(){
+        partitionEngine.clearState();
+    }
+
+    /*
+     ************************************************************************
+     * Testing                                                              *
+     ************************************************************************
+     */
+    protected void offloadWorstStage()
+            throws NothingToOffloadException, NoAdaptivePipelineValidatedException, OverearlyOffloadException {
+
+        partitionEngine.offloadMostExpensiveStage();
+    }
 }

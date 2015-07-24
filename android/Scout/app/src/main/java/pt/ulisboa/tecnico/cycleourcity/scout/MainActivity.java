@@ -30,6 +30,9 @@ import pt.ulisboa.tecnico.cycleourcity.scout.config.exceptions.NotInitializedExc
 import pt.ulisboa.tecnico.cycleourcity.scout.learning.PavementType;
 import pt.ulisboa.tecnico.cycleourcity.scout.logging.ScoutLogger;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.AdaptiveOffloadingManager;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.OverearlyOffloadException;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.exceptions.NoAdaptivePipelineValidatedException;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.exceptions.NothingToOffloadException;
 import pt.ulisboa.tecnico.cycleourcity.scout.pipeline.ScoutPipeline;
 
 public class MainActivity extends ActionBarActivity {
@@ -40,6 +43,8 @@ public class MainActivity extends ActionBarActivity {
     //UI
     private Button startSession, stopSession, saveSession;
     private EditText tagText;
+
+    private Button offloadBtn; //testing
 
     //Pavement Type
     private RadioGroup pavementTypeGroup;
@@ -200,6 +205,27 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
+
+        offloadBtn = (Button) findViewById(R.id.offloadBtn);
+        offloadBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                boolean error = false;
+                String errorMessage = "";
+                try {
+                    offloadingManager.forceOffloading();
+                    error = false;
+                } catch (NothingToOffloadException | NoAdaptivePipelineValidatedException | OverearlyOffloadException e) {
+                    errorMessage = e.getMessage();
+                    error = true;
+                }
+
+                if(error)
+                    Toast.makeText(MainActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+
+            }
+        });
 
         tagText = (EditText) findViewById(R.id.tag);
 

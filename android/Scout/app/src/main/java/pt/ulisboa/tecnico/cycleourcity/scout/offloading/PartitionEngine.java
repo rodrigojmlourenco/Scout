@@ -11,14 +11,15 @@ import java.util.List;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.AdaptivePipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.AdaptiveOffloadingException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.InvalidOffloadingStageException;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.OverearlyOffloadException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.TaggingStageMissingException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.exceptions.NoAdaptivePipelineValidatedException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.exceptions.NothingToOffloadException;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.AdaptiveOffloadingTaggingStage;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.ProfilingStageWrapper;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.ConfigurationTaggingStage;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.OffloadingStageWrapper;
 
 
-public class PipelinePartitionEngine {
+public class PartitionEngine {
 
     //TODO: remover
     private final boolean VERBOSE = true;
@@ -26,24 +27,13 @@ public class PipelinePartitionEngine {
     private final String LOG_TAG = AdaptiveOffloadingManager.LOG_TAG;
     private final String NAME_TAG = getClass().getSimpleName();
 
-    private static PipelinePartitionEngine PARTITIONER = null;
-
-    private long totalExecutionTime;
-
     private ArrayList<AdaptivePipeline> validatedPipelines;
-    private ArrayList<AdaptiveOffloadingTaggingStage> taggingStages;
-    private PipelinePartitionEngine(){
-        validatedPipelines = new ArrayList<>();
-        taggingStages = new ArrayList<>();
-    }
 
-    protected static PipelinePartitionEngine getInstance(){
-        if(PARTITIONER==null)
-            synchronized (PipelinePartitionEngine.class){
-                if(PARTITIONER == null)
-                    PARTITIONER = new PipelinePartitionEngine();
-            }
-        return PARTITIONER;
+    private final OffloadTracker offloadTracker;
+
+    protected PartitionEngine(OffloadTracker tracker){
+        validatedPipelines = new ArrayList<>();
+        offloadTracker = tracker;
     }
 
     /**
@@ -59,27 +49,30 @@ public class PipelinePartitionEngine {
      * @throws AdaptiveOffloadingException if the pipeline has not been designed to support adaptive offloading.
      */
     public void validatePipeline(AdaptivePipeline pipeline)
-            throws AdaptiveOffloadingException{
+            throws InvalidOffloadingStageException, TaggingStageMissingException {
 
         for(Stage stage : pipeline.getAdaptiveStages())
-            if(!(stage instanceof ProfilingStageWrapper))
+            if(!(stage instanceof OffloadingStageWrapper))
                 throw new InvalidOffloadingStageException();
 
-        boolean containsTaggingStage = false;
-        AdaptiveOffloadingTaggingStage taggingStage = null;
+        ConfigurationTaggingStage taggingStage = null;
         for(Stage finalStage : pipeline.getFinalStages())
-            if(finalStage instanceof AdaptiveOffloadingTaggingStage)
-                taggingStage = (AdaptiveOffloadingTaggingStage) finalStage;
+            if(finalStage instanceof ConfigurationTaggingStage) {
+                taggingStage = (ConfigurationTaggingStage) finalStage;
+
+                //Update the tagging stage
+                taggingStage.setPipelineUID(pipeline.hashCode());
+                taggingStage.setOffloadTracker(offloadTracker);
+            }
 
         if(taggingStage==null)
             throw new TaggingStageMissingException();
 
         this.validatedPipelines.add(pipeline);
-        this.taggingStages.add(taggingStage);
     }
 
 
-    public void offloadMostExpensiveStage() throws NoAdaptivePipelineValidatedException, NothingToOffloadException {
+    public Stage offloadMostExpensiveStage() throws NoAdaptivePipelineValidatedException, NothingToOffloadException, OverearlyOffloadException {
 
         if(validatedPipelines.isEmpty()) throw new NoAdaptivePipelineValidatedException();
 
@@ -91,14 +84,14 @@ public class PipelinePartitionEngine {
         List<Long>  executionTimesByStage = new ArrayList<>(),
                     generatedDataByStage = new ArrayList<>();
 
-        List<ProfilingStageWrapper> offloadingStageOptions = new ArrayList<>();
+        List<OffloadingStageWrapper> offloadingStageOptions = new ArrayList<>();
 
         ////Fetch the costs for each stage
-        ProfilingStageWrapper auxStage;
+        OffloadingStageWrapper auxStage;
         for(AdaptivePipeline p : validatedPipelines){
 
 
-            auxStage = (ProfilingStageWrapper) p.getLastAdaptiveStage();
+            auxStage = (OffloadingStageWrapper) p.getLastAdaptiveStage();
 
             if(auxStage==null){
                 if(VERBOSE) OffloadingLogger.log(this.getClass().getSimpleName(), p.getClass().getSimpleName() + " has no more stages");
@@ -106,9 +99,14 @@ public class PipelinePartitionEngine {
                 //continue;
                 Log.e("AdaptiveOffloading", "TESTING if continues...");
             }else {
-                offloadingStageOptions.add(auxStage);
-                executionTimesByStage.add(auxStage.getAverageRunningTime());
-                generatedDataByStage.add(auxStage.getAverageGeneratedDataSize());
+
+                try {
+                    offloadingStageOptions.add(auxStage);
+                    executionTimesByStage.add(auxStage.getAverageRunningTime());
+                    generatedDataByStage.add(auxStage.getAverageGeneratedDataSize());
+                }catch (ArithmeticException e){
+                    throw new OverearlyOffloadException();
+                }
             }
         }
 
@@ -119,10 +117,18 @@ public class PipelinePartitionEngine {
 
 
         ////Aux variables:
-        long totalExecutionTime = getTotalExecutionTime();
-        long totalGeneratedData = getTotalGeneratedData();
-        long optimalGeneratedData = getOptimalGeneratedData(generatedDataByStage);
-        long optimalExecutionTime = getOptimalExecutionTime(executionTimesByStage);
+        long    totalExecutionTime  = 0,
+                totalGeneratedData  = 0,
+                optimalGeneratedData= 0,
+                optimalExecutionTime= 0;
+        try {
+            totalExecutionTime = getTotalExecutionTime();
+            totalGeneratedData = getTotalGeneratedData();
+            optimalGeneratedData = getOptimalGeneratedData(generatedDataByStage);
+            optimalExecutionTime = getOptimalExecutionTime(executionTimesByStage);
+        }catch (ArithmeticException e){
+            throw new OverearlyOffloadException();
+        }
 
         StageCostComputer decider =
                 new MultiCriteriaStageCostComputer(totalExecutionTime,
@@ -130,13 +136,13 @@ public class PipelinePartitionEngine {
 
         //PHASE 2 - Decision
         int i, worst;
-        ProfilingStageWrapper
+        OffloadingStageWrapper
                 auxLastStage,
-                mostExpensiveStage = (ProfilingStageWrapper) validatedPipelines.get(0).getLastAdaptiveStage();
+                mostExpensiveStage = (OffloadingStageWrapper) validatedPipelines.get(0).getLastAdaptiveStage();
 
         for(i=0, worst=0; i < validatedPipelines.size(); i++){
 
-            auxLastStage = (ProfilingStageWrapper) validatedPipelines.get(i).getLastAdaptiveStage();
+            auxLastStage = (OffloadingStageWrapper) validatedPipelines.get(i).getLastAdaptiveStage();
 
             if(!decider.isMoreExpensive(mostExpensiveStage, auxLastStage)){
                 mostExpensiveStage = auxLastStage;
@@ -152,8 +158,16 @@ public class PipelinePartitionEngine {
         OffloadingLogger.log(NAME_TAG, dumpInfo(mostExpensiveStage, offloadingStageOptions));
 
         //PHASE 3 - Offloading
-        validatedPipelines.get(worst).removeStage();
-        taggingStages.get(worst).setWasModified();
+        AdaptivePipeline p  = validatedPipelines.get(worst);
+        Stage offloadedStage= p.removeStage();
+
+        offloadTracker.markOffloadedStage(p, (OffloadingStageWrapper) offloadedStage);
+
+        //PHASE 4 - Adjust the pipelines
+        if(p.getAdaptiveStages().isEmpty())
+            validatedPipelines.remove(p);
+
+        return offloadedStage;
     }
 
 
@@ -167,7 +181,7 @@ public class PipelinePartitionEngine {
 
         for(AdaptivePipeline p : validatedPipelines){
             for(Stage stage : p.getAdaptiveStages())
-                total += ((ProfilingStageWrapper)stage).getAverageRunningTime();
+                total += ((OffloadingStageWrapper)stage).getAverageRunningTime();
         }
 
         return total;
@@ -177,7 +191,7 @@ public class PipelinePartitionEngine {
         long total = 0;
 
         for(AdaptivePipeline p : validatedPipelines)
-           total +=  ((ProfilingStageWrapper)p.getLastAdaptiveStage()).getAverageGeneratedDataSize();
+            total += ((OffloadingStageWrapper) p.getLastAdaptiveStage()).getAverageGeneratedDataSize();
 
         return total;
     }
@@ -209,9 +223,9 @@ public class PipelinePartitionEngine {
         public final static float TIME_WEIGHT = (float)1;
         public final static float DATA_WEIGHT = (float)0;
 
-        public abstract float computeCost(ProfilingStageWrapper stage);
+        public abstract float computeCost(OffloadingStageWrapper stage);
 
-        public boolean isMoreExpensive(ProfilingStageWrapper baseStage, ProfilingStageWrapper stage){
+        public boolean isMoreExpensive(OffloadingStageWrapper baseStage, OffloadingStageWrapper stage){
 
             float cost1, cost2;
 
@@ -256,7 +270,7 @@ public class PipelinePartitionEngine {
 
 
         @Override
-        public float computeCost(ProfilingStageWrapper stage) {
+        public float computeCost(OffloadingStageWrapper stage) {
             return  TIME_WEIGHT*timeUtilityFunction(stage.getAverageRunningTime()) +
                     DATA_WEIGHT*dataUtilityFunction(stage.getAverageGeneratedDataSize());
 
@@ -273,23 +287,23 @@ public class PipelinePartitionEngine {
      ****************************************************************************
      */
 
-    private String dumpInfo(ProfilingStageWrapper choice, List<ProfilingStageWrapper> stages){
+    private String dumpInfo(OffloadingStageWrapper choice, List<OffloadingStageWrapper> stages){
         return "{ name: \""+NAME_TAG+"\", "+
                 "chosen: "+choice.dumpInfo()+", "+
                 "options: "+dumpOffloadingOptionsInfo(stages)+"}";
     }
 
-    private String dumpOffloadingOptionsInfo(List<ProfilingStageWrapper> stages){
+    private String dumpOffloadingOptionsInfo(List<OffloadingStageWrapper> stages){
         String info = "[ ";
 
         int i=1, options = stages.size();
-        for(ProfilingStageWrapper s : stages)
+        for(OffloadingStageWrapper s : stages)
             info += s.dumpInfo() + (i++ < options ? ", " : "]");
 
         return info;
     }
 
-    private String dumpOffloadingChoiceInfo(ProfilingStageWrapper stage){
+    private String dumpOffloadingChoiceInfo(OffloadingStageWrapper stage){
         return stage.dumpInfo();
     }
 }

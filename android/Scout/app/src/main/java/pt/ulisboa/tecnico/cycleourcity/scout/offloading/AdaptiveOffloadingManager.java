@@ -1,13 +1,13 @@
 package pt.ulisboa.tecnico.cycleourcity.scout.offloading;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.text.DateFormat;
 import java.util.Date;
 
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.AdaptivePipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.AdaptiveOffloadingException;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.OverearlyOffloadException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.exceptions.NoAdaptivePipelineValidatedException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.exceptions.NothingToOffloadException;
 
@@ -17,8 +17,7 @@ public class AdaptiveOffloadingManager {
     private final String NAME_TAG = this.getClass().getSimpleName();
 
     private final ScoutProfiler applicationProfiler;
-    private final OffloadingDecisionEngine decisionEngine;
-    private final PipelinePartitionEngine partitionEngine;
+    private final DecisionEngine decisionEngine;
 
     private boolean isProfilingEnabled = false;
 
@@ -26,8 +25,8 @@ public class AdaptiveOffloadingManager {
 
     private AdaptiveOffloadingManager(Context context){
         applicationProfiler = ScoutProfiler.getInstance(context);
-        partitionEngine     = PipelinePartitionEngine.getInstance();
-        decisionEngine      = OffloadingDecisionEngine.getInstance(applicationProfiler,this.decisionEngineObserver);
+        decisionEngine      = new DecisionEngine(applicationProfiler);
+
     }
 
     public static AdaptiveOffloadingManager getInstance(Context context){
@@ -37,7 +36,8 @@ public class AdaptiveOffloadingManager {
                     OFFLOADING_MANAGER = new AdaptiveOffloadingManager(context);
             }
 
-        OFFLOADING_MANAGER.partitionEngine.clearState();
+        //OFFLOADING_MANAGER.partitionEngine.clearState();
+        OFFLOADING_MANAGER.decisionEngine.clearState();
 
         return OFFLOADING_MANAGER;
     }
@@ -108,22 +108,26 @@ public class AdaptiveOffloadingManager {
     }
 
 
-    /*
-     ************************************************************************
-     * Pipeline Partition Engine                                            *
-     ************************************************************************
-     */
 
 
-    public void validatePipeline(AdaptivePipeline pipeline) throws AdaptiveOffloadingException {
-        partitionEngine.validatePipeline(pipeline);
-    }
+
+
 
     /*
      ************************************************************************
      * Decision Engine                                                      *
      ************************************************************************
      */
+    public void validatePipeline(AdaptivePipeline pipeline) throws AdaptiveOffloadingException {
+        decisionEngine.validatePipeline(pipeline);
+        //partitionEngine.validatePipeline(pipeline);
+    }
+
+    public OffloadTracker getOffloadTracker(){
+        return decisionEngine.getOffloadingTracker();
+    }
+
+    /*
     protected static interface OffloadingObserver{
         public void notifyTimeOffloadOpportunity();
     }
@@ -140,13 +144,13 @@ public class AdaptiveOffloadingManager {
                 e.printStackTrace();
             } catch (NothingToOffloadException e) {
                 OffloadingLogger.log(NAME_TAG,
-                        OffloadingDecisionEngine.class.getSimpleName()+" shutdown, all stages have been offloaded.");
+                        DecisionEngine.class.getSimpleName()+" shutdown, all stages have been offloaded.");
                 decisionEngine.stopMonitoring();
                 applicationProfiler.enableActiveLogging();
             }
         }
     };
-
+    */
     /**
      * Redefines the apathy level. The bigger the apathy, the lazier the OffloadingDecisionEngine
      * becomes, by postponing offloading.
@@ -175,4 +179,16 @@ public class AdaptiveOffloadingManager {
     public void enableProfiling(){ isProfilingEnabled = true; }
 
     public void disableProfiling(){ isProfilingEnabled = false; }
+
+    /*
+     ************************************************************************
+     * Testing TODO remover                                                 *
+     ************************************************************************
+     */
+    public void forceOffloading()
+            throws NothingToOffloadException, NoAdaptivePipelineValidatedException, OverearlyOffloadException {
+
+        decisionEngine.offloadWorstStage();
+    }
+
 }

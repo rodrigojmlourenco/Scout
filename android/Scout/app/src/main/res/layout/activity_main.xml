@@ -101,4 +101,12 @@
             android:checked="false" />
     </RadioGroup>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Offload"
+        android:id="@+id/offloadBtn"
+        android:layout_below="@+id/pavementTypeGroup"
+        android:layout_centerHorizontal="true" />
+
 </RelativeLayout>
