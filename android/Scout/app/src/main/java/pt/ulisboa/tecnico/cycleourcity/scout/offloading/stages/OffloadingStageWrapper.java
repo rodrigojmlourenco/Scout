@@ -39,9 +39,6 @@ public class OffloadingStageWrapper implements Stage {
         profilingEnabled = false;
     }
 
-    public UUID getStageUUID(){
-        return this.identifier;
-    }
 
     @Override
     public void execute(PipelineContext pipelineContext) {
@@ -95,7 +92,16 @@ public class OffloadingStageWrapper implements Stage {
         for(DataProfileInfo info : dataSizes)
             total += info.getGeneratedDataSize();
 
-        return total;
+        return total / dataSizes.size();
+    }
+
+    public long getAverageInputDataSize(){
+        long total = 0;
+
+        for(DataProfileInfo info : dataSizes)
+            total += info.getInputDataSize();
+
+        return total / dataSizes.size();
     }
 
     private long sampleMemSize(String sample){
@@ -116,22 +122,16 @@ public class OffloadingStageWrapper implements Stage {
 
     public static class DataProfileInfo {
 
-        private long initalDataSize;
+        private long initialDataSize;
         private long finalDataSize;
 
-        public DataProfileInfo(long initalDataSize,long finalDataSize){
-            this.initalDataSize = initalDataSize;
+        public DataProfileInfo(long initialDataSize,long finalDataSize){
+            this.initialDataSize = initialDataSize;
             this.finalDataSize = finalDataSize;
         }
 
-        public long getSizeDifference(){
-            return  initalDataSize - finalDataSize;
-        }
-
-        public float getCompressionRate(){
-            return  ((float)finalDataSize)/initalDataSize;
-        }
-
         public long getGeneratedDataSize(){ return this.finalDataSize; }
+
+        public long getInputDataSize() { return  this.initialDataSize; }
     }
 }
