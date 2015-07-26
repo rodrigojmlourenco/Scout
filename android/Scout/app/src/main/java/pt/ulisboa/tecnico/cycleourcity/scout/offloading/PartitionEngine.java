@@ -22,6 +22,9 @@ import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.OffloadingStageWr
 
 public class PartitionEngine {
 
+    public final static float DEFAULT_ENERGY_WEIGHT = 1,
+                                DEFAULT_DATA_WEIGHT = 0;
+
     private final boolean VERBOSE = true;
 
     private final String LOG_TAG = AdaptiveOffloadingManager.LOG_TAG;
@@ -33,11 +36,32 @@ public class PartitionEngine {
 
     private final PartitionEngineState internalState;
 
+    private float energyWeight, dataWeight;
+
     protected PartitionEngine(OffloadTracker tracker){
         validatedPipelines = new ArrayList<>();
         offloadTracker = tracker;
 
         internalState = new PartitionEngineState();
+
+        energyWeight= DEFAULT_ENERGY_WEIGHT;
+        dataWeight  = DEFAULT_DATA_WEIGHT;
+    }
+
+    protected void setEnergyWeight(float weight){
+        energyWeight = weight;
+    }
+
+    protected float getEnergyWeight(){
+        return energyWeight;
+    }
+
+    protected void setDataWeight(float weight){
+        dataWeight = weight;
+    }
+
+    protected float getDataWeight(){
+        return dataWeight;
     }
 
     /**
@@ -83,7 +107,12 @@ public class PartitionEngine {
 
     public void offloadMostExpensiveStage()
             throws NothingToOffloadException, OverearlyOffloadException, NoAdaptivePipelineValidatedException {
-        testOffloadMostExpensiveStage();
+
+        try {
+            testOffloadMostExpensiveStage();
+        }catch (ArithmeticException e){
+            throw new OverearlyOffloadException();
+        }
     }
 
     public void testOffloadMostExpensiveStage() throws NothingToOffloadException {
@@ -103,6 +132,7 @@ public class PartitionEngine {
         //2. Identify the worst stage
         StageCostComputer decider =
                 new RevisedMultiCriteriaCostComputer(
+                        energyWeight, dataWeight,
                         internalState.getOriginalExecutionTime(),
                         internalState.getOriginalTransmittedDataSize(),
                         internalState.getOptimalExecutionTime(),
@@ -143,8 +173,12 @@ public class PartitionEngine {
      */
     public static abstract class StageCostComputer {
 
-        public final static float TIME_WEIGHT = (float)1;
-        public final static float DATA_WEIGHT = (float)0;
+        protected final float energyWeight, dataWeight;
+
+        public StageCostComputer(float energyWeight, float dataWeight){
+            this.energyWeight = energyWeight;
+            this.dataWeight = dataWeight;
+        }
 
         public abstract float computeCost(OffloadingStageWrapper stage);
 
@@ -187,10 +221,11 @@ public class PartitionEngine {
         private final long originalExecutionTime, originalDataSize,
                             optimalExecutionTime, optimalDataSize;
 
-        public RevisedMultiCriteriaCostComputer(long originalExecutionTime, long originalDataSize,
+        public RevisedMultiCriteriaCostComputer(float energyWeight, float dataWeight,
+                                                long originalExecutionTime, long originalDataSize,
                                                 long optimalExecutionTime, long optimalDataSize){
 
-            super();
+            super(energyWeight, dataWeight);
             this.originalExecutionTime = originalExecutionTime;
             this.optimalExecutionTime = optimalExecutionTime;
             this.originalDataSize = originalDataSize;
@@ -209,8 +244,8 @@ public class PartitionEngine {
 
         @Override
         public float computeCost(OffloadingStageWrapper stage) {
-            return  TIME_WEIGHT*timeUtilityFunction(stage) +
-                    DATA_WEIGHT*dataUtilityFunction(stage);
+            return  energyWeight*timeUtilityFunction(stage) +
+                    dataWeight*dataUtilityFunction(stage);
         }
     }
 
@@ -327,10 +362,11 @@ public class PartitionEngine {
                 optimalExecutionTime;
 
 
-        protected MultiCriteriaStageCostComputer(long totalExecutionTime,
+        protected MultiCriteriaStageCostComputer(float energyWeight, float dataWeight,
+                                                 long totalExecutionTime,
                                                  long optimalGeneratedData, long optimalExecutionTime){
 
-            super();
+            super(energyWeight, dataWeight);
 
             this.totalExecutionTime = totalExecutionTime;
             this.optimalGeneratedData = optimalGeneratedData;
@@ -351,8 +387,8 @@ public class PartitionEngine {
 
         @Override
         public float computeCost(OffloadingStageWrapper stage) {
-            return  TIME_WEIGHT*timeUtilityFunction(stage.getAverageRunningTime()) +
-                    DATA_WEIGHT*dataUtilityFunction(stage.getAverageGeneratedDataSize());
+            return  energyWeight*timeUtilityFunction(stage.getAverageRunningTime()) +
+                    dataWeight*dataUtilityFunction(stage.getAverageGeneratedDataSize());
 
         }
     }
@@ -441,7 +477,9 @@ public class PartitionEngine {
         }
 
         StageCostComputer decider =
-                new MultiCriteriaStageCostComputer(totalExecutionTime,
+                new MultiCriteriaStageCostComputer(
+                        energyWeight, dataWeight,
+                        totalExecutionTime,
                         optimalGeneratedData, optimalExecutionTime);
 
         //PHASE 2 - Decision
@@ -502,4 +540,5 @@ public class PartitionEngine {
     }
 
 }
+
 

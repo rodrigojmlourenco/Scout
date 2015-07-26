@@ -197,6 +197,21 @@ public class DecisionEngine {
     * Pipeline Partition Engine                                            *
     ************************************************************************
     */
+
+    protected void setTotalUtilityWeights(float energyWeight, float dataWeight){
+        partitionEngine.setEnergyWeight(energyWeight);
+        partitionEngine.setDataWeight(dataWeight);
+    }
+
+    protected float getEnergyWeight(){
+        return partitionEngine.getEnergyWeight();
+    }
+
+    protected float getDataWeight(){
+        return partitionEngine.getDataWeight();
+    }
+
+
     protected void validatePipeline(AdaptivePipeline pipeline) throws AdaptiveOffloadingException {
         partitionEngine.validatePipeline(pipeline);
     }

@@ -19,6 +19,7 @@ import pt.ulisboa.tecnico.cycleourcity.scout.offloading.DecisionEngine;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.AdaptiveOffloadingException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.ConfigurationTaggingStage;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.OffloadingStageWrapper;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.TestOffloadingStage;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.TestStages;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.EvaluationSupportStorage;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.LearningSupportStorage;
@@ -83,6 +84,7 @@ public class ScoutPipeline extends BasicPipeline {
 
 
         PipelineConfiguration pc1 = new PipelineConfiguration();
+
         pc1.addStage(new OffloadingStageWrapper(new TestStages.Test6000Stage()));
         pc1.addStage(new OffloadingStageWrapper(new TestStages.Test4000Stage()));
         pc1.addFinalStage(new ConfigurationTaggingStage());
@@ -90,7 +92,8 @@ public class ScoutPipeline extends BasicPipeline {
 
         PipelineConfiguration pc2 = new PipelineConfiguration();
         pc2.addStage(new OffloadingStageWrapper(new TestStages.Test6000Stage()));
-        pc2.addStage(new OffloadingStageWrapper(new TestStages.Test5000Stage()));
+        //pc2.addStage(new OffloadingStageWrapper(new TestStages.Test5000Stage()));
+        pc2.addStage(new TestOffloadingStage(new TestStages.Test5000Stage(), 5000, 300, 500));
         pc2.addFinalStage(new ConfigurationTaggingStage());
         SensorProcessingPipeline p2 = new SensorProcessingPipeline(SensingUtils.Sensors.PRESSURE, pc2) {};
 

@@ -108,11 +108,6 @@ public class AdaptiveOffloadingManager {
     }
 
 
-
-
-
-
-
     /*
      ************************************************************************
      * Decision Engine                                                      *
@@ -120,11 +115,18 @@ public class AdaptiveOffloadingManager {
      */
     public void validatePipeline(AdaptivePipeline pipeline) throws AdaptiveOffloadingException {
         decisionEngine.validatePipeline(pipeline);
-        //partitionEngine.validatePipeline(pipeline);
     }
 
-    public OffloadTracker getOffloadTracker(){
-        return decisionEngine.getOffloadingTracker();
+    public void setTotalUtilityWeights(float energy, float data){
+        decisionEngine.setTotalUtilityWeights(energy, data);
+    }
+
+    public float getEnergyUtilityWeight(){
+        return decisionEngine.getEnergyWeight();
+    }
+
+    public float getDataUtilityWeight(){
+        return decisionEngine.getDataWeight();
     }
 
     /*
