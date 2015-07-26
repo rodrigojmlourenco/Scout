@@ -2,13 +2,11 @@ package pt.ulisboa.tecnico.cycleourcity.scout.offloading;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
-import com.ideaimpl.patterns.pipeline.Stage;
 
 import java.util.LinkedList;
 import java.util.concurrent.ConcurrentHashMap;
 
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.AdaptivePipeline;
-import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.ConfigurationCaretaker;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.SensorProcessingPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.UnvalidatedPipelineException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.OffloadingStageWrapper;
@@ -22,13 +20,10 @@ public class OffloadTracker {
 
     private JsonParser jsonParser;
     private ConcurrentHashMap<Integer, LinkedList> missingStages;
-    private ConcurrentHashMap<Integer, ConfigurationCaretaker> configurationCaretakers;
 
     public OffloadTracker(){
         jsonParser = new JsonParser();
-
         this.missingStages = new ConcurrentHashMap<>();
-        this.configurationCaretakers = new ConcurrentHashMap<>();
     }
 
     public void registerPipeline(AdaptivePipeline pipeline){
@@ -37,10 +32,6 @@ public class OffloadTracker {
 
         if(!missingStages.containsKey(pID)) {
             missingStages.put(pID, new LinkedList());
-
-            //ConfigurationCaretaker caretaker = new ConfigurationCaretaker();
-            //caretaker.setOriginalPipelineConfiguration(pipeline.get);
-            //configurationCaretakers.put(pID,)
         }
 
     }

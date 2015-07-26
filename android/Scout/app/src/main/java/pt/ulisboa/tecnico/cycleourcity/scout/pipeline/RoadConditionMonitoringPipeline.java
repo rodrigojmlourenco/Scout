@@ -22,7 +22,6 @@ import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.timedomain.Stati
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.timedomain.TimeDomainMetrics;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.PipelineConfiguration;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.SensorPipelineContext;
-import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.ConfigurationCaretaker;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.SensorProcessingPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.stages.CommonStages;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.EvaluationSupportStorage;

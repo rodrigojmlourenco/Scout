@@ -7,7 +7,8 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.ideaimpl.patterns.pipeline.*;
+import com.ideaimpl.patterns.pipeline.PipelineContext;
+import com.ideaimpl.patterns.pipeline.Stage;
 
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -20,7 +21,6 @@ import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils.RotationVectorKeys;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.PipelineConfiguration;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.SensorPipelineContext;
-import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.ConfigurationCaretaker;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.location.LocationSensorPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.stages.CommonStages;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.state.LocationState;
