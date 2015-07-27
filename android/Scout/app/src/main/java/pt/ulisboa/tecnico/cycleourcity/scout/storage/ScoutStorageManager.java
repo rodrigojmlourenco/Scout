@@ -94,35 +94,6 @@ public class ScoutStorageManager implements StorageManager{
         return null;
     }
 
-    /*
-    @Override
-    public void archive() throws NothingToArchiveException{
-
-        if(empty) throw new NothingToArchiveException();
-
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        File dbFile = new File(db.getPath());
-        db.close();
-
-        logger.log(ScoutLogger.DEBUG, LOG_TAG, "dbFile created at '" + dbFile.getAbsolutePath() + "'.");
-
-        if (archive.add(dbFile, "something")){
-            dbFile.delete();
-            try {
-                logger.log(ScoutLogger.DEBUG, LOG_TAG, archive.getPathOnSDCard());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-
-
-        dbHelper.getWritableDatabase(); // Build new database
-        logger.log(ScoutLogger.INFO, LOG_TAG, "Samples were successfully archived");
-        //setHandler(null); // free system resources
-    }
-    */
-
     @Override
     public void archive(final String tag) throws NothingToArchiveException{
 
@@ -143,21 +114,9 @@ public class ScoutStorageManager implements StorageManager{
             }
         }
 
-        //WEKA - LEARNING
-        //wekaStorage.archive(tag);
-        //wekaStorage.clear();
-
-
         dbHelper.getWritableDatabase(); // Build new database
         logger.log(ScoutLogger.INFO, LOG_TAG, "Samples were successfully archived");
         //setHandler(null); // free system resources
-
-        //TESTING
-        //graphValuesStorage.archive(tag);
-        //graphValuesStorage.clearAllTests();
-
-
-
     }
 
     public void archiveGPXTrack(String tag){

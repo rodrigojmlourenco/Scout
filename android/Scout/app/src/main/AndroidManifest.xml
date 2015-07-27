@@ -15,6 +15,13 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+    <!-- Scout Remote Communication -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS"/>
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+
     <!-- Vibration - for user feedback -->
     <uses-permission android:name="android.permission.VIBRATE" />
 
@@ -43,11 +50,11 @@
             </intent-filter>
         </activity>
 
-        <service android:name="edu.mit.media.funf.FunfManager" >
-            <me-data
-                android:name="default"
-                android:value="@string/scout_pipeline" />
-        </service>
+
+
+
+
+
 
         <receiver
             android:name="edu.mit.media.funf.Launcher"
@@ -69,6 +76,45 @@
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings" >
         </activity>
+
+        <provider
+            android:name="pt.ulisboa.tecnico.cycleourcity.scout.storage.provider.ScoutProvider"
+            android:authorities="pt.ulisboa.tecnico.cycleourcity.scout.storage.provider"
+            android:exported="false"
+            android:syncable="true"/>
+
+        <!-- Sensing Service -->
+        <service android:name="edu.mit.media.funf.FunfManager" >
+            <me-data
+                android:name="default"
+                android:value="@string/scout_pipeline" />
+        </service>
+
+        <!-- http://developer.android.com/training/sync-adapters/creating-authenticator.html#DeclareAuthenticator-->
+        <service
+            android:name="pt.ulisboa.tecnico.cycleourcity.scout.network.authentication.ScoutAuthenticatorService">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
+
+        <!-- Network Communication Service (SyncAdapters)-->
+        <service
+            android:name="pt.ulisboa.tecnico.cycleourcity.scout.network.ScoutSyncService"
+            android:exported="true"
+            android:process=":sync">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter"/>
+            </intent-filter>
+            <meta-data android:name="android.content.SyncAdapter"
+                android:resource="@xml/syncadapter" />
+        </service>
+
+
+
     </application>
 
 </manifest>

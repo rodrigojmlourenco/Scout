@@ -1,9 +1,13 @@
 package pt.ulisboa.tecnico.cycleourcity.scout;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.content.ComponentName;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.ActionBarActivity;
@@ -21,7 +25,6 @@ import java.util.regex.Pattern;
 
 import edu.mit.media.funf.FunfManager;
 import edu.mit.media.funf.pipeline.BasicPipeline;
-import pt.ulisboa.tecnico.cycleourcity.scout.calibration.LinearAccelerationCalibrator;
 import pt.ulisboa.tecnico.cycleourcity.scout.calibration.ScoutCalibrationManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.calibration.SensorCalibrator;
 import pt.ulisboa.tecnico.cycleourcity.scout.calibration.exceptions.NotYetCalibratedException;
@@ -29,11 +32,15 @@ import pt.ulisboa.tecnico.cycleourcity.scout.config.ScoutConfigManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.config.exceptions.NotInitializedException;
 import pt.ulisboa.tecnico.cycleourcity.scout.learning.PavementType;
 import pt.ulisboa.tecnico.cycleourcity.scout.logging.ScoutLogger;
+import pt.ulisboa.tecnico.cycleourcity.scout.network.ScoutRemoteClient;
+import pt.ulisboa.tecnico.cycleourcity.scout.network.stages.UploadStage;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.AdaptiveOffloadingManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.OverearlyOffloadException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.exceptions.NoAdaptivePipelineValidatedException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.exceptions.NothingToOffloadException;
 import pt.ulisboa.tecnico.cycleourcity.scout.pipeline.ScoutPipeline;
+import pt.ulisboa.tecnico.cycleourcity.scout.storage.provider.ScoutProvider;
+import pt.ulisboa.tecnico.cycleourcity.scout.storage.provider.ScoutProviderObserver;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -45,6 +52,7 @@ public class MainActivity extends ActionBarActivity {
     private EditText tagText;
 
     private Button offloadBtn; //testing
+    private Button netTestBtn;
 
     //Pavement Type
     private RadioGroup pavementTypeGroup;
@@ -65,6 +73,14 @@ public class MainActivity extends ActionBarActivity {
     private AdaptiveOffloadingManager offloadingManager;
 
     private boolean isSensing = false;
+
+
+    //BEGIN TESTING - SyncAdapters
+    Account mAccount;
+    ContentResolver mContentResolver;
+    public static final String ACCOUNT = "scout";
+    //END TESTING - SyncAdapters
+
 
     private ServiceConnection funfManagerConn = new ServiceConnection() {
         @Override
@@ -187,7 +203,7 @@ public class MainActivity extends ActionBarActivity {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 PavementType.Pavements pavement;
 
-                switch (checkedId){
+                switch (checkedId) {
                     case R.id.isAsphalt:
                         pavement = PavementType.Pavements.asphalt;
                         break;
@@ -205,7 +221,7 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
-
+        //BEGIN TESTING
         offloadBtn = (Button) findViewById(R.id.offloadBtn);
         offloadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -221,11 +237,24 @@ public class MainActivity extends ActionBarActivity {
                     error = true;
                 }
 
-                if(error)
+                if (error)
                     Toast.makeText(MainActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
 
             }
         });
+
+        final ScoutRemoteClient rc = ScoutRemoteClient.getInstance();
+        netTestBtn = (Button) findViewById(R.id.netTestBtn);
+        netTestBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UploadStage stage = new UploadStage();
+                stage.execute(null);
+            }
+        });
+
+
+        //END TESTING
 
         tagText = (EditText) findViewById(R.id.tag);
 
@@ -243,6 +272,26 @@ public class MainActivity extends ActionBarActivity {
         //Profiling
         offloadingManager = AdaptiveOffloadingManager.getInstance(getApplicationContext());
 
+        //BEGIN TESTING - SyncAdapters
+        mAccount = CreateSyncAccount(this);
+        mContentResolver = getContentResolver();
+        ScoutProviderObserver observer = new ScoutProviderObserver(mAccount);
+        mContentResolver.registerContentObserver(ScoutProvider.CONTENT_URI, true, observer);
+
+        ContentResolver.setIsSyncable(mAccount, ScoutProvider.AUTHORITY, 1);
+        //TODO: solve as this invalidates the performance improvements inherent from the use of SyncAdapters
+        ContentResolver.setSyncAutomatically(mAccount, ScoutProvider.AUTHORITY, true);
+
+        /* Este método funciona
+        ContentResolver.addPeriodicSync(
+                mAccount,
+                ScoutProvider.AUTHORITY,
+                Bundle.EMPTY,
+                1); //Minutos
+       */
+
+        //END TESTING - SyncAdapters
+
         // Bind to the service, to create the connection with FunfManager
         bindService(new Intent(this, FunfManager.class), funfManagerConn, BIND_AUTO_CREATE);
     }
@@ -250,17 +299,13 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
-
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
 
         if(isSensing){
@@ -269,7 +314,6 @@ public class MainActivity extends ActionBarActivity {
 
             return true;
         }
-
 
         Intent intent;
         switch (id){
@@ -297,11 +341,22 @@ public class MainActivity extends ActionBarActivity {
 
     }
 
-    /**********************************************************************************************
-     * UI update Async
-     **********************************************************************************************/
+    //BEGIN TESTING - SyncAdapters
+    public static Account CreateSyncAccount(Context context){
+        Account account = new Account(ACCOUNT, ScoutProvider.ACCOUNT_TYPE);
+        AccountManager accountManager = (AccountManager) context.getSystemService(ACCOUNT_SERVICE);
 
-    public static interface EnergyProfileUpdateCallback{
-        public void updateEnergyConsumption(int capacity, long iddleEnergy, long sensingEnergy);
+        if(accountManager.addAccountExplicitly(account, null, null))
+            return account;
+        else {
+            Account[] accounts = accountManager.getAccountsByType(ScoutProvider.ACCOUNT_TYPE);
+            if(accounts.length == 1)
+                return accounts[0];
+            else
+                throw new RuntimeException("There are "+accounts.length+" registered.");
+        }
+
+
     }
+    //END TESTING - SyncAdapters
 }
