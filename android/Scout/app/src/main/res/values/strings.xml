@@ -103,5 +103,18 @@
     <!-- Settings Activity -->
     <string name="clear_data_settings">Clear Data</string>
     <string name="cleared_data_settings">Scout\'s internal data has been cleared</string>
+    <string name="data_plan">Data Plan</string>
+    <string name="mobile_plan_usage">Mobile Plan Usage</string>
+    <string name="mobile_plan_limit">Mobile Plan Limit</string>
+    <string name="mobile_plan_error">The limit must not exceed the overall data plan.</string>
+    <string name="mobile_plan_void">Please set the data plan and limit values.</string>
+    <string name="mobile_plan_zero">The data plan and respective limit higher than zero.</string>
 
+
+    <!-- General Strings -->
+    <string name="ok">Ok</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="gigabyte">Gb</string>
+    <string name="megabyte">MB</string>
 </resources>

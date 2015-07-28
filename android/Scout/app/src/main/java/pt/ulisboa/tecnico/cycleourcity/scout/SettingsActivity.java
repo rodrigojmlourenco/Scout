@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.cycleourcity.scout;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -12,10 +13,9 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
 import pt.ulisboa.tecnico.cycleourcity.scout.calibration.SensorCalibrator;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.AdaptiveOffloadingManager;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.ScoutProfiling;
 
 
 public class SettingsActivity extends ActionBarActivity implements SeekBar.OnSeekBarChangeListener {
@@ -34,16 +34,25 @@ public class SettingsActivity extends ActionBarActivity implements SeekBar.OnSee
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
+        //
+        checkExtras(getIntent());
+
         offloadingManager = AdaptiveOffloadingManager.getInstance(ScoutApplication.getContext());
 
         clearDataBtn = (Button) findViewById(R.id.clearDataBtn);
         clearDataBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharedPreferences preferences =
-                        getSharedPreferences(SensorCalibrator.PREFERENCES_NAME, Context.MODE_PRIVATE);
 
-                preferences.edit().clear().commit();
+                getSharedPreferences(SensorCalibrator.PREFERENCES_NAME, Context.MODE_PRIVATE)
+                        .edit()
+                        .clear()
+                        .commit();
+
+                getSharedPreferences(ScoutProfiling.PREFERENCES,Context.MODE_PRIVATE)
+                        .edit()
+                        .clear()
+                        .commit();
 
                 Toast.makeText(SettingsActivity.this, getString(R.string.cleared_data_settings), Toast.LENGTH_SHORT).show();
             }
@@ -127,5 +136,17 @@ public class SettingsActivity extends ActionBarActivity implements SeekBar.OnSee
         dataProgressText.setText(getWeightAsText(dataProgressValue));
 
         offloadingManager.setTotalUtilityWeights((float)energyProgressValue / 100, (float)dataProgressValue / 100);
+    }
+
+    private void checkExtras(Intent intent){
+        if(intent.hasExtra(SettingsExtras.EXTRA_DATA_PLAN)){
+            DataPlanUpdateDialog dialog = new DataPlanUpdateDialog();
+            dialog.show(getFragmentManager(), "Data Plan");
+        }
+
+    }
+
+    static interface SettingsExtras {
+        public static final String EXTRA_DATA_PLAN = "data_plan";
     }
 }

@@ -9,63 +9,28 @@ import android.util.Log;
 /**
  * Created by rodrigo.jm.lourenco on 29/05/2015.
  */
-public class NetworkProfiler extends ResourceProfiler{
+public class NetworkProfiler {
 
-    public static enum NetworkType {
-        LTE,
-        WIFI
-    }
+    private MobileDataPlanProfiler dataPlanProfiler;
+    private NetworkStateProfiler networkStateProfiler;
 
-    private NetworkType type;
-    private float linkSpeed;
+    public NetworkProfiler(Context context){
+        this.networkStateProfiler   = new NetworkStateProfiler(context);
+        this.dataPlanProfiler       = new MobileDataPlanProfiler(context);
 
-    private final ConnectivityManager networkManager;
-    private final WifiManager wifiManager;
+        dataPlanProfiler.startMonitoring();
 
-    public NetworkProfiler(Context context) {
-        this.networkManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        this.wifiManager    = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        //Logging
+        networkStateProfiler.VERBOSE = true;
     }
 
 
-    @Override
-    public void profile() {
+    public void teardown(){
 
-        NetworkInfo info = networkManager.getActiveNetworkInfo();
-        switch (info.getType()){
-            case ConnectivityManager.TYPE_WIFI:
-                type = NetworkType.WIFI;
-                linkSpeed = wifiManager.getConnectionInfo().getLinkSpeed();
-                break;
-            case ConnectivityManager.TYPE_MOBILE:
-                switch (info.getSubtype()){
-                    case 13:
-                        type = NetworkType.LTE;
-                        break;
-                    default:
-                        Log.e("???", String.valueOf(info.getSubtype()));
-                        break;
-                }
-                break;
-            default:
-                Log.e("???", String.valueOf(info.getType()));
-        }
-    }
+        dataPlanProfiler.stopMonitoring();
 
-    @Override
-    public String dumpInfo() {
-        String info = "[NetworkProfiler]\n";
+        networkStateProfiler.teardown();
+        dataPlanProfiler.teardown();
 
-        switch (type){
-            case WIFI:
-                info += "\tNetwork Type: WiFi\n"+
-                        "\tLink Speed: "+linkSpeed+"Mbps";
-                break;
-            case LTE:
-                info += "\tNetwork Type: LTE";
-
-        }
-
-        return info;
     }
 }

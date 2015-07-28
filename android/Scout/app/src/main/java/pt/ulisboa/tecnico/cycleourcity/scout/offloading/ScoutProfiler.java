@@ -11,7 +11,6 @@ import java.util.concurrent.TimeUnit;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.AdaptiveOffloadingException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.ProfilerIsAlreadyRunningException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.exceptions.EnergyPropertyNotSupportedException;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.EnergyProfiler;
 
 /**
  * ScoutProfiler is the application profiler. It is responsible for monitoring the application's
@@ -38,7 +37,7 @@ public class ScoutProfiler {
     private final Object lockState = new Object(), lockValues = new Object();
 
     //Resource Profiling
-    private EnergyProfiler sensingEProf;
+    //private EnergyProfiler sensingEProf;
 
     //Profiler State
     private boolean isProfiling = false;
@@ -68,10 +67,11 @@ public class ScoutProfiler {
 
     private ScoutProfiler(Context context){
 
+        /*
         sensingEProf = new EnergyProfiler.SensingEnergyProfiler(
                 context,
                 context.getSharedPreferences(EnergyProfiler.PREFS_NAME, Context.MODE_PRIVATE));
-
+        */
     }
 
     protected boolean isProfiling(){
@@ -111,9 +111,11 @@ public class ScoutProfiler {
             @Override
             public void run() {
 
+                /*
             synchronized (lockValues) {
                 sensingEProf.profile();
             }
+            */
 
             if(activeLogging) OffloadingLogger.log(NAME_TAG, dumpInfo());
 
@@ -141,6 +143,7 @@ public class ScoutProfiler {
 
     public long getSensingAverageCurrent(){
 
+        /*
         synchronized (lockValues) {
             try {
                 return this.sensingEProf.getCurrentAverage();
@@ -148,9 +151,13 @@ public class ScoutProfiler {
                 return -1;
             }
         }
+        */
+
+        return -1;
     }
 
     public int getBatteryCapacity(){
+        /*
         synchronized (lockValues) {
             try {
                 return this.sensingEProf.getCapacity();
@@ -158,18 +165,28 @@ public class ScoutProfiler {
                 return 100;
             }
         }
+        */
+        return -1;
     }
 
     public boolean isCharging(){
+        /*
         synchronized (lockValues) {
             return this.sensingEProf.isCharging();
         }
+        */
+        //TODO:
+        return false;
     }
 
     public boolean isFull(){
+        /*
         synchronized (lockValues) {
             return this.sensingEProf.isFull();
         }
+        */
+        //TODO
+        return false;
     }
 
     public String dumpInfo(){

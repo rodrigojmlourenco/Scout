@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="pt.ulisboa.tecnico.cycleourcity.scout" >
 
     <uses-permission android:name="android.permission.BATTERY_STATS" />
@@ -50,11 +51,11 @@
             </intent-filter>
         </activity>
 
-
-
-
-
-
+        <receiver android:name=".offloading.profiler.resources.MobileDataPlanProfiler">
+            <intent-filter>
+                <action android:name="android.intent.action.ACTION_SHUTDOWN" />
+            </intent-filter>
+        </receiver>
 
         <receiver
             android:name="edu.mit.media.funf.Launcher"

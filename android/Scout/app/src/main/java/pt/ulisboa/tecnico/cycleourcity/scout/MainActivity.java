@@ -7,7 +7,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.net.Uri;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.ActionBarActivity;
@@ -36,8 +36,13 @@ import pt.ulisboa.tecnico.cycleourcity.scout.network.ScoutRemoteClient;
 import pt.ulisboa.tecnico.cycleourcity.scout.network.stages.UploadStage;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.AdaptiveOffloadingManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.OverearlyOffloadException;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.exceptions.DataPlanProfileNotSetException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.exceptions.NoAdaptivePipelineValidatedException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.exceptions.NothingToOffloadException;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.MobileDataPlanProfiler;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.NetworkProfiler;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.NetworkStateProfiler;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.ScoutProfiling;
 import pt.ulisboa.tecnico.cycleourcity.scout.pipeline.ScoutPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.provider.ScoutProvider;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.provider.ScoutProviderObserver;
@@ -71,6 +76,7 @@ public class MainActivity extends ActionBarActivity {
 
     //Adaptive Offloading
     private AdaptiveOffloadingManager offloadingManager;
+    NetworkProfiler np;
 
     private boolean isSensing = false;
 
@@ -163,6 +169,9 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        onInitChecks();
 
         // Runs a save action if pipeline is enabled
         saveSession = (Button) findViewById(R.id.archive);
@@ -258,15 +267,7 @@ public class MainActivity extends ActionBarActivity {
 
         tagText = (EditText) findViewById(R.id.tag);
 
-        //Check if calibrated
-        try {
-            ScoutCalibrationManager.initScoutCalibrationManager(
-                    getSharedPreferences(SensorCalibrator.PREFERENCES_NAME,MODE_PRIVATE));
-        } catch (NotYetCalibratedException e) {
-            Log.e(getClass().getSimpleName(), "The application must be calibrated.");
-            Intent intent = new Intent(this, CalibrateActivity.class);
-            startActivity(intent);
-        }
+
 
 
         //Profiling
@@ -282,7 +283,7 @@ public class MainActivity extends ActionBarActivity {
         //TODO: solve as this invalidates the performance improvements inherent from the use of SyncAdapters
         ContentResolver.setSyncAutomatically(mAccount, ScoutProvider.AUTHORITY, true);
 
-        /* Este método funciona
+        /* This method actually works
         ContentResolver.addPeriodicSync(
                 mAccount,
                 ScoutProvider.AUTHORITY,
@@ -292,10 +293,21 @@ public class MainActivity extends ActionBarActivity {
 
         //END TESTING - SyncAdapters
 
+        //BEGIN TESTING - Profiling
+        np = new NetworkProfiler(this);
+        //END TESTING - Profiling
+
+
         // Bind to the service, to create the connection with FunfManager
         bindService(new Intent(this, FunfManager.class), funfManagerConn, BIND_AUTO_CREATE);
     }
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        onInitChecks();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -339,6 +351,8 @@ public class MainActivity extends ActionBarActivity {
 
         offloadingManager.onDestroy();
 
+        np.teardown();
+
     }
 
     //BEGIN TESTING - SyncAdapters
@@ -359,4 +373,45 @@ public class MainActivity extends ActionBarActivity {
 
     }
     //END TESTING - SyncAdapters
+
+
+    /*
+     ********************************************************
+     *  Overall Settings Check                              *
+     ********************************************************
+     */
+    private boolean hasDataPlanSettings(){
+        SharedPreferences profPrefs = getSharedPreferences(ScoutProfiling.PREFERENCES,Context.MODE_PRIVATE);
+
+        if(profPrefs.getString(ScoutProfiling.DATA_PLAN_PREFS,null)!=null)
+            return true;
+        else
+            return false;
+    }
+
+    private void onInitChecks(){
+
+        boolean hasDataPlan = hasDataPlanSettings();
+
+        Intent settingsIntent = new Intent(this, SettingsActivity.class);
+        if(!hasDataPlan) settingsIntent.putExtra(SettingsActivity.SettingsExtras.EXTRA_DATA_PLAN, true);
+
+        if(!hasDataPlan)
+            startActivity(settingsIntent);
+
+        //Check if calibrated
+        boolean isCalibrated = true;
+        try {
+            ScoutCalibrationManager.initScoutCalibrationManager(
+                    getSharedPreferences(SensorCalibrator.PREFERENCES_NAME,MODE_PRIVATE));
+        } catch (NotYetCalibratedException e) {
+            Log.e(getClass().getSimpleName(), "The application must be calibrated.");
+            isCalibrated = false;
+        }
+
+        if(!isCalibrated) {
+            Intent intent = new Intent(this, CalibrateActivity.class);
+            startActivity(intent);
+        }
+    }
 }

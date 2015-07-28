@@ -12,12 +12,11 @@ import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.AdaptiveOfflo
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.OverearlyOffloadException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.exceptions.NoAdaptivePipelineValidatedException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.exceptions.NothingToOffloadException;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.EnergyProfiler;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.MockupBatteryProfiler;
 
 /**
  * Created by rodrigo.jm.lourenco on 01/06/2015.
  */
+@Deprecated
 public class DecisionEngine {
 
     //Debugging
@@ -87,7 +86,7 @@ public class DecisionEngine {
                     int battery     = appProfiler.getBatteryCapacity();
                     long current    = appProfiler.getSensingAverageCurrent();
 
-                    boolean offload = isTimeToOffload(battery, EnergyProfiler.convertToAmpere(current));
+                    boolean offload = false;//isTimeToOffload(battery, EnergyProfiler.convertToAmpere(current));
 
                     if(offload){
                         if(VERBOSE) Log.d(LOG_TAG, NAME_TAG+" has deemed it opportunistic to perform computation offloading.");
@@ -114,8 +113,10 @@ public class DecisionEngine {
                         offloadingAttempts++;
                     }
 
+                    /*
                     if(MockupBatteryProfiler.isActive())
                         MockupBatteryProfiler.decrementBattery();
+                    */
 
                 }
             }, WAIT_TO_ATTEMPT_OFFLOAD, ATTEMPT_OFFLOAD_INTERVAL, TimeUnit.MILLISECONDS);
