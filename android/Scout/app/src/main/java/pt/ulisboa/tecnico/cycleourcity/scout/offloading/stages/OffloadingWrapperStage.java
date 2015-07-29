@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.ideaimpl.patterns.pipeline.PipelineContext;
@@ -7,36 +9,50 @@ import com.ideaimpl.patterns.pipeline.Stage;
 
 import org.apache.commons.collections4.queue.CircularFifoQueue;
 
-import java.util.UUID;
-
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.SensorPipelineContext;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.StageProfiler;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.pipelines.StageProfiler;
 
 /**
- * Created by rodrigo.jm.lourenco on 31/05/2015.
+ * This class is used to wrap a Stage as to enable Stage profiling.
+ * <br>
+ * In order for offloading to be possible all adaptive Stages must be wrapped by this class.
  */
-public class OffloadingStageWrapper implements Stage {
+public class OffloadingWrapperStage implements Stage {
 
     private final Stage stage;
-    private final UUID identifier;
+    private final String identifier;
     private Boolean profilingEnabled = true;
     private CircularFifoQueue<Long> executionTimes;
     private CircularFifoQueue<DataProfileInfo> dataSizes;
     private StageProfiler profiler = StageProfiler.getInstance();
 
-    public OffloadingStageWrapper(Stage stage){
+    public OffloadingWrapperStage(String identifier, Stage stage){
+
         this.stage = stage;
-        identifier = profiler.registerStage(this);
-        dataSizes = new CircularFifoQueue<>(StageProfiler.NUM_PROFILING_SAMPLES);
-        executionTimes = new CircularFifoQueue<>(StageProfiler.NUM_PROFILING_SAMPLES);
-    }
+        this.identifier = identifier;
 
-    public Class<? extends Stage> getStageClass(){
-        return stage.getClass();
-    }
 
-    public void toggleProfiling(){
-        profilingEnabled = false;
+        if(!profiler.hasBeenModeled(identifier)){ //Profiling is necessary
+
+            dataSizes = new CircularFifoQueue<>(StageProfiler.NUM_PROFILING_SAMPLES);
+            executionTimes = new CircularFifoQueue<>(StageProfiler.NUM_PROFILING_SAMPLES);
+
+            if(profiler.hasModel())
+                Log.e(StageProfiler.LOG_TAG, "Unexpected case: has model but stage "+identifier+" hasn't been modelled.");
+
+            profiler.registerStage(identifier, this);
+
+        }else{ //Profiling is not necessary
+
+            dataSizes = null;
+            executionTimes = null;
+
+            if(StageProfiler.VERBOSE)
+                Log.d(StageProfiler.LOG_TAG,
+                        identifier+" has already been modelled, and so profiling will be disabled");
+
+            profilingEnabled = false;
+        }
     }
 
 
@@ -45,7 +61,7 @@ public class OffloadingStageWrapper implements Stage {
 
         Gson gson = new Gson();
         long startTime = 0, endTime;
-        long initDataSize=0, endDataSize, totalData=0;
+        long initDataSize=0, endDataSize, totalData;
 
         if(profilingEnabled) {
             //Time Profiling
@@ -74,8 +90,39 @@ public class OffloadingStageWrapper implements Stage {
             endDataSize = totalData;
             dataSizes.add(new DataProfileInfo(initDataSize, endDataSize));
         }
+
+        if(profilingEnabled && !profiler.hasBeenModeled(identifier) && isInitialMonitoringComplete()) {
+
+            if(StageProfiler.VERBOSE)
+                Log.d(StageProfiler.LOG_TAG, "Generating a model for the stage "+identifier+".");
+
+            profiler.generateStageModel(
+                    identifier,
+                    stage.getClass().getCanonicalName(),
+                    getAverageRunningTime(),
+                    getAverageInputDataSize(),
+                    getAverageGeneratedDataSize());
+
+            this.profilingEnabled = false;
+
+        }else {
+            if(StageProfiler.VERBOSE)
+                Log.d(StageProfiler.LOG_TAG, "["+identifier+"]:"
+                        +(StageProfiler.NUM_PROFILING_SAMPLES-executionTimes.size())+" iterations to go.");
+        }
     }
 
+    private boolean isInitialMonitoringComplete(){
+        return (StageProfiler.NUM_PROFILING_SAMPLES -executionTimes.size() == 0)
+                && (StageProfiler.NUM_PROFILING_SAMPLES -dataSizes.size() == 0);
+    }
+
+    @Deprecated
+    public Class<? extends Stage> getStageClass(){
+        return stage.getClass();
+    }
+
+    @Deprecated
     public long getAverageRunningTime(){
 
         long total = 0;
@@ -86,6 +133,7 @@ public class OffloadingStageWrapper implements Stage {
         return total / executionTimes.size();
     }
 
+    @Deprecated
     public long getAverageGeneratedDataSize(){
         long total = 0;
 
@@ -96,7 +144,7 @@ public class OffloadingStageWrapper implements Stage {
     }
 
 
-
+    @Deprecated
     public long getAverageInputDataSize(){
         long total = 0;
 

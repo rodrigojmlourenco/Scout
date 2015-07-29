@@ -17,8 +17,8 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.MobileDataPlanProfiler;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.ScoutProfiling;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.device.MobileDataPlanProfiler;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.device.ScoutProfiling;
 
 public class DataPlanUpdateDialog extends DialogFragment{
 

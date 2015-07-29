@@ -18,8 +18,7 @@ import pt.ulisboa.tecnico.cycleourcity.scout.offloading.AdaptiveOffloadingManage
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.DecisionEngine;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.AdaptiveOffloadingException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.ConfigurationTaggingStage;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.OffloadingStageWrapper;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.TestOffloadingStage;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.OffloadingWrapperStage;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.TestStages;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.EvaluationSupportStorage;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.LearningSupportStorage;
@@ -31,8 +30,11 @@ import pt.ulisboa.tecnico.cycleourcity.scout.storage.exceptions.NothingToArchive
  */
 public class ScoutPipeline extends BasicPipeline {
 
-    private final static String LOG_TAG = "ScoutPipeline";
     public final static String NAME = "Scout";
+    private final static String LOG_TAG = "ScoutPipeline";
+
+
+    public final static int PIPELINE_VERSION = 0;
 
     private String samplingTag = "scout";
 
@@ -85,25 +87,26 @@ public class ScoutPipeline extends BasicPipeline {
 
         PipelineConfiguration pc1 = new PipelineConfiguration();
 
-        pc1.addStage(new OffloadingStageWrapper(new TestStages.Test6000Stage()));
-        pc1.addStage(new OffloadingStageWrapper(new TestStages.Test4000Stage()));
+        pc1.addStage(new OffloadingWrapperStage("pc11", new TestStages.Test6000Stage()));
+        pc1.addStage(new OffloadingWrapperStage("pc12", new TestStages.Test4000Stage()));
         pc1.addFinalStage(new ConfigurationTaggingStage());
         SensorProcessingPipeline p1 = new SensorProcessingPipeline(SensingUtils.Sensors.LINEAR_ACCELERATION, pc1) {};
 
+        /*
         PipelineConfiguration pc2 = new PipelineConfiguration();
-        pc2.addStage(new OffloadingStageWrapper(new TestStages.Test6000Stage()));
+        pc2.addStage(new OffloadingStageWrapper("pc21", new TestStages.Test6000Stage()));
         //pc2.addStage(new OffloadingStageWrapper(new TestStages.Test5000Stage()));
-        pc2.addStage(new TestOffloadingStage(new TestStages.Test5000Stage(), 5000, 300, 500));
+        pc2.addStage(new TestOffloadingStage(new TestStages.Test5000Stage(), 5000, 300, 500, "pc22"));
         pc2.addFinalStage(new ConfigurationTaggingStage());
         SensorProcessingPipeline p2 = new SensorProcessingPipeline(SensingUtils.Sensors.PRESSURE, pc2) {};
-
+        */
 
         //Scout Profiling
         offloadingManager.validatePipeline(p1);
         mPipeline.addSensorProcessingPipeline(p1);
 
-        offloadingManager.validatePipeline(p2);
-        mPipeline.addSensorProcessingPipeline(p2);
+        //offloadingManager.validatePipeline(p2);
+        //mPipeline.addSensorProcessingPipeline(p2);
 
         isInstantiated = true;
     }

@@ -51,7 +51,7 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".offloading.profiler.resources.MobileDataPlanProfiler">
+        <receiver android:name=".offloading.profiling.device.MobileDataPlanProfiler">
             <intent-filter>
                 <action android:name="android.intent.action.ACTION_SHUTDOWN" />
             </intent-filter>

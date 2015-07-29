@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources;
+package pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.device;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

@@ -14,10 +14,10 @@ import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.AdaptiveOfflo
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.InvalidOffloadingStageException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.OverearlyOffloadException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.TaggingStageMissingException;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.exceptions.NoAdaptivePipelineValidatedException;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.exceptions.NothingToOffloadException;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.exceptions.NoAdaptivePipelineValidatedException;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.exceptions.NothingToOffloadException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.ConfigurationTaggingStage;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.OffloadingStageWrapper;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.OffloadingWrapperStage;
 
 
 public class PartitionEngine {
@@ -85,7 +85,7 @@ public class PartitionEngine {
             throws InvalidOffloadingStageException, TaggingStageMissingException {
 
         for(Stage stage : pipeline.getAdaptiveStages())
-            if(!(stage instanceof OffloadingStageWrapper))
+            if(!(stage instanceof OffloadingWrapperStage))
                 throw new InvalidOffloadingStageException();
 
         ConfigurationTaggingStage taggingStage = null;
@@ -104,7 +104,7 @@ public class PartitionEngine {
         this.validatedPipelines.add(pipeline);
     }
 
-
+    @Deprecated
     public void offloadMostExpensiveStage()
             throws NothingToOffloadException, OverearlyOffloadException, NoAdaptivePipelineValidatedException {
 
@@ -140,16 +140,16 @@ public class PartitionEngine {
 
         AdaptivePipeline offloadCandidate = decider.getOptimalOffloadingPipeline(validatedPipelines);
 
-        List<OffloadingStageWrapper> offloadingStageOptions;
+        List<OffloadingWrapperStage> offloadingStageOptions;
         if(VERBOSE){
             offloadingStageOptions = new ArrayList<>();
             for(AdaptivePipeline p : validatedPipelines)
-                offloadingStageOptions.add((OffloadingStageWrapper) p.getLastAdaptiveStage());
+                offloadingStageOptions.add((OffloadingWrapperStage) p.getLastAdaptiveStage());
         }
 
 
         //3 - Offload the worst stage
-        OffloadingStageWrapper offloadedStage= (OffloadingStageWrapper) offloadCandidate.removeStage();
+        OffloadingWrapperStage offloadedStage= (OffloadingWrapperStage) offloadCandidate.removeStage();
         offloadTracker.markOffloadedStage(offloadCandidate, offloadedStage);
 
         if (VERBOSE)
@@ -180,9 +180,9 @@ public class PartitionEngine {
             this.dataWeight = dataWeight;
         }
 
-        public abstract float computeCost(OffloadingStageWrapper stage);
+        public abstract float computeCost(OffloadingWrapperStage stage);
 
-        public boolean isMoreExpensive(OffloadingStageWrapper baseStage, OffloadingStageWrapper stage){
+        public boolean isMoreExpensive(OffloadingWrapperStage baseStage, OffloadingWrapperStage stage){
 
             float cost1, cost2;
 
@@ -196,13 +196,13 @@ public class PartitionEngine {
 
             int i, worst;
 
-            OffloadingStageWrapper
+            OffloadingWrapperStage
                     auxLastStage,
-                    mostExpensiveStage = (OffloadingStageWrapper) pipelines.get(0).getLastAdaptiveStage();
+                    mostExpensiveStage = (OffloadingWrapperStage) pipelines.get(0).getLastAdaptiveStage();
 
             for(i=0, worst=0; i < pipelines.size(); i++){
 
-                auxLastStage = (OffloadingStageWrapper) pipelines.get(i).getLastAdaptiveStage();
+                auxLastStage = (OffloadingWrapperStage) pipelines.get(i).getLastAdaptiveStage();
 
                 if(!isMoreExpensive(mostExpensiveStage, auxLastStage)) {
                     mostExpensiveStage = auxLastStage;
@@ -232,18 +232,18 @@ public class PartitionEngine {
             this.optimalDataSize = optimalDataSize;
         }
 
-        private float timeUtilityFunction(OffloadingStageWrapper stage){
+        private float timeUtilityFunction(OffloadingWrapperStage stage){
             float newTime = originalExecutionTime - stage.getAverageRunningTime();
             return (optimalExecutionTime - newTime)/newTime;
         }
 
-        private float dataUtilityFunction(OffloadingStageWrapper stage){
+        private float dataUtilityFunction(OffloadingWrapperStage stage){
             float newDataSize = originalDataSize - stage.getAverageGeneratedDataSize() + stage.getAverageInputDataSize();
             return (optimalDataSize-newDataSize)/newDataSize;
         }
 
         @Override
-        public float computeCost(OffloadingStageWrapper stage) {
+        public float computeCost(OffloadingWrapperStage stage) {
             return  energyWeight*timeUtilityFunction(stage) +
                     dataWeight*dataUtilityFunction(stage);
         }
@@ -257,17 +257,17 @@ public class PartitionEngine {
      ****************************************************************************
      */
 
-    private String dumpInfo(OffloadingStageWrapper choice, List<OffloadingStageWrapper> stages){
+    private String dumpInfo(OffloadingWrapperStage choice, List<OffloadingWrapperStage> stages){
         return "{ name: \""+NAME_TAG+"\", "+
                 "chosen: "+choice.dumpInfo()+", "+
                 "options: "+dumpOffloadingOptionsInfo(stages)+"}";
     }
 
-    private String dumpOffloadingOptionsInfo(List<OffloadingStageWrapper> stages){
+    private String dumpOffloadingOptionsInfo(List<OffloadingWrapperStage> stages){
         String info = "[ ";
 
         int i=1, options = stages.size();
-        for(OffloadingStageWrapper s : stages)
+        for(OffloadingWrapperStage s : stages)
             info += s.dumpInfo() + (i++ < options ? ", " : "]");
 
         return info;
@@ -291,7 +291,7 @@ public class PartitionEngine {
 
             for(AdaptivePipeline p : pipelines)
                 for (Stage s : p.getAdaptiveStages())
-                    sequentialExecutionTime += ((OffloadingStageWrapper) s).getAverageRunningTime();
+                    sequentialExecutionTime += ((OffloadingWrapperStage) s).getAverageRunningTime();
 
             return sequentialExecutionTime;
 
@@ -302,16 +302,16 @@ public class PartitionEngine {
 
             for(AdaptivePipeline p : pipelines)
                 totalTransmittedDataSize +=
-                        ((OffloadingStageWrapper)p.getLastAdaptiveStage()).getAverageGeneratedDataSize();
+                        ((OffloadingWrapperStage)p.getLastAdaptiveStage()).getAverageGeneratedDataSize();
 
             return totalTransmittedDataSize;
         }
 
-        private long computeNewSequentialExecutionTime(OffloadingStageWrapper lastStage){
+        private long computeNewSequentialExecutionTime(OffloadingWrapperStage lastStage){
             return originalExecutionTime - lastStage.getAverageRunningTime();
         }
 
-        private long computeNewTransmittedDataSize(OffloadingStageWrapper lastStage){
+        private long computeNewTransmittedDataSize(OffloadingWrapperStage lastStage){
             return originalTransmittedDataSize - lastStage.getAverageGeneratedDataSize() + lastStage.getAverageInputDataSize();
         }
 
@@ -327,9 +327,9 @@ public class PartitionEngine {
             long[] possibleExecutionTimes = new long[size],
                     possibleTransmittedDataSizes = new long[size];
 
-            OffloadingStageWrapper auxLastStage;
+            OffloadingWrapperStage auxLastStage;
             for(int i=0; i < size ; i++){
-                auxLastStage = (OffloadingStageWrapper)activePipelines.get(i).getLastAdaptiveStage();
+                auxLastStage = (OffloadingWrapperStage)activePipelines.get(i).getLastAdaptiveStage();
                 possibleExecutionTimes[i] = computeNewSequentialExecutionTime(auxLastStage);
                 possibleTransmittedDataSizes[i] = computeNewTransmittedDataSize(auxLastStage);
             }
@@ -386,7 +386,7 @@ public class PartitionEngine {
 
 
         @Override
-        public float computeCost(OffloadingStageWrapper stage) {
+        public float computeCost(OffloadingWrapperStage stage) {
             return  energyWeight*timeUtilityFunction(stage.getAverageRunningTime()) +
                     dataWeight*dataUtilityFunction(stage.getAverageGeneratedDataSize());
 
@@ -432,13 +432,13 @@ public class PartitionEngine {
         List<Long>  executionTimesByStage = new ArrayList<>(),
                 generatedDataByStage = new ArrayList<>();
 
-        List<OffloadingStageWrapper> offloadingStageOptions = new ArrayList<>();
+        List<OffloadingWrapperStage> offloadingStageOptions = new ArrayList<>();
 
         ////Fetch the costs for each stage
-        OffloadingStageWrapper auxStage;
+        OffloadingWrapperStage auxStage;
         for(AdaptivePipeline p : validatedPipelines){
 
-            auxStage = (OffloadingStageWrapper) p.getLastAdaptiveStage();
+            auxStage = (OffloadingWrapperStage) p.getLastAdaptiveStage();
 
             if(auxStage==null){
                 if(VERBOSE) OffloadingLogger.log(this.getClass().getSimpleName(), p.getClass().getSimpleName() + " has no more stages");
@@ -484,13 +484,13 @@ public class PartitionEngine {
 
         //PHASE 2 - Decision
         int i, worst;
-        OffloadingStageWrapper
+        OffloadingWrapperStage
                 auxLastStage,
-                mostExpensiveStage = (OffloadingStageWrapper) validatedPipelines.get(0).getLastAdaptiveStage();
+                mostExpensiveStage = (OffloadingWrapperStage) validatedPipelines.get(0).getLastAdaptiveStage();
 
         for(i=0, worst=0; i < validatedPipelines.size(); i++){
 
-            auxLastStage = (OffloadingStageWrapper) validatedPipelines.get(i).getLastAdaptiveStage();
+            auxLastStage = (OffloadingWrapperStage) validatedPipelines.get(i).getLastAdaptiveStage();
 
             if(!decider.isMoreExpensive(mostExpensiveStage, auxLastStage)){
                 mostExpensiveStage = auxLastStage;
@@ -509,7 +509,7 @@ public class PartitionEngine {
         AdaptivePipeline p  = validatedPipelines.get(worst);
         Stage offloadedStage= p.removeStage();
 
-        offloadTracker.markOffloadedStage(p, (OffloadingStageWrapper) offloadedStage);
+        offloadTracker.markOffloadedStage(p, (OffloadingWrapperStage) offloadedStage);
 
         //PHASE 4 - Adjust the pipelines
         if(p.getAdaptiveStages().isEmpty())
@@ -524,7 +524,7 @@ public class PartitionEngine {
 
         for(AdaptivePipeline p : validatedPipelines){
             for(Stage stage : p.getAdaptiveStages())
-                total += ((OffloadingStageWrapper)stage).getAverageRunningTime();
+                total += ((OffloadingWrapperStage)stage).getAverageRunningTime();
         }
 
         return total;
@@ -534,11 +534,17 @@ public class PartitionEngine {
         long total = 0;
 
         for(AdaptivePipeline p : validatedPipelines)
-            total += ((OffloadingStageWrapper) p.getLastAdaptiveStage()).getAverageGeneratedDataSize();
+            total += ((OffloadingWrapperStage) p.getLastAdaptiveStage()).getAverageGeneratedDataSize();
 
         return total;
     }
 
+
+    /*
+     ************************************************************
+     * NEW PARTITION ENGINE SCHEME                              *
+     ************************************************************
+     */
 }
 
 

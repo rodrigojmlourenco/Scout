@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources;
+package pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.device;
 
 /**
  * Created by rodrigo.jm.lourenco on 28/07/2015.

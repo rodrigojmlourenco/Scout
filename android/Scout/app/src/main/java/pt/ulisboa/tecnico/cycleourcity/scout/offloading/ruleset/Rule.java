@@ -4,7 +4,7 @@ import android.util.Log;
 
 import com.google.gson.JsonObject;
 
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.DeviceStateProfiler;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.device.DeviceStateProfiler;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.exceptions.InvalidRuleException;
 
 public class Rule {

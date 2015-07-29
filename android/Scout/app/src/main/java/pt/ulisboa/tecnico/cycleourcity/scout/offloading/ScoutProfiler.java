@@ -10,7 +10,6 @@ import java.util.concurrent.TimeUnit;
 
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.AdaptiveOffloadingException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.ProfilerIsAlreadyRunningException;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.exceptions.EnergyPropertyNotSupportedException;
 
 /**
  * ScoutProfiler is the application profiler. It is responsible for monitoring the application's

@@ -2,7 +2,6 @@ package pt.ulisboa.tecnico.cycleourcity.scout;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -15,7 +14,7 @@ import android.widget.Toast;
 
 import pt.ulisboa.tecnico.cycleourcity.scout.calibration.SensorCalibrator;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.AdaptiveOffloadingManager;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.ScoutProfiling;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.device.ScoutProfiling;
 
 
 public class SettingsActivity extends ActionBarActivity implements SeekBar.OnSeekBarChangeListener {

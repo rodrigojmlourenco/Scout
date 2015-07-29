@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.AdaptivePipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.SensorProcessingPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.UnvalidatedPipelineException;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.OffloadingStageWrapper;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.OffloadingWrapperStage;
 
 /**
  * Created by rodrigo.jm.lourenco on 23/07/2015.
@@ -42,7 +42,7 @@ public class OffloadTracker {
             missingStages.put(pUID, new LinkedList());
     }
 
-    public void markOffloadedStage(AdaptivePipeline pipeline, OffloadingStageWrapper stage){
+    public void markOffloadedStage(AdaptivePipeline pipeline, OffloadingWrapperStage stage){
 
         int pID = pipeline.hashCode();
 
@@ -51,7 +51,7 @@ public class OffloadTracker {
         }
     }
 
-    public void markOffloadedStage(int pUID, OffloadingStageWrapper wrapper){
+    public void markOffloadedStage(int pUID, OffloadingWrapperStage wrapper){
         if(missingStages.containsKey(pUID)){
             missingStages.get(pUID).add(wrapper.getStageClass().getName());
         }

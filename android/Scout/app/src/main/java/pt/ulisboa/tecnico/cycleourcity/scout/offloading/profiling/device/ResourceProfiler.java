@@ -1,11 +1,8 @@
-package pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources;
+package pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.device;
 
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.exceptions.UnknownNetworkTypeException;
 
 /**
  * Created by rodrigo.jm.lourenco on 29/05/2015.

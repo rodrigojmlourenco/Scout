@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.exceptions;
+package pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.exceptions;
 
 /**
  * Created by rodrigo.jm.lourenco on 29/05/2015.

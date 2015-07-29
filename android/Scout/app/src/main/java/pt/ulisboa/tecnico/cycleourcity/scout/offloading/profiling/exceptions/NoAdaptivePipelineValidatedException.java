@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.exceptions;
+package pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.exceptions;
 
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.AdaptiveOffloadingException;
 

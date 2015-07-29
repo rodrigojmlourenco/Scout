@@ -1,10 +1,6 @@
-package pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources;
+package pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.device;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.wifi.WifiManager;
-import android.util.Log;
 
 /**
  * Created by rodrigo.jm.lourenco on 29/05/2015.
