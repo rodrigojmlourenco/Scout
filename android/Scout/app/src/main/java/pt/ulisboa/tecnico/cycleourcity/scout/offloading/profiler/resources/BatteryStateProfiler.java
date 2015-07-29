@@ -34,6 +34,12 @@ public class BatteryStateProfiler extends BroadcastReceiver{
         context.registerReceiver(this, filter);
     }
 
+    public int getCurrentBattery(){return currentBattery;}
+
+    public boolean isCharging(){return isCharging;}
+
+    public boolean isFull(){return isFull;}
+
 
     public void teardown(){
         appContext.unregisterReceiver(this);

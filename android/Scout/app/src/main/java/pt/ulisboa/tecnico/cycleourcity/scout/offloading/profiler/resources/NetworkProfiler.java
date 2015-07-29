@@ -9,6 +9,7 @@ import android.util.Log;
 /**
  * Created by rodrigo.jm.lourenco on 29/05/2015.
  */
+@Deprecated
 public class NetworkProfiler {
 
     private MobileDataPlanProfiler dataPlanProfiler;

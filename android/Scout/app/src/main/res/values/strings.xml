@@ -7,14 +7,34 @@
     <string name="stopSession">Stop Sensing</string>
     <string name="archive">Save Session</string>
 
+    <string name="rule_set">
+        { "@rule-set" :
+            [
+                { "@name" : "rule-priority1",
+                  "@rules": { "@battery" : 10, "@network-type": "4G"},
+                  "@weights": { "@time-weight" : 0.7, "@transmission-weight":0.2, "@mobile-cost-weight":0.1 }
+                },
+                { "@name" : "rule-priority2",
+                  "@rules": { "@battery" : 100, "@network-type": "GPRS"},
+                  "@weights": { "@time-weight" : 0.7, "@transmission-weight":0.2, "@mobile-cost-weight":0.1 }
+                },
+
+                { "@name" : "default-rule",
+                  "@rules": { "@battery" : 90, "@network-type": "4G"},
+                  "@weights": { "@time-weight" : 0.33, "@transmission-weight":0.33, "@mobile-cost-weight":0.33 }
+                }
+            ]
+        }
+    </string>
+
     <string name="scout_pipeline">
         {"@type":"pt.ulisboa.tecnico.cycleourcity.scout.pipeline.ScoutPipeline",
          "name":"default",
          "version":1,
          "data":[
 
-            <!-- Active Processing -->
-            {
+        <!-- Active Processing -->
+        {
                 "@type":"edu.mit.media.funf.probe.builtin.LocationProbe",
                 "@schedule": {"interval":15, "duration":0, "strict":true}
             },
@@ -22,8 +42,8 @@
                 "@type":"edu.mit.media.funf.probe.builtin.RotationVectorSensorProbe",
                 "@schedule": {"interval":1, "duration":0, "strict":true}
             },
-            <!-- Passive Processing -->
-            {
+        <!-- Passive Processing -->
+        {
                 "@type":"edu.mit.media.funf.probe.builtin.PressureSensorProbe",
                 "@schedule": {"interval":1, "duration":0, "strict":true}
             },
@@ -32,18 +52,18 @@
                 "@schedule": {"interval":1, "duration":0, "strict":true}
             }
 
-            <!--
+        <!--
 
-            {
-                "@type":"edu.mit.media.funf.probe.builtin.GravitySensorProbe",
-                "@schedule": {"interval":1, "duration":0, "strict":true}
-            },
+        {
+            "@type":"edu.mit.media.funf.probe.builtin.GravitySensorProbe",
+            "@schedule": {"interval":1, "duration":0, "strict":true}
+        },
 
 
 
-            -->
+        -->
 
-         ]
+        ]
         }
     </string>
 

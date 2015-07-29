@@ -30,31 +30,21 @@ public class MobileDataPlanProfiler extends BroadcastReceiver{
         public final static String
                 NAME = "name",
                 PREFS_NAME = "mobile_data",
-
-        //Immutable Fields
-        DATA_PLAN = "dataPlan",
-                DATA_LIMIT = "dataLimit",
-
-        //Marks the last timestamp
-        TIME = "time_since_shutdown",
-
-        //Before Last Shutdown
-        PRE_USAGE       = "pre_data_usage",
+                DATA_PLAN = "dataPlan",             //Immutable Field
+                DATA_LIMIT = "dataLimit",           //Immutable Field
+                TIME = "time_since_shutdown",        //Marks the last timestamp
+                PRE_USAGE       = "pre_data_usage", //Before Last Shutdown
                 PRE_DOWNLOAD    = "pre_downloaded", //useless
-                PRE_UPLOAD      = "pre_uploaded",//useless
-
-        //After Last Shutdown
-        POST_USAGE = "post_data_usage",
+                PRE_UPLOAD      = "pre_uploaded",   //useless
+                POST_USAGE = "post_data_usage",     //After Last Shutdown
                 POST_DOWNLOAD   = "post_downloaded",//useless
-                POST_UPLOAD     = "post_uploaded",//useless
-
-        //Real data
-        CONSUMED_DATA   = "dataUsage";
+                POST_UPLOAD     = "post_uploaded",  //useless
+                CONSUMED_DATA   = "dataUsage";      //Real data
     }
 
 
     private long
-            maxDataUsage,           //IMMUTABLE
+            dataPlan,           //IMMUTABLE
             limitDataUsage,         //IMMUTABLE
             preShutdownDownloaded,
             preShutdownUploaded,
@@ -121,6 +111,31 @@ public class MobileDataPlanProfiler extends BroadcastReceiver{
         pseudoRealDataUsage = preShutdownUsage + postShutdownUsage;
     }
 
+    /*
+     ************************************************
+     * Getters                                      *
+     ************************************************
+     */
+    public long getRemainingDataInPlan(){
+        return dataPlan - pseudoRealDataUsage;
+    }
+
+    public long getRemainingDataTillLimit(){
+        return limitDataUsage - pseudoRealDataUsage;
+    }
+
+    public long getDataPlan(){
+        return dataPlan;
+    }
+
+    public long getDataPlanLimit(){
+        return limitDataUsage;
+    }
+
+    public long getDataPlanConsumption(){
+        return pseudoRealDataUsage;
+    }
+
 
     /*
      ****************************************************************
@@ -138,7 +153,7 @@ public class MobileDataPlanProfiler extends BroadcastReceiver{
         state.addProperty(DataPlanStateFields.TIME, System.nanoTime());
 
         //Immutable
-        state.addProperty(DataPlanStateFields.DATA_PLAN, maxDataUsage);
+        state.addProperty(DataPlanStateFields.DATA_PLAN, dataPlan);
         state.addProperty(DataPlanStateFields.DATA_LIMIT, limitDataUsage);
 
         //Pseudo-Real Total data consumed
@@ -191,7 +206,7 @@ public class MobileDataPlanProfiler extends BroadcastReceiver{
         lastUpdate          = state.get(DataPlanStateFields.TIME).getAsLong();
 
         //Immutable Values
-        maxDataUsage        = state.get(DataPlanStateFields.DATA_PLAN).getAsLong();
+        dataPlan = state.get(DataPlanStateFields.DATA_PLAN).getAsLong();
         limitDataUsage      = state.get(DataPlanStateFields.DATA_LIMIT).getAsLong();
 
         //Pre-Shutdown

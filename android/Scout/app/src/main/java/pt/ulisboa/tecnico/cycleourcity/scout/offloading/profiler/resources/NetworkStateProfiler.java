@@ -200,6 +200,10 @@ public class NetworkStateProfiler extends BroadcastReceiver {
     }
 
     public void teardown() {
-        ScoutApplication.getContext().unregisterReceiver(this);
+        try {
+            ScoutApplication.getContext().unregisterReceiver(this);
+        }catch (IllegalArgumentException e){
+            Log.e(LOG_TAG, e.getMessage());
+        }
     }
 }

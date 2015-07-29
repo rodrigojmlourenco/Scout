@@ -39,10 +39,14 @@ import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.OverearlyOffl
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.exceptions.DataPlanProfileNotSetException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.exceptions.NoAdaptivePipelineValidatedException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.exceptions.NothingToOffloadException;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.DeviceStateProfiler;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.MobileDataPlanProfiler;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.NetworkProfiler;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.NetworkStateProfiler;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiler.resources.ScoutProfiling;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.Rule;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.RuleSetManager;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.exceptions.InvalidRuleSetException;
 import pt.ulisboa.tecnico.cycleourcity.scout.pipeline.ScoutPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.provider.ScoutProvider;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.provider.ScoutProviderObserver;
@@ -76,7 +80,7 @@ public class MainActivity extends ActionBarActivity {
 
     //Adaptive Offloading
     private AdaptiveOffloadingManager offloadingManager;
-    NetworkProfiler np;
+
 
     private boolean isSensing = false;
 
@@ -87,6 +91,10 @@ public class MainActivity extends ActionBarActivity {
     public static final String ACCOUNT = "scout";
     //END TESTING - SyncAdapters
 
+    //BEGIN TESTING - Rule Set Framework
+    private DeviceStateProfiler deviceState;
+    private RuleSetManager ruleSetManager;
+    //END TESTING - Rule Set Framework
 
     private ServiceConnection funfManagerConn = new ServiceConnection() {
         @Override
@@ -257,8 +265,11 @@ public class MainActivity extends ActionBarActivity {
         netTestBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UploadStage stage = new UploadStage();
-                stage.execute(null);
+                DeviceStateProfiler.DeviceStateSnapshot stateSnapshot = deviceState.getDeviceState();
+                Rule r = ruleSetManager.selectRuleToEnforce(stateSnapshot);
+
+                Log.d("RULE", r.getRuleName());
+
             }
         });
 
@@ -294,8 +305,18 @@ public class MainActivity extends ActionBarActivity {
         //END TESTING - SyncAdapters
 
         //BEGIN TESTING - Profiling
-        np = new NetworkProfiler(this);
+        deviceState = new DeviceStateProfiler(this);
         //END TESTING - Profiling
+
+        //BEGIN TESTING - Rule Set Framework
+        try {
+            ruleSetManager = new RuleSetManager(this);
+        } catch (InvalidRuleSetException e) {
+            e.printStackTrace();
+            //this.finish();
+            //System.exit(0);
+        }
+        //END TESTING - Rule Set Framework
 
 
         // Bind to the service, to create the connection with FunfManager
@@ -351,7 +372,7 @@ public class MainActivity extends ActionBarActivity {
 
         offloadingManager.onDestroy();
 
-        np.teardown();
+        deviceState.teardown();
 
     }
 
