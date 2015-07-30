@@ -25,6 +25,7 @@ import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.ProfilerIsAlr
  * @see DecisionEngine
  *
  */
+@Deprecated
 public class ScoutProfiler {
 
     //TODO: remover antes da release

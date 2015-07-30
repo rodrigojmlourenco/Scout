@@ -9,6 +9,9 @@ import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.RuleSetKeys;
  */
 public class DeviceStateProfiler {
 
+    public final static String LOG_TAG = "DeviceProfiling";
+
+
     private final NetworkStateProfiler networkState;
     private final BatteryStateProfiler batteryState;
     private final MobileDataPlanProfiler mobileDataPlanState;
@@ -19,6 +22,12 @@ public class DeviceStateProfiler {
         mobileDataPlanState = new MobileDataPlanProfiler(context);
 
         mobileDataPlanState.startMonitoring();
+
+        //Logging
+        networkState.VERBOSE        = true;
+        batteryState.VERBOSE        = true;
+        mobileDataPlanState.VERBOSE = true;
+
     }
 
     public DeviceStateSnapshot getDeviceState(){

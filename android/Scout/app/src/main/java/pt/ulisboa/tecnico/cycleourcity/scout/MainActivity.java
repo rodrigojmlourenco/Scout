@@ -277,7 +277,11 @@ public class MainActivity extends ActionBarActivity {
 
 
         //Profiling
-        offloadingManager = AdaptiveOffloadingManager.getInstance(getApplicationContext());
+        try {
+            offloadingManager = AdaptiveOffloadingManager.getInstance(getApplicationContext());
+        } catch (InvalidRuleSetException e) {
+            e.printStackTrace();
+        }
 
         //BEGIN TESTING - SyncAdapters
         mAccount = CreateSyncAccount(this);

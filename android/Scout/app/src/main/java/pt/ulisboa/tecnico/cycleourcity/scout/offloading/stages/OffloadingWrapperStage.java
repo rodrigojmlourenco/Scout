@@ -19,18 +19,17 @@ import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.pipelines.Stag
  */
 public class OffloadingWrapperStage implements Stage {
 
-    private final Stage stage;
-    private final String identifier;
-    private Boolean profilingEnabled = true;
-    private CircularFifoQueue<Long> executionTimes;
-    private CircularFifoQueue<DataProfileInfo> dataSizes;
-    private StageProfiler profiler = StageProfiler.getInstance();
+    protected final Stage stage;
+    protected final String identifier;
+    protected Boolean profilingEnabled = true;
+    protected CircularFifoQueue<Long> executionTimes;
+    protected CircularFifoQueue<DataProfileInfo> dataSizes;
+    protected StageProfiler profiler = StageProfiler.getInstance();
 
     public OffloadingWrapperStage(String identifier, Stage stage){
 
         this.stage = stage;
         this.identifier = identifier;
-
 
         if(!profiler.hasBeenModeled(identifier)){ //Profiling is necessary
 
@@ -91,28 +90,29 @@ public class OffloadingWrapperStage implements Stage {
             dataSizes.add(new DataProfileInfo(initDataSize, endDataSize));
         }
 
-        if(profilingEnabled && !profiler.hasBeenModeled(identifier) && isInitialMonitoringComplete()) {
+        if(profilingEnabled)
+            if(!profiler.hasBeenModeled(identifier) && isInitialMonitoringComplete()) {
 
-            if(StageProfiler.VERBOSE)
-                Log.d(StageProfiler.LOG_TAG, "Generating a model for the stage "+identifier+".");
+                if(StageProfiler.VERBOSE)
+                    Log.d(StageProfiler.LOG_TAG, "Generating a model for the stage "+identifier+".");
 
-            profiler.generateStageModel(
-                    identifier,
-                    stage.getClass().getCanonicalName(),
-                    getAverageRunningTime(),
-                    getAverageInputDataSize(),
-                    getAverageGeneratedDataSize());
+                profiler.generateStageModel(
+                        identifier,
+                        stage.getClass().getCanonicalName(),
+                        getAverageRunningTime(),
+                        getAverageInputDataSize(),
+                        getAverageGeneratedDataSize());
 
-            this.profilingEnabled = false;
+                this.profilingEnabled = false;
 
-        }else {
-            if(StageProfiler.VERBOSE)
-                Log.d(StageProfiler.LOG_TAG, "["+identifier+"]:"
-                        +(StageProfiler.NUM_PROFILING_SAMPLES-executionTimes.size())+" iterations to go.");
-        }
+            }else {
+                if(StageProfiler.VERBOSE)
+                    Log.d(StageProfiler.LOG_TAG, "["+identifier+"]:"
+                            +(StageProfiler.NUM_PROFILING_SAMPLES-executionTimes.size())+" iterations to go.");
+            }
     }
 
-    private boolean isInitialMonitoringComplete(){
+    protected boolean isInitialMonitoringComplete(){
         return (StageProfiler.NUM_PROFILING_SAMPLES -executionTimes.size() == 0)
                 && (StageProfiler.NUM_PROFILING_SAMPLES -dataSizes.size() == 0);
     }
@@ -183,5 +183,9 @@ public class OffloadingWrapperStage implements Stage {
         public long getGeneratedDataSize(){ return this.finalDataSize; }
 
         public long getInputDataSize() { return  this.initialDataSize; }
+    }
+
+    public String getIdentifier(){
+        return identifier;
     }
 }

@@ -24,7 +24,6 @@ import pt.ulisboa.tecnico.cycleourcity.scout.ScoutApplication;
 public class MobileDataPlanProfiler extends BroadcastReceiver{
 
     protected boolean VERBOSE = true;
-    private final String LOG_TAG = this.getClass().getSimpleName();
 
     public interface DataPlanStateFields {
         public final static String
@@ -187,7 +186,7 @@ public class MobileDataPlanProfiler extends BroadcastReceiver{
         prefsEditor.putString(ScoutProfiling.DATA_PLAN_PREFS, state);
         prefsEditor.commit();
 
-        if(VERBOSE) Log.d(LOG_TAG, state);
+        if(VERBOSE) Log.d(DeviceStateProfiler.LOG_TAG, state);
     }
 
     private void fetchState() {

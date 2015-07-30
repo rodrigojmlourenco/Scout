@@ -8,43 +8,44 @@ import java.util.Date;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.AdaptivePipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.AdaptiveOffloadingException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.OverearlyOffloadException;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.device.DeviceStateProfiler;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.exceptions.NoAdaptivePipelineValidatedException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.exceptions.NothingToOffloadException;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.exceptions.InvalidRuleSetException;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.InstantPartitionEngine;
 
 public class AdaptiveOffloadingManager {
 
     protected final static String LOG_TAG = "AdaptiveOffloading";
     private final String NAME_TAG = this.getClass().getSimpleName();
 
-    private final ScoutProfiler applicationProfiler;
-    private final DecisionEngine decisionEngine;
+
+    private final InstantPartitionEngine partitionEngine;
+    private final DeviceStateProfiler deviceState;
 
     private boolean isProfilingEnabled = false;
 
     private static AdaptiveOffloadingManager OFFLOADING_MANAGER = null;
 
-    private AdaptiveOffloadingManager(Context context){
-        applicationProfiler = ScoutProfiler.getInstance(context);
-        decisionEngine      = new DecisionEngine(applicationProfiler);
-
+    private AdaptiveOffloadingManager(Context context) throws InvalidRuleSetException {
+        deviceState = new DeviceStateProfiler(context);
+        partitionEngine = new InstantPartitionEngine(context);
     }
 
-    public static AdaptiveOffloadingManager getInstance(Context context){
+    public static AdaptiveOffloadingManager getInstance(Context context)
+            throws InvalidRuleSetException {
+
         if(OFFLOADING_MANAGER == null)
             synchronized (AdaptiveOffloadingManager.class){
                 if(OFFLOADING_MANAGER == null)
                     OFFLOADING_MANAGER = new AdaptiveOffloadingManager(context);
             }
 
-        //OFFLOADING_MANAGER.partitionEngine.clearState();
-        OFFLOADING_MANAGER.decisionEngine.clearState();
-
         return OFFLOADING_MANAGER;
     }
 
     public void onDestroy(){
-        decisionEngine.destroy();
-        applicationProfiler.destroy();
+        deviceState.teardown();
     }
 
     /*
@@ -52,26 +53,33 @@ public class AdaptiveOffloadingManager {
      * Profiling Functions                                                  *
      ************************************************************************
      */
+    @Deprecated
     public void startProfiling(int rateMillis){
+        /*
         try {
             applicationProfiler.setProfilingRate(rateMillis);
             applicationProfiler.startProfiling();
         } catch (AdaptiveOffloadingException e) {
             e.printStackTrace();
         }
+        */
     }
 
     /**
      * Checks if the application's profiler is enabled
      * @return True if the profiler enabled, false otherwise.
      */
+    @Deprecated
     public boolean isProfiling(){
-        return applicationProfiler.isProfiling();
+        //return applicationProfiler.isProfiling();
+        return false;
     }
 
 
+    @Deprecated
     public void startProfiling(){
 
+        /*
         try {
             OffloadingLogger.log(getClass().getSimpleName(),
                     "[BEGIN SESSION "+ DateFormat.getTimeInstance().format(new Date())+"]");
@@ -82,85 +90,34 @@ public class AdaptiveOffloadingManager {
         } catch (AdaptiveOffloadingException e) {
             e.printStackTrace();
         }
+        */
     }
 
 
+    @Deprecated
     public void stopProfiling(){
-        applicationProfiler.stopProfiling();
-        decisionEngine.stopMonitoring();
+        //applicationProfiler.stopProfiling();
+        //decisionEngine.stopMonitoring();
 
         //Logging
         OffloadingLogger.log(getClass().getSimpleName(), "[TERMINATING SESSION]");
-        OffloadingLogger.log(decisionEngine.NAME_TAG,
+        /*OffloadingLogger.log(decisionEngine.NAME_TAG,
                 "{name: \"" + decisionEngine.NAME_TAG + "\", " +
                         " offloads: " + decisionEngine.getPerformedOffloads() + ", " +
                         " attemptsSinceOffload: " + decisionEngine.getOffloadingAttempts() + "}");
-    }
-
-
-    public int getRemainingBattery(){
-        return applicationProfiler.getBatteryCapacity();
-    }
-
-
-    public long getAverageCurrent(){
-        return applicationProfiler.getSensingAverageCurrent();
+        */
     }
 
 
     /*
      ************************************************************************
-     * Decision Engine                                                      *
+     * Partition Engine                                                     *
      ************************************************************************
      */
     public void validatePipeline(AdaptivePipeline pipeline) throws AdaptiveOffloadingException {
-        decisionEngine.validatePipeline(pipeline);
+        partitionEngine.validatePipeline(pipeline);
     }
 
-    public void setTotalUtilityWeights(float energy, float data){
-        decisionEngine.setTotalUtilityWeights(energy, data);
-    }
-
-    public float getEnergyUtilityWeight(){
-        return decisionEngine.getEnergyWeight();
-    }
-
-    public float getDataUtilityWeight(){
-        return decisionEngine.getDataWeight();
-    }
-
-    /*
-    protected static interface OffloadingObserver{
-        public void notifyTimeOffloadOpportunity();
-    }
-
-    private OffloadingObserver decisionEngineObserver = new OffloadingObserver() {
-        @Override
-        public void notifyTimeOffloadOpportunity() {
-
-            try {
-                partitionEngine.offloadMostExpensiveStage();
-            } catch (NoAdaptivePipelineValidatedException e) {
-                OffloadingLogger.log(LOG_TAG, "[END] All pipelines are empty [END]");
-                Log.e(LOG_TAG, e.getMessage());
-                e.printStackTrace();
-            } catch (NothingToOffloadException e) {
-                OffloadingLogger.log(NAME_TAG,
-                        DecisionEngine.class.getSimpleName()+" shutdown, all stages have been offloaded.");
-                decisionEngine.stopMonitoring();
-                applicationProfiler.enableActiveLogging();
-            }
-        }
-    };
-    */
-    /**
-     * Redefines the apathy level. The bigger the apathy, the lazier the OffloadingDecisionEngine
-     * becomes, by postponing offloading.
-     * @param apathy
-     */
-    public void setDecisionEngineApathy(float apathy){
-        this.decisionEngine.setApathy(apathy);
-    }
 
     /*
      ************************************************************************
@@ -190,7 +147,7 @@ public class AdaptiveOffloadingManager {
     public void forceOffloading()
             throws NothingToOffloadException, NoAdaptivePipelineValidatedException, OverearlyOffloadException {
 
-        decisionEngine.offloadWorstStage();
+        partitionEngine.testRunOffload();
     }
 
 }

@@ -58,8 +58,7 @@ public class BatteryStateProfiler extends BroadcastReceiver{
 
         currentBattery = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
 
-        if(VERBOSE)
-            Log.d(LOG_TAG, dumpState());
+        if(VERBOSE) Log.d(DeviceStateProfiler.LOG_TAG, dumpState());
     }
 
     @Override

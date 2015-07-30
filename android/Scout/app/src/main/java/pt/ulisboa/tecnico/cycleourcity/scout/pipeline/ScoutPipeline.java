@@ -17,8 +17,10 @@ import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.Senso
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.AdaptiveOffloadingManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.DecisionEngine;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.AdaptiveOffloadingException;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.exceptions.InvalidRuleSetException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.ConfigurationTaggingStage;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.OffloadingWrapperStage;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.TestOffloadingStage;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.TestStages;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.EvaluationSupportStorage;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.LearningSupportStorage;
@@ -34,7 +36,7 @@ public class ScoutPipeline extends BasicPipeline {
     private final static String LOG_TAG = "ScoutPipeline";
 
 
-    public final static int PIPELINE_VERSION = 0;
+    public final static int PIPELINE_VERSION = 1;
 
     private String samplingTag = "scout";
 
@@ -55,11 +57,10 @@ public class ScoutPipeline extends BasicPipeline {
     //  Test - Storage for graph creation
     private EvaluationSupportStorage evaluationStorage = EvaluationSupportStorage.getInstance();
 
-    public ScoutPipeline() throws AdaptiveOffloadingException {
+    public ScoutPipeline() throws AdaptiveOffloadingException, InvalidRuleSetException {
         super();
         storage = ScoutStorageManager.getInstance();
         offloadingManager = AdaptiveOffloadingManager.getInstance(ScoutApplication.getContext());
-        offloadingManager.setDecisionEngineApathy(DecisionEngine.NO_APATHY);
     }
 
 
@@ -87,8 +88,8 @@ public class ScoutPipeline extends BasicPipeline {
 
         PipelineConfiguration pc1 = new PipelineConfiguration();
 
-        pc1.addStage(new OffloadingWrapperStage("pc11", new TestStages.Test6000Stage()));
-        pc1.addStage(new OffloadingWrapperStage("pc12", new TestStages.Test4000Stage()));
+        pc1.addStage(new TestOffloadingStage("pc11", new TestStages.Test6000Stage(), 6000, 700, 600));
+        pc1.addStage(new TestOffloadingStage("pc12", new TestStages.Test4000Stage(), 4000, 600, 500));
         pc1.addFinalStage(new ConfigurationTaggingStage());
         SensorProcessingPipeline p1 = new SensorProcessingPipeline(SensingUtils.Sensors.LINEAR_ACCELERATION, pc1) {};
 

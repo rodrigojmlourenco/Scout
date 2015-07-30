@@ -153,7 +153,6 @@ public class NetworkStateProfiler extends BroadcastReceiver {
                 this.currentNetworkType = getMobileType(mobileType);
                 this.isMobile = true;
 
-                Log.d(this.getClass().getSimpleName(), getTelTypeAsString(mobileType));
             }else {
 
                 switch (info.getType()){
@@ -174,8 +173,7 @@ public class NetworkStateProfiler extends BroadcastReceiver {
         }else
             isConnected=false;
 
-        if(VERBOSE)
-            Log.d(LOG_TAG, dumpState());
+        if(VERBOSE) Log.d(DeviceStateProfiler.LOG_TAG, dumpState());
     }
 
     private String dumpState(){
@@ -200,10 +198,6 @@ public class NetworkStateProfiler extends BroadcastReceiver {
     }
 
     public void teardown() {
-        try {
-            ScoutApplication.getContext().unregisterReceiver(this);
-        }catch (IllegalArgumentException e){
-            Log.e(LOG_TAG, e.getMessage());
-        }
+        ScoutApplication.getContext().unregisterReceiver(this);
     }
 }

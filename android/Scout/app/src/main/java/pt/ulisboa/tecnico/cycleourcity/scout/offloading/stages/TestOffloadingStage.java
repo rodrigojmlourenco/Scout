@@ -1,7 +1,14 @@
 package pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages;
 
+import android.util.Log;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.ideaimpl.patterns.pipeline.PipelineContext;
 import com.ideaimpl.patterns.pipeline.Stage;
+
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.SensorPipelineContext;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.pipelines.StageProfiler;
 
 public class TestOffloadingStage extends OffloadingWrapperStage {
 
@@ -9,8 +16,8 @@ public class TestOffloadingStage extends OffloadingWrapperStage {
     private final int wait;
     private final int inputDataBytes, outputDataBytes;
 
-    public TestOffloadingStage(Stage stage, int waitMillis, int inputDataBytes, int outputDataBytes, String identifier) {
-        super(identifier, stage); //TODO corrigir o identificador
+    public TestOffloadingStage(String identifier, Stage stage, int waitMillis, int inputDataBytes, int outputDataBytes) {
+        super(identifier, stage);
         this.wait = waitMillis;
         this.inputDataBytes = inputDataBytes;
         this.outputDataBytes= outputDataBytes;
@@ -33,6 +40,42 @@ public class TestOffloadingStage extends OffloadingWrapperStage {
 
     @Override
     public void execute(PipelineContext pipelineContext) {
-        for(int i=0; i < this.wait; i++ );
+
+        long startTime = 0, endTime;
+
+        if(profilingEnabled) {
+            startTime = System.nanoTime();
+        }
+
+        this.stage.execute(pipelineContext);
+
+        if(profilingEnabled) {
+            //Time Profiling
+            endTime = System.nanoTime();
+            executionTimes.add(endTime - startTime);
+
+            dataSizes.add(new DataProfileInfo(inputDataBytes, outputDataBytes));
+        }
+
+        if(profilingEnabled)
+            if (!profiler.hasBeenModeled(identifier) && isInitialMonitoringComplete()) {
+
+                if(StageProfiler.VERBOSE)
+                    Log.d(StageProfiler.LOG_TAG, "Generating a model for the stage " + identifier + ".");
+
+                profiler.generateStageModel(
+                        identifier,
+                        stage.getClass().getCanonicalName(),
+                        getAverageRunningTime(),
+                        getAverageInputDataSize(),
+                        getAverageGeneratedDataSize());
+
+                this.profilingEnabled = false;
+
+            }else {
+                if(StageProfiler.VERBOSE)
+                    Log.d(StageProfiler.LOG_TAG, "["+identifier+"]:"
+                            +(StageProfiler.NUM_PROFILING_SAMPLES-executionTimes.size())+" iterations to go.");
+            }
     }
 }

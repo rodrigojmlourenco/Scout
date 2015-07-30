@@ -15,6 +15,7 @@ import android.widget.Toast;
 import pt.ulisboa.tecnico.cycleourcity.scout.calibration.SensorCalibrator;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.AdaptiveOffloadingManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.device.ScoutProfiling;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.exceptions.InvalidRuleSetException;
 
 
 public class SettingsActivity extends ActionBarActivity implements SeekBar.OnSeekBarChangeListener {
@@ -36,7 +37,11 @@ public class SettingsActivity extends ActionBarActivity implements SeekBar.OnSee
         //
         checkExtras(getIntent());
 
-        offloadingManager = AdaptiveOffloadingManager.getInstance(ScoutApplication.getContext());
+        try {
+            offloadingManager = AdaptiveOffloadingManager.getInstance(ScoutApplication.getContext());
+        } catch (InvalidRuleSetException e) {
+            e.printStackTrace();
+        }
 
         clearDataBtn = (Button) findViewById(R.id.clearDataBtn);
         clearDataBtn.setOnClickListener(new View.OnClickListener() {
@@ -66,8 +71,9 @@ public class SettingsActivity extends ActionBarActivity implements SeekBar.OnSee
         energySeekBar.setOnSeekBarChangeListener(this);
         dataSeekBar.setOnSeekBarChangeListener(this);
 
-        energyProgressValue = (int) (offloadingManager.getEnergyUtilityWeight()*100);
-        dataProgressValue   = (int) (offloadingManager.getDataUtilityWeight()*100);
+        //TODO
+        //energyProgressValue = (int) (offloadingManager.getEnergyUtilityWeight()*100);
+        //dataProgressValue   = (int) (offloadingManager.getDataUtilityWeight()*100);
 
         energySeekBar.setProgress(energyProgressValue);
         dataSeekBar.setProgress(dataProgressValue);
@@ -134,7 +140,7 @@ public class SettingsActivity extends ActionBarActivity implements SeekBar.OnSee
         energyProgressText.setText(getWeightAsText(energyProgressValue));
         dataProgressText.setText(getWeightAsText(dataProgressValue));
 
-        offloadingManager.setTotalUtilityWeights((float)energyProgressValue / 100, (float)dataProgressValue / 100);
+        //offloadingManager.setTotalUtilityWeights((float)energyProgressValue / 100, (float)dataProgressValue / 100);
     }
 
     private void checkExtras(Intent intent){
