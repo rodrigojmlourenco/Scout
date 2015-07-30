@@ -2,17 +2,15 @@ package pt.ulisboa.tecnico.cycleourcity.scout.offloading;
 
 import android.content.Context;
 
-import java.text.DateFormat;
-import java.util.Date;
-
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.AdaptivePipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.AdaptiveOffloadingException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.OverearlyOffloadException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.device.DeviceStateProfiler;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.exceptions.NoAdaptivePipelineValidatedException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.exceptions.NothingToOffloadException;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.RuleSetManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.exceptions.InvalidRuleSetException;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.InstantPartitionEngine;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.exceptions.UnableToEnforceRuleException;
 
 public class AdaptiveOffloadingManager {
 
@@ -20,16 +18,24 @@ public class AdaptiveOffloadingManager {
     private final String NAME_TAG = this.getClass().getSimpleName();
 
 
-    private final InstantPartitionEngine partitionEngine;
-    private final DeviceStateProfiler deviceState;
+
+    private final DeviceStateProfiler       deviceState;
+    private final PartitionEngine partitionEngine;
+    private final RuleSetManager            ruleSetFrameWork;
+
 
     private boolean isProfilingEnabled = false;
 
     private static AdaptiveOffloadingManager OFFLOADING_MANAGER = null;
 
     private AdaptiveOffloadingManager(Context context) throws InvalidRuleSetException {
-        deviceState = new DeviceStateProfiler(context);
-        partitionEngine = new InstantPartitionEngine(context);
+        deviceState     = new DeviceStateProfiler(context);
+        partitionEngine = new PartitionEngine();
+        ruleSetFrameWork= new RuleSetManager(context);
+
+        partitionEngine.updateEnforcedRule(
+                ruleSetFrameWork.selectRuleToEnforce(deviceState.getDeviceState()));
+
     }
 
     public static AdaptiveOffloadingManager getInstance(Context context)
@@ -53,60 +59,12 @@ public class AdaptiveOffloadingManager {
      * Profiling Functions                                                  *
      ************************************************************************
      */
-    @Deprecated
-    public void startProfiling(int rateMillis){
-        /*
-        try {
-            applicationProfiler.setProfilingRate(rateMillis);
-            applicationProfiler.startProfiling();
-        } catch (AdaptiveOffloadingException e) {
-            e.printStackTrace();
-        }
-        */
-    }
-
-    /**
-     * Checks if the application's profiler is enabled
-     * @return True if the profiler enabled, false otherwise.
-     */
-    @Deprecated
-    public boolean isProfiling(){
-        //return applicationProfiler.isProfiling();
-        return false;
-    }
 
 
-    @Deprecated
-    public void startProfiling(){
-
-        /*
-        try {
-            OffloadingLogger.log(getClass().getSimpleName(),
-                    "[BEGIN SESSION "+ DateFormat.getTimeInstance().format(new Date())+"]");
-
-            applicationProfiler.setProfilingRate(ScoutProfiler.DEFAULT_PROFILING_RATE);
-            applicationProfiler.startProfiling();
-            decisionEngine.startMonitoring();
-        } catch (AdaptiveOffloadingException e) {
-            e.printStackTrace();
-        }
-        */
-    }
 
 
-    @Deprecated
-    public void stopProfiling(){
-        //applicationProfiler.stopProfiling();
-        //decisionEngine.stopMonitoring();
 
-        //Logging
-        OffloadingLogger.log(getClass().getSimpleName(), "[TERMINATING SESSION]");
-        /*OffloadingLogger.log(decisionEngine.NAME_TAG,
-                "{name: \"" + decisionEngine.NAME_TAG + "\", " +
-                        " offloads: " + decisionEngine.getPerformedOffloads() + ", " +
-                        " attemptsSinceOffload: " + decisionEngine.getOffloadingAttempts() + "}");
-        */
-    }
+
 
 
     /*
@@ -116,6 +74,14 @@ public class AdaptiveOffloadingManager {
      */
     public void validatePipeline(AdaptivePipeline pipeline) throws AdaptiveOffloadingException {
         partitionEngine.validatePipeline(pipeline);
+    }
+
+    public void optimizePipelines(){
+        try {
+            partitionEngine.optimizePipelines();
+        } catch (UnableToEnforceRuleException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -147,7 +113,11 @@ public class AdaptiveOffloadingManager {
     public void forceOffloading()
             throws NothingToOffloadException, NoAdaptivePipelineValidatedException, OverearlyOffloadException {
 
-        partitionEngine.testRunOffload();
+        try {
+            partitionEngine.optimizePipelines();
+        } catch (UnableToEnforceRuleException e) {
+            e.printStackTrace();
+        }
     }
 
 }

@@ -29,6 +29,15 @@ public class BatteryStateProfiler extends BroadcastReceiver{
         appContext = context;
         batteryManager = (BatteryManager) context.getSystemService(Context.BATTERY_SERVICE);
 
+        //Force Battery State Update
+        Intent batteryIntent = context.getApplicationContext().registerReceiver(null,
+                new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        int scale = batteryIntent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+        currentBattery  = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+        isCharging      = (batteryIntent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1) == 0 ? false : true);
+        isFull          = (currentBattery == scale ? true : false);
+
+
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_BATTERY_CHANGED);
         context.registerReceiver(this, filter);

@@ -86,11 +86,6 @@ public class MainActivity extends ActionBarActivity {
     public static final String ACCOUNT = "scout";
     //END TESTING - SyncAdapters
 
-    //BEGIN TESTING - Rule Set Framework
-    private DeviceStateProfiler deviceState;
-    private RuleSetManager ruleSetManager;
-    //END TESTING - Rule Set Framework
-
     private ServiceConnection funfManagerConn = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -254,21 +249,6 @@ public class MainActivity extends ActionBarActivity {
 
             }
         });
-
-        final ScoutRemoteClient rc = ScoutRemoteClient.getInstance();
-        netTestBtn = (Button) findViewById(R.id.netTestBtn);
-        netTestBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DeviceStateProfiler.DeviceStateSnapshot stateSnapshot = deviceState.getDeviceState();
-                Rule r = ruleSetManager.selectRuleToEnforce(stateSnapshot);
-
-                Log.d("RULE", r.getRuleName());
-
-            }
-        });
-
-
         //END TESTING
 
         tagText = (EditText) findViewById(R.id.tag);
@@ -302,20 +282,6 @@ public class MainActivity extends ActionBarActivity {
        */
 
         //END TESTING - SyncAdapters
-
-        //BEGIN TESTING - Profiling
-        deviceState = new DeviceStateProfiler(this);
-        //END TESTING - Profiling
-
-        //BEGIN TESTING - Rule Set Framework
-        try {
-            ruleSetManager = new RuleSetManager(this);
-        } catch (InvalidRuleSetException e) {
-            e.printStackTrace();
-            //this.finish();
-            //System.exit(0);
-        }
-        //END TESTING - Rule Set Framework
 
 
         // Bind to the service, to create the connection with FunfManager
@@ -370,9 +336,6 @@ public class MainActivity extends ActionBarActivity {
         unbindService(funfManagerConn);
 
         offloadingManager.onDestroy();
-
-        deviceState.teardown();
-
     }
 
     //BEGIN TESTING - SyncAdapters

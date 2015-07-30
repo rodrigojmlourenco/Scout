@@ -32,6 +32,7 @@ public class DeviceStateProfiler {
 
     public DeviceStateSnapshot getDeviceState(){
         return new DeviceStateSnapshot(
+                batteryState.isCharging(),
                 networkState.getCurrentNetworkType(),
                 batteryState.getCurrentBattery(),
                 mobileDataPlanState.getDataPlan(),
@@ -50,9 +51,6 @@ public class DeviceStateProfiler {
 
     }
 
-
-
-
     public static class DeviceStateSnapshot{
 
         public final RuleSetKeys.SupportedNetworkTypes networkType;
@@ -61,10 +59,14 @@ public class DeviceStateProfiler {
 
         public final long dataPlan, dataPlanLimit, consumedDataPlan;
 
-        public DeviceStateSnapshot(int networkType,
+        public boolean isCharging;
+
+        public DeviceStateSnapshot(boolean isCharging,
+                                    int networkType,
                                    int currentBattery,
                                    long dataPlan, long dataPlanLimit, long consumedDataPlan){
 
+            this.isCharging         = isCharging;
             this.networkType        = parseNetworkType(networkType);
             this.currentBattery     = currentBattery;
             this.dataPlan           = dataPlan;

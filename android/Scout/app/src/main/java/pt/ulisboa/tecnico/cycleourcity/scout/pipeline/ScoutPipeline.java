@@ -15,11 +15,9 @@ import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exceptions.MobileSens
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.PipelineConfiguration;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.SensorProcessingPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.AdaptiveOffloadingManager;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.DecisionEngine;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.AdaptiveOffloadingException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.exceptions.InvalidRuleSetException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.ConfigurationTaggingStage;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.OffloadingWrapperStage;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.TestOffloadingStage;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.TestStages;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.EvaluationSupportStorage;
@@ -108,6 +106,8 @@ public class ScoutPipeline extends BasicPipeline {
 
         //offloadingManager.validatePipeline(p2);
         //mPipeline.addSensorProcessingPipeline(p2);
+        offloadingManager.optimizePipelines();
+
 
         isInstantiated = true;
     }
@@ -150,12 +150,13 @@ public class ScoutPipeline extends BasicPipeline {
 
                 break;
             case ACTION_PROFILE:
+                /* DEPRECATED
                 if(offloadingManager.isProfilingEnabled()) {
                     if (offloadingManager.isProfiling())
                         offloadingManager.stopProfiling();
                     else
                         offloadingManager.startProfiling();
-                }
+                }*/
                 break;
             default:
                 Log.e(LOG_TAG, "ScoutPipeline doesn't support the "+action+" action.");

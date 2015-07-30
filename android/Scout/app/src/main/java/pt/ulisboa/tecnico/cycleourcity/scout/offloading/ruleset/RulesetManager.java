@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -17,6 +18,7 @@ import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.exceptions.Inval
 
 public class RuleSetManager {
 
+    private boolean VERBOSE = true;
     public final static String LOG_TAG = "RuleSet";
 
     private final Context appContext;
@@ -63,7 +65,6 @@ public class RuleSetManager {
         JsonArray jsonRuleSet = null;
         String ruleSetString = appContext.getString(R.string.rule_set);
 
-
         try {
             JsonObject aux = (JsonObject) jsonParser.parse(ruleSetString);
             jsonRuleSet = (JsonArray) aux.get(RuleSetKeys.RULESET);
@@ -104,6 +105,11 @@ public class RuleSetManager {
     }
 
     public Rule selectRuleToEnforce(DeviceStateProfiler.DeviceStateSnapshot deviceState){
+
+        if(deviceState.isCharging){
+            if(VERBOSE) Log.d(LOG_TAG, "Device is charging so the default rule will be employed.");
+            return defaultRule;
+        }
 
         for(Rule rule : ruleSet)
             if(rule.ruleMatches(deviceState)) {

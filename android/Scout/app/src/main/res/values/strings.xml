@@ -21,7 +21,7 @@
 
                 { "@name" : "default-rule",
                   "@rules": { "@battery" : 90, "@network-type": "4G"},
-                  "@weights": { "@time-weight" : 0.33, "@transmission-weight":0.33, "@mobile-cost-weight":0.33 }
+                  "@weights": { "@time-weight" : 0, "@transmission-weight":0.5, "@mobile-cost-weight":0.5 }
                 }
             ]
         }

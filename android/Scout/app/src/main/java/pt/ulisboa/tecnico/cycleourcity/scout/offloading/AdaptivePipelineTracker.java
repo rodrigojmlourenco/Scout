@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.AdaptivePipeline;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.exceptions.NothingToOffloadException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.OffloadingWrapperStage;
 
 public class AdaptivePipelineTracker {
@@ -150,10 +151,11 @@ public class AdaptivePipelineTracker {
      * Pipeline Manipulation                    *
      ********************************************
      */
-    public OffloadingWrapperStage offloadStage(){
+    public OffloadingWrapperStage offloadStage()
+            throws NothingToOffloadException {
 
         if(pipeline.getAdaptiveStages().isEmpty())
-            return null;
+            throw new NothingToOffloadException();
 
         Stage stage = pipeline.removeStage();
         missingStages.add(stage);
