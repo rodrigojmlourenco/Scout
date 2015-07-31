@@ -6,8 +6,10 @@ import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.ActionBarActivity;
@@ -18,6 +20,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.regex.Matcher;
@@ -32,15 +36,8 @@ import pt.ulisboa.tecnico.cycleourcity.scout.config.ScoutConfigManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.config.exceptions.NotInitializedException;
 import pt.ulisboa.tecnico.cycleourcity.scout.learning.PavementType;
 import pt.ulisboa.tecnico.cycleourcity.scout.logging.ScoutLogger;
-import pt.ulisboa.tecnico.cycleourcity.scout.network.ScoutRemoteClient;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.AdaptiveOffloadingManager;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.OverearlyOffloadException;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.exceptions.NoAdaptivePipelineValidatedException;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.exceptions.NothingToOffloadException;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.device.DeviceStateProfiler;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.device.ScoutProfiling;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.Rule;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.RuleSetManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.exceptions.InvalidRuleSetException;
 import pt.ulisboa.tecnico.cycleourcity.scout.pipeline.ScoutPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.provider.ScoutProvider;
@@ -75,9 +72,12 @@ public class MainActivity extends ActionBarActivity {
 
     //Adaptive Offloading
     private AdaptiveOffloadingManager offloadingManager;
-
+    private SeekBar mockupBattSeekBar, mockupNetBar;
+    private TextView mockupBattText, mockupNetText;
 
     private boolean isSensing = false;
+
+
 
 
     //BEGIN TESTING - SyncAdapters
@@ -257,8 +257,6 @@ public class MainActivity extends ActionBarActivity {
         tagText = (EditText) findViewById(R.id.tag);
 
 
-
-
         //Profiling
         try {
             offloadingManager = AdaptiveOffloadingManager.getInstance(getApplicationContext());
@@ -286,6 +284,83 @@ public class MainActivity extends ActionBarActivity {
 
         //END TESTING - SyncAdapters
 
+        //MockUp Battery [TESTING]
+        Intent intent = this.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        boolean isCharging = (intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1) == 0 ? false : true);
+
+        if(isCharging)
+            offloadingManager.forceMockUp();
+
+
+        mockupBattSeekBar   = (SeekBar) findViewById(R.id.mockupBattBar);
+        mockupBattText      = (TextView)findViewById(R.id.mockupBattText);
+
+        mockupBattText.setText(String.valueOf(mockupBattSeekBar.getProgress()) + "%");
+
+        mockupBattSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            private String parseProgress(int progress){
+                return String.valueOf(progress)+"%";
+            }
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                mockupBattText.setText(parseProgress(progress));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                int battLevel = seekBar.getProgress();
+                mockupBattText.setText(String.valueOf(battLevel) + "%");
+
+                offloadingManager.forceUpdateBatteryLevel(battLevel);
+
+            }
+        });
+
+        mockupNetBar = (SeekBar) findViewById(R.id.mockupNetBar);
+        mockupNetText= (TextView)findViewById(R.id.mockupNetText);
+        mockupNetBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            private String parseProgress(int progress){
+                String netType;
+                switch (progress){
+                    case 5: netType = "Wifi";   break;
+                    case 4: netType = "4G";     break;
+                    case 3: netType = "3G";     break;
+                    case 2: netType = "2G";     break;
+                    case 1: netType = "GPRS";   break;
+                    default: netType= "n/a";
+                }
+
+                return netType;
+            }
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                mockupNetText.setText(parseProgress(seekBar.getProgress()));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                mockupNetText.setText(parseProgress(seekBar.getProgress()));
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                int net = seekBar.getProgress();
+
+                mockupNetText.setText(parseProgress(seekBar.getProgress()));
+
+                offloadingManager.forceUpdateNetworkType(net);
+            }
+        });
+
+
 
         // Bind to the service, to create the connection with FunfManager
         bindService(new Intent(this, FunfManager.class), funfManagerConn, BIND_AUTO_CREATE);
@@ -295,7 +370,6 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        onInitChecks();
     }
 
     @Override
@@ -312,7 +386,6 @@ public class MainActivity extends ActionBarActivity {
         if(isSensing){
             Toast.makeText(MainActivity.this,
                     "Please terminate the sensing session first.", Toast.LENGTH_SHORT).show();
-
             return true;
         }
 
@@ -332,13 +405,19 @@ public class MainActivity extends ActionBarActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        if(isFinishing()){
+            offloadingManager.onDestroy();
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         Log.d("MAIN", "Disabling pipeline, and unbinding service connection.");
         funfManager.disablePipeline(PIPELINE_NAME);
         unbindService(funfManagerConn);
-
-        offloadingManager.onDestroy();
     }
 
     //BEGIN TESTING - SyncAdapters
@@ -361,11 +440,19 @@ public class MainActivity extends ActionBarActivity {
     //END TESTING - SyncAdapters
 
 
+
+
+
+
+
+
+
     /*
-     ********************************************************
-     *  Overall Settings Check                              *
-     ********************************************************
+     ************************************************************************
+     * MainActivity Support Functions                                       *
+     ************************************************************************
      */
+
     private boolean hasDataPlanSettings(){
         SharedPreferences profPrefs = getSharedPreferences(ScoutProfiling.PREFERENCES,Context.MODE_PRIVATE);
 
@@ -374,6 +461,7 @@ public class MainActivity extends ActionBarActivity {
         else
             return false;
     }
+
 
     private void onInitChecks(){
 

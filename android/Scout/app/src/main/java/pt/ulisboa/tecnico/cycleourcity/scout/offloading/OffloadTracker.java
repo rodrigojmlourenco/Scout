@@ -51,6 +51,16 @@ public class OffloadTracker {
         }
     }
 
+    public void unmarkOffloadedStage(AdaptivePipeline pipeline) {
+
+        int pID = pipeline.hashCode();
+
+        if(missingStages.containsKey(pID))
+            missingStages.get(pID).removeFirst();
+
+    }
+
+    @Deprecated
     public void markOffloadedStage(int pUID, OffloadingWrapperStage wrapper){
         if(missingStages.containsKey(pUID)){
             missingStages.get(pUID).add(wrapper.getStageClass().getName());
@@ -89,4 +99,6 @@ public class OffloadTracker {
         else
             return configuration;
     }
+
+
 }

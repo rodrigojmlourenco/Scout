@@ -24,7 +24,7 @@ public class BatteryStateProfiler extends BroadcastReceiver{
     private final Context appContext;
     private BatteryManager batteryManager;
 
-
+    private boolean isCleanedUp = false;
     protected BatteryStateProfiler(Context context){
         appContext = context;
         batteryManager = (BatteryManager) context.getSystemService(Context.BATTERY_SERVICE);
@@ -49,9 +49,11 @@ public class BatteryStateProfiler extends BroadcastReceiver{
 
     public boolean isFull(){return isFull;}
 
-
     public void teardown(){
-        appContext.unregisterReceiver(this);
+        if(!isCleanedUp) {
+            appContext.unregisterReceiver(this);
+            isCleanedUp = true;
+        }
     }
 
     private void updateInternalState(@Nullable Intent batteryStatus){
@@ -88,5 +90,19 @@ public class BatteryStateProfiler extends BroadcastReceiver{
                 (isFull ? "Full Capacity": ""+currentBattery+"%");
     }
 
+    /*
+     ************************************************************************
+     * MockUp Function - For testing purposes only                          *
+     ************************************************************************
+     */
+    protected void forceMockUpMode(){
+        teardown();
+    }
+
+    protected void forceBatteryUpdate(int batteryLevel){
+        this.currentBattery = batteryLevel;
+        this.isCharging = true;
+        this.isFull = batteryLevel == 100;
+    }
 }
 

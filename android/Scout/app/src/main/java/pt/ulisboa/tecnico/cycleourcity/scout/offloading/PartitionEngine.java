@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.cycleourcity.scout.offloading;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.ideaimpl.patterns.pipeline.Stage;
@@ -11,11 +10,10 @@ import java.util.List;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.AdaptivePipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.AdaptiveOffloadingException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.InvalidOffloadingStageException;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.NothingToRetrieveException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.TaggingStageMissingException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.exceptions.NothingToOffloadException;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.pipelines.StageProfiler;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.Rule;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.exceptions.InvalidRuleSetException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.exceptions.UnableToEnforceRuleException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.ConfigurationTaggingStage;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.OffloadingWrapperStage;
@@ -90,13 +88,14 @@ public class PartitionEngine {
      */
     protected void updateEnforcedRule(Rule rule) {
 
-        if(enforcedRule == null)
-            enforcedRule = rule;
-        else if(enforcedRule.equals(rule)){
+        if(enforcedRule != null && enforcedRule.equals(rule)){
             if(VERBOSE) Log.d(LOG_TAG, "Skipping enforced rule update has the rule is the same.");
+            return;
         }
 
-        if(VERBOSE) Log.d(LOG_TAG, "Updating the enforced rule to '"+rule.getRuleName()+"'.");
+        enforcedRule = rule;
+
+        if(VERBOSE) Log.d(LOG_TAG, "Updating the enforced rule to '" + rule.getRuleName() + "'.");
 
         for(AdaptivePipelineTracker p : validatedPipelines)
             p.updateWeights(
@@ -120,7 +119,8 @@ public class PartitionEngine {
                 if(VERBOSE) Log.d(LOG_TAG, "Offloading "+offloadIterations+" stages in pipeline "+p);
                 offloadStages(p, offloadIterations);
             }else if(offloadIterations < 0){
-                throw new UnsupportedOperationException();
+                if(VERBOSE) Log.d(LOG_TAG, "Retrieve "+Math.abs(offloadIterations)+" stages to the pipeline "+p);
+                retrieveStages(p, Math.abs(offloadIterations));
             }else if(VERBOSE)
                 Log.d(LOG_TAG, "The original configuration is ideal so nothing will be offloaded.");
 
@@ -135,5 +135,15 @@ public class PartitionEngine {
                 if(VERBOSE) Log.e(LOG_TAG, "Nothing to offload in this pipeline");
             }
         }
+    }
+
+    private void retrieveStages(AdaptivePipelineTracker tracker, int iterations){
+        for(int i=0; i < iterations; i++)
+            try {
+                tracker.retrieveStage();
+                offloadTracker.unmarkOffloadedStage(tracker.getPipeline());
+            } catch (NothingToRetrieveException e) {
+                e.printStackTrace();
+            }
     }
 }

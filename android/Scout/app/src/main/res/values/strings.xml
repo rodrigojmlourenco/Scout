@@ -10,18 +10,25 @@
     <string name="rule_set">
         { "@rule-set" :
             [
-                { "@name" : "rule-priority1",
-                  "@rules": { "@battery" : 10, "@network-type": "4G"},
-                  "@weights": { "@time-weight" : 0.7, "@transmission-weight":0.2, "@mobile-cost-weight":0.1 }
+                { "@name" : "rule-priority10",
+                  "@rules": { "@battery" : 10, "@network-type": "GPRS"},
+                  "@weights": { "@time-weight" : 1, "@transmission-weight":0, "@mobile-cost-weight":0 }
                 },
-                { "@name" : "rule-priority2",
-                  "@rules": { "@battery" : 100, "@network-type": "GPRS"},
-                  "@weights": { "@time-weight" : 0.7, "@transmission-weight":0.2, "@mobile-cost-weight":0.1 }
+                { "@name" : "rule-priority25",
+                  "@rules": { "@battery" : 25, "@network-type": "GPRS"},
+                  "@weights": { "@time-weight" : 0.6, "@transmission-weight":0.2, "@mobile-cost-weight":0.2 }
                 },
-
+                { "@name" : "rule-priority50",
+                  "@rules": { "@battery" : 50, "@network-type": "GPRS"},
+                  "@weights": { "@time-weight" : 0.3, "@transmission-weight":0.5, "@mobile-cost-weight":0.2 }
+                },
+                { "@name" : "rule-priority75",
+                  "@rules": { "@battery" : 75, "@network-type": "GPRS"},
+                  "@weights": { "@time-weight" : 0.2, "@transmission-weight":0.5, "@mobile-cost-weight":0.3 }
+                },
                 { "@name" : "default-rule",
                   "@rules": { "@battery" : 90, "@network-type": "4G"},
-                  "@weights": { "@time-weight" : 0, "@transmission-weight":0.5, "@mobile-cost-weight":0.5 }
+                  "@weights": { "@time-weight" : 0.0, "@transmission-weight":0.5, "@mobile-cost-weight":0.5 }
                 }
             ]
         }
@@ -137,4 +144,5 @@
     <string name="cancel">Cancel</string>
     <string name="gigabyte">Gb</string>
     <string name="megabyte">MB</string>
+    <string name="toggle_mockup">Mockup</string>
 </resources>

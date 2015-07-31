@@ -1,56 +1,48 @@
 package pt.ulisboa.tecnico.cycleourcity.scout.offloading;
 
-import android.util.Log;
-
 import com.google.common.primitives.Floats;
 import com.google.common.primitives.Longs;
 import com.ideaimpl.patterns.pipeline.Stage;
 
-import org.apache.commons.lang3.ArrayUtils;
-
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.AdaptivePipeline;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.NothingToRetrieveException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.exceptions.NothingToOffloadException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.OffloadingWrapperStage;
 
 public class AdaptivePipelineTracker {
 
+    //Tracked Pipeline
     private int currentConfig;
+    private LinkedList<Stage> offloadedStages;
+    private AdaptivePipeline pipeline;
+
+    //Original Configuration Values
     private final int originalConfigCount;
     private final List<Stage> originalConfiguration;
+    private float[] totalUtilityValues;
 
-    private float[] configsTotalUtility;
-
-    private AdaptivePipeline pipeline;
-    private List<Stage> missingStages;
-
+    //Configuration computation support values
+    private final long optimalExecution, optimalTransmissionSize;
     private float timeWeight = 1, mobileCostWeight=0, transmissionWeight = 0;
+
 
     public AdaptivePipelineTracker(AdaptivePipeline pipeline){
 
-        originalConfigCount = pipeline.getAdaptiveStages().size()+1;
-        currentConfig = originalConfigCount;
-        originalConfiguration = pipeline.getAdaptiveStages();
-
         this.pipeline = pipeline;
-        missingStages = new ArrayList<>();
+        originalConfiguration = new ArrayList<>(pipeline.getAdaptiveStages());
+        originalConfigCount = pipeline.getAdaptiveStages().size()+1;
 
+        currentConfig = originalConfigCount;
+        offloadedStages = new LinkedList<>();
+
+        optimalExecution = 0;
+        optimalTransmissionSize = computeOptimalTransmittedData(originalConfiguration);
     }
 
-    public AdaptivePipelineTracker(AdaptivePipeline pipeline,
-                                      float timeWeight, float mobileCostWeight, float transmissionWeight){
-
-        originalConfigCount = pipeline.getAdaptiveStages().size()+1;
-        currentConfig = originalConfigCount;
-        originalConfiguration = pipeline.getAdaptiveStages();
-
-        this.pipeline = pipeline;
-        missingStages = new ArrayList<>();
-
-        updateWeights(timeWeight, mobileCostWeight, transmissionWeight);
-    }
 
     public void updateWeights(float timeWeight, float mobileCostWeight, float transmissionWeight){
 
@@ -58,26 +50,26 @@ public class AdaptivePipelineTracker {
         this.mobileCostWeight   = mobileCostWeight;
         this.transmissionWeight = transmissionWeight;
 
-        configsTotalUtility = computeConfigurationsTotalUtilities(pipeline);
+        totalUtilityValues = computeConfigurationsTotalUtilities();
     }
 
     public List<Stage> getCurrentConfiguration(){
         return pipeline.getAdaptiveStages();
     }
 
-    public List<Stage> getMissingStages(){
-        return missingStages;
+    public List<Stage> getOffloadedStages(){
+        return offloadedStages;
     }
 
     public int computeIdealOffloadIterations(){
-        return originalConfigCount - computeIdealConfiguration();
+        return currentConfig - computeIdealConfiguration();
     }
 
     private int computeIdealConfiguration(){
-        float bestUtility = Floats.max(configsTotalUtility);
+        float bestUtility = Floats.max(totalUtilityValues);
         int ideal = 0;
         for(; ideal < originalConfigCount; ideal++)
-            if (bestUtility == configsTotalUtility[ideal])
+            if (bestUtility == totalUtilityValues[ideal])
                 return ideal+1;
 
         return 0;
@@ -118,27 +110,22 @@ public class AdaptivePipelineTracker {
     }
 
 
-    private float[] computeConfigurationsTotalUtilities(AdaptivePipeline pipeline){
+    private float[] computeConfigurationsTotalUtilities(){
 
         float[] totalUtilities = new float[originalConfigCount];
 
-        long optimalExecution = 0,
-                optimalTransmissionSize = computeOptimalTransmittedData(originalConfiguration);
-        //For each possible configuration compute total utility
-        // then add that value to the array, in the position corresponding to that config
-
         //Special Case - Nothing is executed and all data is sent
-        long executionTime;
-        long transmittedData = ((OffloadingWrapperStage)pipeline.getAdaptiveStages().get(0)).getAverageInputDataSize();
-        totalUtilities[0] = computeTotalUtility(optimalExecution, optimalTransmissionSize, 0, transmittedData);
-        for(int i=1; i < originalConfigCount; i++){
-            OffloadingWrapperStage s = (OffloadingWrapperStage) pipeline.getAdaptiveStages().get(i-1);
-            executionTime = s.getAverageRunningTime();
-            transmittedData = s.getAverageGeneratedDataSize();
-            totalUtilities[i] = computeTotalUtility(optimalExecution, optimalTransmissionSize, executionTime, transmittedData);
-        }
+        long sequentialExecutionTime = 0;
+        long transmittedData = ((OffloadingWrapperStage)originalConfiguration.get(0)).getAverageInputDataSize();
+        totalUtilities[0] = computeTotalUtility(optimalExecution, optimalTransmissionSize, sequentialExecutionTime, transmittedData);
 
-        //ArrayUtils.reverse(totalUtilities);
+        //Remaining cases
+        for(int i=1; i < originalConfigCount; i++){
+            OffloadingWrapperStage s = (OffloadingWrapperStage) originalConfiguration.get(i - 1);
+            sequentialExecutionTime += s.getAverageRunningTime();
+            transmittedData = s.getAverageGeneratedDataSize();
+            totalUtilities[i] = computeTotalUtility(optimalExecution, optimalTransmissionSize, sequentialExecutionTime, transmittedData);
+        }
 
         return totalUtilities;
     }
@@ -151,6 +138,12 @@ public class AdaptivePipelineTracker {
      * Pipeline Manipulation                    *
      ********************************************
      */
+
+    /**
+     * Offloads the pipeline's tail stage
+     * @return The offloaded stage wrapped by a OffloadingStageWrapper
+     * @throws NothingToOffloadException if there are no more offloadable stages.
+     */
     public OffloadingWrapperStage offloadStage()
             throws NothingToOffloadException {
 
@@ -158,12 +151,24 @@ public class AdaptivePipelineTracker {
             throw new NothingToOffloadException();
 
         Stage stage = pipeline.removeStage();
-        missingStages.add(stage);
+        offloadedStages.add(stage);
+        currentConfig--;
         return (OffloadingWrapperStage) stage;
     }
 
-    public void addLoadStage(){
-        throw new UnsupportedOperationException();
+    /**
+     * Retrieves, to the pipeline, the last offloaded stage.
+     * @throws NothingToRetrieveException if there are no offloaded stages.
+     */
+    public void retrieveStage()
+        throws NothingToRetrieveException {
+
+        if(offloadedStages.isEmpty())
+            throw new NothingToRetrieveException();
+
+        pipeline.addStage(offloadedStages.removeLast());
+        currentConfig++;
     }
+
 
 }

@@ -3,8 +3,6 @@ package pt.ulisboa.tecnico.cycleourcity.scout.offloading;
 import android.content.Context;
 import android.util.Log;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -14,6 +12,7 @@ import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.OverearlyOffl
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.device.DeviceStateProfiler;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.exceptions.NoAdaptivePipelineValidatedException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.exceptions.NothingToOffloadException;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.pipelines.StageProfiler;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.Rule;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.RuleSetManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.exceptions.InvalidRuleSetException;
@@ -22,20 +21,23 @@ import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.exceptions.Unabl
 public class AdaptiveOffloadingManager implements Observer{
 
     protected final static String LOG_TAG = "AdaptiveOffloading";
+    private static final boolean VERBOSE = true;
     private final String NAME_TAG = this.getClass().getSimpleName();
 
 
 
-    private final DeviceStateProfiler       deviceState;
-    private final PartitionEngine partitionEngine;
-    private final RuleSetManager            ruleSetFrameWork;
-
+    private final DeviceStateProfiler   deviceState;
+    private final PartitionEngine       partitionEngine;
+    private final RuleSetManager        ruleSetFrameWork;
+    private final StageProfiler         stageModel;
 
     private boolean isProfilingEnabled = false;
 
     private static AdaptiveOffloadingManager OFFLOADING_MANAGER = null;
 
     private AdaptiveOffloadingManager(Context context) throws InvalidRuleSetException {
+
+        stageModel      = StageProfiler.getInstance();
         deviceState     = new DeviceStateProfiler(context);
         partitionEngine = new PartitionEngine();
         ruleSetFrameWork= new RuleSetManager(context, deviceState);
@@ -70,6 +72,13 @@ public class AdaptiveOffloadingManager implements Observer{
     }
 
     public void optimizePipelines(){
+
+        if(!stageModel.hasModel()){
+            if(VERBOSE) Log.d(LOG_TAG, "No offloading will be performed "+
+                    "has these configuration has not yet been modelled.");
+            return;
+        }
+
         try {
             partitionEngine.optimizePipelines();
         } catch (UnableToEnforceRuleException e) {
@@ -84,8 +93,21 @@ public class AdaptiveOffloadingManager implements Observer{
      */
     @Override
     public void update(Observable observable, Object data) {
+
+        if(!stageModel.hasModel()){
+            if(VERBOSE) Log.d(LOG_TAG, "No offloading will be performed "+
+                    "has these configuration has not yet been modelled.");
+            return;
+        }
+
         Rule rule = (Rule) data;
         partitionEngine.updateEnforcedRule(rule);
+
+        try {
+            partitionEngine.optimizePipelines();
+        } catch (UnableToEnforceRuleException e) {
+            if(VERBOSE)Log.w(LOG_TAG, e.getMessage());
+        }
     }
 
 
@@ -124,5 +146,26 @@ public class AdaptiveOffloadingManager implements Observer{
 
     public void forceObserverReaction(){
         ruleSetFrameWork.enforceRule(null);
+    }
+
+    private boolean isMockup = false;
+
+    public void forceMockUp() {
+
+        if(VERBOSE) Log.d(LOG_TAG, "Running in mockup mode, device state will be simulated.");
+
+        isMockup = true;
+
+        deviceState.forceMockUp();
+    }
+
+    public void forceUpdateBatteryLevel(int level){
+        if(!isMockup)return;
+
+        deviceState.forceBatteryUpdate(level);
+    }
+
+    public void forceUpdateNetworkType(int net) {
+        //TODO
     }
 }

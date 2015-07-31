@@ -11,7 +11,6 @@ public class DeviceStateProfiler {
 
     public final static String LOG_TAG = "DeviceProfiling";
 
-
     private final NetworkStateProfiler networkState;
     private final BatteryStateProfiler batteryState;
     private final MobileDataPlanProfiler mobileDataPlanState;
@@ -51,6 +50,22 @@ public class DeviceStateProfiler {
 
     }
 
+    /*
+     ************************************************************************
+     * MockUp Function - For testing purposes only                          *
+     ************************************************************************
+     */
+    public void forceMockUp(){
+        batteryState.forceMockUpMode();
+    }
+
+    public void forceBatteryUpdate(int batteryLevel){
+        batteryState.forceBatteryUpdate(batteryLevel);
+    }
+
+    /**
+     *
+     */
     public static class DeviceStateSnapshot{
 
         public final RuleSetKeys.SupportedNetworkTypes networkType;
@@ -71,8 +86,7 @@ public class DeviceStateProfiler {
             this.currentBattery     = currentBattery;
             this.dataPlan           = dataPlan;
             this.dataPlanLimit      = dataPlanLimit;
-            this.consumedDataPlan   = consumedDataPlan;
-        }
+            this.consumedDataPlan   = consumedDataPlan; }
 
         @Override
         public boolean equals(Object snapshot) {

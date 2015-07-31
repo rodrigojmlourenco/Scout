@@ -34,7 +34,7 @@ public class ScoutPipeline extends BasicPipeline {
     private final static String LOG_TAG = "ScoutPipeline";
 
 
-    public final static int PIPELINE_VERSION = 1;
+    public final static int PIPELINE_VERSION = 0;
 
     private String samplingTag = "scout";
 
@@ -87,7 +87,8 @@ public class ScoutPipeline extends BasicPipeline {
         PipelineConfiguration pc1 = new PipelineConfiguration();
 
         pc1.addStage(new TestOffloadingStage("pc11", new TestStages.Test6000Stage(), 6000, 700, 600));
-        pc1.addStage(new TestOffloadingStage("pc12", new TestStages.Test4000Stage(), 4000, 600, 500));
+        pc1.addStage(new TestOffloadingStage("pc12", new TestStages.Test2000Stage(), 2000, 600, 300));
+        pc1.addStage(new TestOffloadingStage("pc13", new TestStages.Test4000Stage(), 4000, 300, 200));
         pc1.addFinalStage(new ConfigurationTaggingStage());
         SensorProcessingPipeline p1 = new SensorProcessingPipeline(SensingUtils.Sensors.LINEAR_ACCELERATION, pc1) {};
 

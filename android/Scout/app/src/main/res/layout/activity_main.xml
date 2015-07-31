@@ -118,4 +118,73 @@
         android:layout_below="@+id/pavementTypeGroup"
         android:layout_toEndOf="@+id/tag" />
 
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/offloadBtn"
+        android:layout_alignParentStart="true"
+        android:id="@+id/mockUpBattery"
+        android:layout_marginTop="15dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Mockup Battery"
+            android:id="@+id/textView16"
+            android:gravity="center" />
+
+        <SeekBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/mockupBattBar"
+            android:layout_weight="1"
+            android:max="100"
+            android:progress="100"
+            android:indeterminate="false" />
+
+        <TextView
+            android:layout_width="40dp"
+            android:layout_height="fill_parent"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="100%"
+            android:id="@+id/mockupBattText"
+            android:gravity="center" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/mockUpBattery"
+        android:layout_alignParentStart="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Mockup Network"
+            android:id="@+id/textView17"
+            android:gravity="center" />
+
+        <SeekBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/mockupNetBar"
+            android:layout_weight="1"
+            android:max="5"
+            android:progress="5"
+            android:indeterminate="false" />
+
+        <TextView
+            android:layout_width="40dp"
+            android:layout_height="fill_parent"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:id="@+id/mockupNetText"
+            android:gravity="center"
+            android:text="Wifi" />
+    </LinearLayout>
+
+
 </RelativeLayout>

@@ -130,8 +130,8 @@ public class RuleSetManager extends Observable{
         enforcedRule = defaultRule;
     }
 
-    //TODO make private
     public void enforceRule(Rule rule){
+        enforcedRule = rule;
         this.setChanged();
         notifyObservers(rule);
     }
@@ -145,7 +145,6 @@ public class RuleSetManager extends Observable{
      * Rule Set Enforcer                                *
      ****************************************************
      */
-    //TODO criar um scheduled executor service
     private ScheduledFuture enforcerTask;
     private ScheduledExecutorService schedule;
 
@@ -218,10 +217,10 @@ public class RuleSetManager extends Observable{
 
                     enforceRule(nRule);
                 }else if(VERBOSE)
-                    Log.d(LOG_TAG, "The device state has changes, however the rule still holds.");
+                    Log.v(LOG_TAG, "The device state has changed, however the rule still holds.");
 
             }else if(VERBOSE)
-                Log.d(LOG_TAG, "The device state has not changed.");
+                Log.v(LOG_TAG, "The device state has not changed.");
 
         }
     }
