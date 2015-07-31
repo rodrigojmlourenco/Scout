@@ -10,13 +10,18 @@ import com.google.gson.JsonSyntaxException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import pt.ulisboa.tecnico.cycleourcity.scout.R;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.device.DeviceStateProfiler;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.exceptions.InvalidRuleException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.exceptions.InvalidRuleSetException;
 
-public class RuleSetManager {
+public class RuleSetManager extends Observable{
 
     private boolean VERBOSE = true;
     public final static String LOG_TAG = "RuleSet";
@@ -29,13 +34,21 @@ public class RuleSetManager {
     private Rule defaultRule    = null;
     private Rule enforcedRule   = null;
 
-    public RuleSetManager(Context context)
+    //Device State
+    private final DeviceStateProfiler deviceState;
+
+    public RuleSetManager(Context context, DeviceStateProfiler deviceState)
             throws InvalidRuleSetException {
 
         appContext = context;
         ruleSet = new ArrayList<>();
 
+        this.deviceState = deviceState;
+
         fetchAndValidateRuleSet();
+        selectRuleToEnforce(deviceState.getDeviceState());
+
+        initiateRuleSetEnforcer();
     }
 
     /**
@@ -52,7 +65,6 @@ public class RuleSetManager {
     public float getEnforcedTransmissionWeight() { return  enforcedRule.getTransmissionWeight(); }
 
     public float getEnforcedMobileCostWeight() { return enforcedRule.getMobileCostWeight(); }
-
 
 
     /*
@@ -104,20 +116,114 @@ public class RuleSetManager {
 
     }
 
-    public Rule selectRuleToEnforce(DeviceStateProfiler.DeviceStateSnapshot deviceState){
+    private void selectRuleToEnforce(DeviceStateProfiler.DeviceStateSnapshot deviceState){
 
         if(deviceState.isCharging){
             if(VERBOSE) Log.d(LOG_TAG, "Device is charging so the default rule will be employed.");
-            return defaultRule;
+            enforcedRule = defaultRule;
         }
 
         for(Rule rule : ruleSet)
-            if(rule.ruleMatches(deviceState)) {
+            if(rule.ruleMatches(deviceState))
                 enforcedRule = rule;
-                return rule;
-            }
 
         enforcedRule = defaultRule;
-        return defaultRule;
     }
+
+    //TODO make private
+    public void enforceRule(Rule rule){
+        this.setChanged();
+        notifyObservers(rule);
+    }
+
+    public void teardown(){
+        terminateRuleSetEnforcer();
+    }
+
+    /*
+     ****************************************************
+     * Rule Set Enforcer                                *
+     ****************************************************
+     */
+    //TODO criar um scheduled executor service
+    private ScheduledFuture enforcerTask;
+    private ScheduledExecutorService schedule;
+
+
+    private void initiateRuleSetEnforcer(){
+        schedule = Executors.newSingleThreadScheduledExecutor();
+        enforcerTask = schedule.scheduleAtFixedRate(new
+                RuleSetEnforcer(),
+                10,
+                10, TimeUnit.SECONDS);
+    }
+
+    private void terminateRuleSetEnforcer(){
+        if(enforcerTask!=null){
+            schedule.shutdown();
+            try{
+                if (!schedule.awaitTermination(60, TimeUnit.SECONDS)) {
+                    schedule.shutdownNow(); // Cancel currently executing tasks
+                    // Wait a while for tasks to respond to being cancelled
+                    if (!schedule.awaitTermination(60, TimeUnit.SECONDS))
+                        System.err.println("Pool did not terminate");
+                }
+            } catch (InterruptedException ie) {
+                // (Re-)Cancel if current thread also interrupted
+                schedule.shutdownNow();
+                // Preserve interrupt status
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+
+
+    private class RuleSetEnforcer implements Runnable {
+
+        private DeviceStateProfiler.DeviceStateSnapshot lastRegisteredState;
+
+        private RuleSetEnforcer(){
+            this.lastRegisteredState = deviceState.getDeviceState();
+        }
+
+        private boolean hasDeviceStateChanged(DeviceStateProfiler.DeviceStateSnapshot currentState){
+            return !lastRegisteredState.equals(currentState);
+        }
+
+        private Rule selectRuleToEnforce(DeviceStateProfiler.DeviceStateSnapshot deviceState){
+
+            for(Rule rule : ruleSet)
+                if(rule.ruleMatches(deviceState))
+                    return  rule;
+
+            return defaultRule;
+        }
+
+
+        @Override
+        public void run() {
+
+            DeviceStateProfiler.DeviceStateSnapshot currentState = deviceState.getDeviceState();
+
+            if (hasDeviceStateChanged(currentState)){
+
+
+                lastRegisteredState = currentState;
+
+                Rule nRule = selectRuleToEnforce(lastRegisteredState);
+
+                if(!enforcedRule.equals(nRule)){ //New rule to be enforced
+
+                    if(VERBOSE) Log.d(LOG_TAG, "The device state has changed. Now enforcing rule "+nRule.getRuleName());
+
+                    enforceRule(nRule);
+                }else if(VERBOSE)
+                    Log.d(LOG_TAG, "The device state has changes, however the rule still holds.");
+
+            }else if(VERBOSE)
+                Log.d(LOG_TAG, "The device state has not changed.");
+
+        }
+    }
+
 }

@@ -234,6 +234,7 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
+                /*
                 boolean error = false;
                 String errorMessage = "";
                 try {
@@ -246,7 +247,9 @@ public class MainActivity extends ActionBarActivity {
 
                 if (error)
                     Toast.makeText(MainActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                */
 
+                offloadingManager.forceObserverReaction();
             }
         });
         //END TESTING

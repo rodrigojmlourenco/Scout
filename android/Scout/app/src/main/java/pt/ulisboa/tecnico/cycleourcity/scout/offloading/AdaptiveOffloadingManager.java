@@ -1,6 +1,12 @@
 package pt.ulisboa.tecnico.cycleourcity.scout.offloading;
 
 import android.content.Context;
+import android.util.Log;
+
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.Observable;
+import java.util.Observer;
 
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.AdaptivePipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.AdaptiveOffloadingException;
@@ -8,11 +14,12 @@ import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.OverearlyOffl
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.device.DeviceStateProfiler;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.exceptions.NoAdaptivePipelineValidatedException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.exceptions.NothingToOffloadException;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.Rule;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.RuleSetManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.exceptions.InvalidRuleSetException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.exceptions.UnableToEnforceRuleException;
 
-public class AdaptiveOffloadingManager {
+public class AdaptiveOffloadingManager implements Observer{
 
     protected final static String LOG_TAG = "AdaptiveOffloading";
     private final String NAME_TAG = this.getClass().getSimpleName();
@@ -31,11 +38,10 @@ public class AdaptiveOffloadingManager {
     private AdaptiveOffloadingManager(Context context) throws InvalidRuleSetException {
         deviceState     = new DeviceStateProfiler(context);
         partitionEngine = new PartitionEngine();
-        ruleSetFrameWork= new RuleSetManager(context);
+        ruleSetFrameWork= new RuleSetManager(context, deviceState);
 
-        partitionEngine.updateEnforcedRule(
-                ruleSetFrameWork.selectRuleToEnforce(deviceState.getDeviceState()));
-
+        ruleSetFrameWork.addObserver(this);
+        partitionEngine.updateEnforcedRule(ruleSetFrameWork.getEnforcedRule());
     }
 
     public static AdaptiveOffloadingManager getInstance(Context context)
@@ -56,19 +62,6 @@ public class AdaptiveOffloadingManager {
 
     /*
      ************************************************************************
-     * Profiling Functions                                                  *
-     ************************************************************************
-     */
-
-
-
-
-
-
-
-
-    /*
-     ************************************************************************
      * Partition Engine                                                     *
      ************************************************************************
      */
@@ -83,6 +76,18 @@ public class AdaptiveOffloadingManager {
             e.printStackTrace();
         }
     }
+
+    /*
+     ********************************************************************
+     * RuleSetFramework Observer                                        *
+     ********************************************************************
+     */
+    @Override
+    public void update(Observable observable, Object data) {
+        Rule rule = (Rule) data;
+        partitionEngine.updateEnforcedRule(rule);
+    }
+
 
 
     /*
@@ -101,9 +106,6 @@ public class AdaptiveOffloadingManager {
      */
     public boolean isProfilingEnabled(){ return isProfilingEnabled; }
 
-    public void enableProfiling(){ isProfilingEnabled = true; }
-
-    public void disableProfiling(){ isProfilingEnabled = false; }
 
     /*
      ************************************************************************
@@ -120,4 +122,7 @@ public class AdaptiveOffloadingManager {
         }
     }
 
+    public void forceObserverReaction(){
+        ruleSetFrameWork.enforceRule(null);
+    }
 }

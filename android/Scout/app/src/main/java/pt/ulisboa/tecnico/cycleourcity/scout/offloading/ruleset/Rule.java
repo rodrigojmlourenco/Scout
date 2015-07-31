@@ -183,6 +183,26 @@ public class Rule {
 
     }
 
+    @Override
+    public boolean equals(Object rule) {
+
+        Rule comparable = null;
+
+        if(!(rule instanceof Rule))
+            return false;
+        else comparable = (Rule) rule;
+
+        return batteryRule == comparable.batteryRule
+                && hasNetworkTypeRule       == comparable.hasNetworkTypeRule
+                && networkTypeRule          == comparable.networkTypeRule
+                && hasRemainingDataPlanRule == comparable.hasRemainingDataPlanRule
+                && remainingDataPlanRule    == comparable.remainingDataPlanRule
+                && hasOverDataPlanLimitRule == comparable.hasOverDataPlanLimitRule
+                && overDataLimitRule        == comparable.overDataLimitRule
+                && hasScoutBudgetRule       == comparable.hasScoutBudgetRule
+                && scoutBudgetRule          == comparable.scoutBudgetRule;
+    }
+
     private int parseNetworkType(RuleSetKeys.SupportedNetworkTypes networkType){
         switch (networkType){
             case NETWORK_WIFI:

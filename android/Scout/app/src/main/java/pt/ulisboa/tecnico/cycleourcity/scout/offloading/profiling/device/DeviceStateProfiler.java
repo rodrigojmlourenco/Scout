@@ -74,6 +74,24 @@ public class DeviceStateProfiler {
             this.consumedDataPlan   = consumedDataPlan;
         }
 
+        @Override
+        public boolean equals(Object snapshot) {
+
+            DeviceStateSnapshot comparable = null;
+
+            if(snapshot instanceof DeviceStateSnapshot)
+                comparable = (DeviceStateSnapshot) snapshot;
+            else
+                return false;
+
+            return isCharging == comparable.isCharging
+                    && currentBattery   == comparable.currentBattery
+                    && networkType      == comparable.networkType
+                    && dataPlan         == comparable.dataPlan
+                    && dataPlanLimit    == comparable.dataPlanLimit
+                    && consumedDataPlan == comparable.consumedDataPlan;
+        }
+
         private RuleSetKeys.SupportedNetworkTypes parseNetworkType(int networkType){
             switch (networkType){
                 case NetworkStateProfiler.NetworkTypes.TYPE_WIFI:
