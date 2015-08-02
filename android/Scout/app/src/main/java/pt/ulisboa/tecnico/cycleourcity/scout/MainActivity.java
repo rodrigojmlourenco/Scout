@@ -18,9 +18,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -379,6 +381,17 @@ public class MainActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        MenuItem mView = menu.findItem(R.id.myswitch);
+        Switch mSwitch = (Switch) mView.getActionView().findViewById(R.id.switchForActionBar);
+
+        mSwitch.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                toggleAdaptiveOffloading(isChecked);
+            }
+        });
+
         return true;
     }
 
@@ -497,5 +510,14 @@ public class MainActivity extends ActionBarActivity {
         }
 
         ON_INITS_CHECKED = true;
+    }
+
+    /*
+     ************************************************
+     * Adaptive Offloading                          *
+     ************************************************
+     */
+    public void toggleAdaptiveOffloading(boolean isEnabled){
+        offloadingManager.toggleOffloading(isEnabled);
     }
 }

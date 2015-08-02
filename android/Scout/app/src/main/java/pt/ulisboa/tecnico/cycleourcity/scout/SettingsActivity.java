@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RadioButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +24,7 @@ public class SettingsActivity extends ActionBarActivity implements SeekBar.OnSee
     private Button clearDataBtn;
     private SeekBar energySeekBar, dataSeekBar;
     private TextView energyProgressText, dataProgressText;
+    private RadioButton hasStageModel;
 
     int energyProgressValue, dataProgressValue;
 
@@ -34,8 +36,11 @@ public class SettingsActivity extends ActionBarActivity implements SeekBar.OnSee
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
+        hasStageModel = (RadioButton) findViewById(R.id.hasStageModelRadio);
+
         try {
             offloadingManager = AdaptiveOffloadingManager.getInstance(ScoutApplication.getContext());
+            hasStageModel.setChecked(offloadingManager.isStageModelComplete());
         } catch (InvalidRuleSetException e) {
             e.printStackTrace();
         }

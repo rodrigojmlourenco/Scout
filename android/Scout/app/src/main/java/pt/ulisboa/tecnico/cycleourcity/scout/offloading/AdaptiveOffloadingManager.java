@@ -76,6 +76,12 @@ public class AdaptiveOffloadingManager implements Observer{
 
     public void optimizePipelines(){
 
+        if(!offloadingEnabled) {
+            if (VERBOSE)
+                Log.d(LOG_TAG, "Since the offloading is not enabled, the pipelines will not be optimized");
+            return;
+        }
+
         if(!stageModel.hasModel()){
             if(VERBOSE) Log.d(LOG_TAG, "No offloading will be performed "+
                     "has these configuration has not yet been modelled.");
@@ -129,7 +135,22 @@ public class AdaptiveOffloadingManager implements Observer{
      * Internal State                                                       *
      ************************************************************************
      */
+    private boolean offloadingEnabled = false;
+
     public boolean isProfilingEnabled(){ return isProfilingEnabled; }
+
+
+    public boolean isOffloadingEnabled(){
+        return offloadingEnabled;
+    }
+
+    public void toggleOffloading(boolean isEnabled){
+        offloadingEnabled = isEnabled;
+    }
+
+    public boolean isStageModelComplete(){
+        return stageModel.hasModel();
+    }
 
 
     /*
@@ -137,6 +158,8 @@ public class AdaptiveOffloadingManager implements Observer{
      * Testing TODO remover                                                 *
      ************************************************************************
      */
+
+
     public void forceOffloading()
             throws NothingToOffloadException, NoAdaptivePipelineValidatedException, OverearlyOffloadException {
 

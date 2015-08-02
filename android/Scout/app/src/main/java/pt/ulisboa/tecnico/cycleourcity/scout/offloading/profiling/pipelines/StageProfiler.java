@@ -201,6 +201,7 @@ public class StageProfiler {
             modelledStages.put(identifier, new StageModel(((JsonObject)stageModel)));
         }
 
+        hasModel = true;
         if(VERBOSE) Log.d(LOG_TAG, "A complete model was successfully retrieved from memory - "+model);
         return true;
     }
@@ -225,6 +226,7 @@ public class StageProfiler {
                 .putString(ModelStorageKeys.MODEL, gson.toJson(model))
                 .apply();
 
+        hasModel = true;
         if(VERBOSE) Log.d(LOG_TAG, "The complete model has been created and stored. Model: "+model);
     }
 
