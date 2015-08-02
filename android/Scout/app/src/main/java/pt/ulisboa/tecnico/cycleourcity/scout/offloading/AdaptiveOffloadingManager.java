@@ -28,7 +28,7 @@ public class AdaptiveOffloadingManager implements Observer{
 
     private final DeviceStateProfiler   deviceState;
     private final PartitionEngine       partitionEngine;
-    private final RuleSetManager        ruleSetFrameWork;
+    private final RuleSetManager ruleSetFrameWork;
     private final StageProfiler         stageModel;
 
     private boolean isProfilingEnabled = false;
@@ -71,7 +71,7 @@ public class AdaptiveOffloadingManager implements Observer{
     public void resetPartitionEngine() { partitionEngine.teardown(); }
 
     public void validatePipeline(AdaptivePipeline pipeline) throws AdaptiveOffloadingException {
-        partitionEngine.validatePipeline(pipeline);
+        if(offloadingEnabled) partitionEngine.validatePipeline(pipeline);
     }
 
     public void optimizePipelines(){

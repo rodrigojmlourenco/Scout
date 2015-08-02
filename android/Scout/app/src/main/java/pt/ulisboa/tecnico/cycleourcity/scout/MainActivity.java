@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.graphics.drawable.Drawable;
 import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -206,57 +208,19 @@ public class MainActivity extends ActionBarActivity {
         startSession.setEnabled(false);
         stopSession.setEnabled(false);
 
-        //Pavement Type Group
-        final PavementType pavementType = PavementType.getInstance();
-        pavementTypeGroup = (RadioGroup) findViewById(R.id.pavementTypeGroup);
-        pavementTypeGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                PavementType.Pavements pavement;
+        switch (this.getResources().getConfiguration().orientation){
+            case Configuration.ORIENTATION_LANDSCAPE:
+                setupLandscapeModeWidgets();
+                break;
+            case Configuration.ORIENTATION_PORTRAIT:
+                setupPortraitModeWidgets();
+                break;
 
-                switch (checkedId) {
-                    case R.id.isAsphalt:
-                        pavement = PavementType.Pavements.asphalt;
-                        break;
-                    case R.id.isCobblestone:
-                        pavement = PavementType.Pavements.cobblestone;
-                        break;
-                    case R.id.isGravel:
-                        pavement = PavementType.Pavements.gravel;
-                        break;
-                    default:
-                        pavement = PavementType.Pavements.undefined;
-                }
-
-                pavementType.setPavementType(pavement);
-            }
-        });
+        };
 
         //BEGIN TESTING
-        offloadBtn = (Button) findViewById(R.id.offloadBtn);
-        offloadBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                /*
-                boolean error = false;
-                String errorMessage = "";
-                try {
-                    offloadingManager.forceOffloading();
-                    error = false;
-                } catch (NothingToOffloadException | NoAdaptivePipelineValidatedException | OverearlyOffloadException e) {
-                    errorMessage = e.getMessage();
-                    error = true;
-                }
-
-                if (error)
-                    Toast.makeText(MainActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
-                */
-
-                offloadingManager.forceObserverReaction();
-            }
-        });
         //END TESTING
 
         tagText = (EditText) findViewById(R.id.tag);
@@ -297,73 +261,7 @@ public class MainActivity extends ActionBarActivity {
             offloadingManager.forceMockUp();
 
 
-        mockupBattSeekBar   = (SeekBar) findViewById(R.id.mockupBattBar);
-        mockupBattText      = (TextView)findViewById(R.id.mockupBattText);
 
-        mockupBattText.setText(String.valueOf(mockupBattSeekBar.getProgress()) + "%");
-
-        mockupBattSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
-            private String parseProgress(int progress){
-                return String.valueOf(progress)+"%";
-            }
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                mockupBattText.setText(parseProgress(progress));
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                int battLevel = seekBar.getProgress();
-                mockupBattText.setText(String.valueOf(battLevel) + "%");
-
-                offloadingManager.forceUpdateBatteryLevel(battLevel);
-
-            }
-        });
-
-        mockupNetBar = (SeekBar) findViewById(R.id.mockupNetBar);
-        mockupNetText= (TextView)findViewById(R.id.mockupNetText);
-        mockupNetBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
-            private String parseProgress(int progress){
-                String netType;
-                switch (progress){
-                    case 5: netType = "Wifi";   break;
-                    case 4: netType = "4G";     break;
-                    case 3: netType = "3G";     break;
-                    case 2: netType = "2G";     break;
-                    case 1: netType = "GPRS";   break;
-                    default: netType= "n/a";
-                }
-
-                return netType;
-            }
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                mockupNetText.setText(parseProgress(seekBar.getProgress()));
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                mockupNetText.setText(parseProgress(seekBar.getProgress()));
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                int net = seekBar.getProgress();
-
-                mockupNetText.setText(parseProgress(seekBar.getProgress()));
-
-                offloadingManager.forceUpdateNetworkType(net);
-            }
-        });
 
 
 
@@ -520,4 +418,215 @@ public class MainActivity extends ActionBarActivity {
     public void toggleAdaptiveOffloading(boolean isEnabled){
         offloadingManager.toggleOffloading(isEnabled);
     }
+
+    /*
+     ************************************************
+     * UI - Widget Handling                         *
+     ************************************************
+     */
+
+
+    private Drawable btnDefaultBG;
+    private Button goodAsphaltBtn, goodCobblestoneBtn, goodGravelBtn,
+                    badAsphaltBtn, badCobblestoneBtn, badGravelBtn;
+
+    private void setupLandscapeModeWidgets(){
+
+        goodAsphaltBtn      = (Button) findViewById(R.id.goodAsphaltBtn);
+        goodCobblestoneBtn  = (Button) findViewById(R.id.goodCobblestoneBtn);
+        goodGravelBtn       = (Button) findViewById(R.id.goodGravelBtn);
+        badAsphaltBtn       = (Button) findViewById(R.id.badAsphaltBtn);
+        badCobblestoneBtn   = (Button) findViewById(R.id.badCobblestoneBtn);
+        badGravelBtn        = (Button) findViewById(R.id.badGravelBtn);
+
+        btnDefaultBG = goodAsphaltBtn.getBackground();
+
+        final PavementType pavementType = PavementType.getInstance();
+        Button.OnClickListener pavementButtonListener = new Button.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                PavementType.Pavements pavement;
+
+                switch (v.getId()){
+                    case R.id.goodAsphaltBtn:
+                        pavement = PavementType.Pavements.AsphaltGood;
+                        break;
+                    case R.id.goodCobblestoneBtn:
+                        pavement = PavementType.Pavements.CobblestoneGood;
+                        break;
+                    case R.id.goodGravelBtn:
+                        pavement = PavementType.Pavements.GravelGood;
+                        break;
+                    case R.id.badAsphaltBtn:
+                        pavement = PavementType.Pavements.AsphaltBad;
+                        break;
+                    case R.id.badCobblestoneBtn:
+                        pavement = PavementType.Pavements.CobblestoneBad;
+                        break;
+                    case R.id.badGravelBtn:
+                        pavement = PavementType.Pavements.GravelGood;
+                        break;
+                    default:
+                        pavement = PavementType.Pavements.undefined;
+                }
+
+                goodAsphaltBtn.setBackground(btnDefaultBG);
+                goodCobblestoneBtn.setBackground(btnDefaultBG);
+                goodGravelBtn.setBackground(btnDefaultBG);
+                badAsphaltBtn.setBackground(btnDefaultBG);
+                badCobblestoneBtn.setBackground(btnDefaultBG);
+                badGravelBtn.setBackground(btnDefaultBG);
+
+                ((Button)v).setBackground(getDrawable(R.color.cyan));
+
+                pavementType.setPavementType(pavement);
+            }
+        };
+
+        goodAsphaltBtn.setOnClickListener(pavementButtonListener);
+        goodCobblestoneBtn.setOnClickListener(pavementButtonListener);
+        goodGravelBtn.setOnClickListener(pavementButtonListener);
+        badAsphaltBtn.setOnClickListener(pavementButtonListener);
+        badCobblestoneBtn.setOnClickListener(pavementButtonListener);
+        badGravelBtn.setOnClickListener(pavementButtonListener);
+
+    }
+
+    private void setupPortraitModeWidgets(){
+        //Pavement Type Group
+        final PavementType pavementType = PavementType.getInstance();
+        pavementTypeGroup = (RadioGroup) findViewById(R.id.pavementTypeGroup);
+        pavementTypeGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                PavementType.Pavements pavement;
+
+                switch (checkedId) {
+                    case R.id.isAsphalt:
+                        pavement = PavementType.Pavements.asphalt;
+                        break;
+                    case R.id.isCobblestone:
+                        pavement = PavementType.Pavements.cobblestone;
+                        break;
+                    case R.id.isGravel:
+                        pavement = PavementType.Pavements.gravel;
+                        break;
+                    default:
+                        pavement = PavementType.Pavements.undefined;
+                }
+
+                pavementType.setPavementType(pavement);
+            }
+        });
+
+        //Testing - Offload
+        offloadBtn = (Button) findViewById(R.id.offloadBtn);
+        offloadBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                /*
+                boolean error = false;
+                String errorMessage = "";
+                try {
+                    offloadingManager.forceOffloading();
+                    error = false;
+                } catch (NothingToOffloadException | NoAdaptivePipelineValidatedException | OverearlyOffloadException e) {
+                    errorMessage = e.getMessage();
+                    error = true;
+                }
+
+                if (error)
+                    Toast.makeText(MainActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                */
+
+                offloadingManager.forceObserverReaction();
+            }
+        });
+
+        //Device State Mockup
+        mockupBattSeekBar   = (SeekBar) findViewById(R.id.mockupBattBar);
+        mockupBattText      = (TextView)findViewById(R.id.mockupBattText);
+
+        mockupBattText.setText(String.valueOf(mockupBattSeekBar.getProgress()) + "%");
+
+        mockupBattSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            private String parseProgress(int progress){
+                return String.valueOf(progress)+"%";
+            }
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                mockupBattText.setText(parseProgress(progress));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                int battLevel = seekBar.getProgress();
+                mockupBattText.setText(String.valueOf(battLevel) + "%");
+
+                offloadingManager.forceUpdateBatteryLevel(battLevel);
+
+            }
+        });
+
+        mockupNetBar = (SeekBar) findViewById(R.id.mockupNetBar);
+        mockupNetText= (TextView)findViewById(R.id.mockupNetText);
+        mockupNetBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            private String parseProgress(int progress) {
+                String netType;
+                switch (progress) {
+                    case 5:
+                        netType = "Wifi";
+                        break;
+                    case 4:
+                        netType = "4G";
+                        break;
+                    case 3:
+                        netType = "3G";
+                        break;
+                    case 2:
+                        netType = "2G";
+                        break;
+                    case 1:
+                        netType = "GPRS";
+                        break;
+                    default:
+                        netType = "n/a";
+                }
+
+                return netType;
+            }
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                mockupNetText.setText(parseProgress(seekBar.getProgress()));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                mockupNetText.setText(parseProgress(seekBar.getProgress()));
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                int net = seekBar.getProgress();
+
+                mockupNetText.setText(parseProgress(seekBar.getProgress()));
+
+                offloadingManager.forceUpdateNetworkType(net);
+            }
+        });
+    }
+
+
+
 }

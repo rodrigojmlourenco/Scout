@@ -5,11 +5,18 @@ package pt.ulisboa.tecnico.cycleourcity.scout.learning;
  */
 public class PavementType {
 
-    public static enum Pavements {
+    public enum Pavements {
         undefined,
         asphalt,
         gravel,
-        cobblestone
+        cobblestone,
+        //Pavement Types 2.0
+        AsphaltGood,
+        AsphaltBad,
+        CobblestoneGood,
+        CobblestoneBad,
+        GravelGood,
+        GravelBad
     }
 
     private Object lock = new Object();
@@ -36,6 +43,18 @@ public class PavementType {
                     return "cobblestone";
                 case gravel:
                     return "gravel";
+                case AsphaltGood:
+                    return "AsphaltGood";
+                case AsphaltBad:
+                    return "AsphaltBad";
+                case CobblestoneGood:
+                    return  "CobblestoneGood";
+                case CobblestoneBad:
+                    return "CobblestoneBad";
+                case GravelGood:
+                    return "GravelGood";
+                case GravelBad:
+                    return "GravelBad";
                 default:
                     return "undefined";
             }

@@ -1,9 +1,8 @@
 package pt.ulisboa.tecnico.cycleourcity.scout;
 
 import android.content.Context;
-import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,11 +18,9 @@ import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.device.ScoutPr
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.exceptions.InvalidRuleSetException;
 
 
-public class SettingsActivity extends ActionBarActivity implements SeekBar.OnSeekBarChangeListener {
+public class SettingsActivity extends ActionBarActivity {
 
     private Button clearDataBtn;
-    private SeekBar energySeekBar, dataSeekBar;
-    private TextView energyProgressText, dataProgressText;
     private RadioButton hasStageModel;
 
     int energyProgressValue, dataProgressValue;
@@ -72,26 +69,6 @@ public class SettingsActivity extends ActionBarActivity implements SeekBar.OnSee
                 MainActivity.ON_INITS_CHECKED = false;
             }
         });
-
-        energySeekBar   = (SeekBar) findViewById(R.id.energyWeightBar);
-        dataSeekBar     = (SeekBar) findViewById(R.id.dataWeightBar);
-
-        energyProgressText  = (TextView) findViewById(R.id.energyProgressText);
-        dataProgressText   = (TextView) findViewById(R.id.dataProgressText);
-
-        energySeekBar.setOnSeekBarChangeListener(this);
-        dataSeekBar.setOnSeekBarChangeListener(this);
-
-        //TODO
-        //energyProgressValue = (int) (offloadingManager.getEnergyUtilityWeight()*100);
-        //dataProgressValue   = (int) (offloadingManager.getDataUtilityWeight()*100);
-
-        energySeekBar.setProgress(energyProgressValue);
-        dataSeekBar.setProgress(dataProgressValue);
-
-        energyProgressText.setText(getWeightAsText(energyProgressValue));
-        dataProgressText.setText(getWeightAsText(dataProgressValue));
-
     }
 
     private String getWeightAsText(float weight){
@@ -119,42 +96,4 @@ public class SettingsActivity extends ActionBarActivity implements SeekBar.OnSee
 
         return super.onOptionsItemSelected(item);
     }
-
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
-    }
-
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
-
-    }
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
-
-        switch (seekBar.getId()){
-            case R.id.energyWeightBar:
-                energyProgressValue = seekBar.getProgress();
-                dataProgressValue = 100 - energyProgressValue;
-                break;
-            case R.id.dataWeightBar:
-                dataProgressValue = seekBar.getProgress();
-                energyProgressValue = 100 - dataProgressValue;
-                break;
-        }
-
-
-        energySeekBar.setProgress(energyProgressValue);
-        dataSeekBar.setProgress(dataProgressValue);
-
-        energyProgressText.setText(getWeightAsText(energyProgressValue));
-        dataProgressText.setText(getWeightAsText(dataProgressValue));
-
-        //offloadingManager.setTotalUtilityWeights((float)energyProgressValue / 100, (float)dataProgressValue / 100);
-    }
-
-
-
-
 }
