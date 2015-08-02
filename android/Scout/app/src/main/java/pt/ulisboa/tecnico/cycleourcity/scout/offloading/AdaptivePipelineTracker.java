@@ -44,6 +44,30 @@ public class AdaptivePipelineTracker {
     }
 
 
+    /**
+     * Computes the number of offloading operation that must be performed as to achieve
+     * the ideal configuration, i.e. the one that maximizes the total utility function.
+     * <br>
+     * Depending on the computed value three scenarios arise:<br>
+     *     <ul>
+     *         <li>i = 0: Nothing is to be done, has the current configuration is the ideal one.</li>
+     *         <li>i > 0: Offload as many stages as specified by the return.</li>
+     *         <li>i < 0: Retrieve as many stages as specified by the return.</li>
+     *     </ul>
+     * @return The number off stages that must be offloaded or retrieved.
+     */
+    public int computeIdealOffloadIterations(){
+        return currentConfig - computeIdealConfiguration();
+    }
+
+    /**
+     * Given a set of weights, which define the priority given to either the time or transmitted
+     * data metrics, this methods updates the total utility values for each possible configuration.
+
+     * @param timeWeight Priority given to execution the time metric
+     * @param mobileCostWeight Priority given to the mobile cost, a sub-set of the transmitted data metric.
+     * @param transmissionWeight Priority given to the transmitted data.
+     */
     public void updateWeights(float timeWeight, float mobileCostWeight, float transmissionWeight){
 
         this.timeWeight         = timeWeight;
@@ -53,17 +77,12 @@ public class AdaptivePipelineTracker {
         totalUtilityValues = computeConfigurationsTotalUtilities();
     }
 
-    public List<Stage> getCurrentConfiguration(){
-        return pipeline.getAdaptiveStages();
-    }
 
-    public List<Stage> getOffloadedStages(){
-        return offloadedStages;
-    }
-
-    public int computeIdealOffloadIterations(){
-        return currentConfig - computeIdealConfiguration();
-    }
+    /*
+     ************************************************
+     * Multi-Criteria Decision Theory Computations  *
+     ************************************************
+     */
 
     private int computeIdealConfiguration(){
         float bestUtility = Floats.max(totalUtilityValues);
@@ -130,14 +149,14 @@ public class AdaptivePipelineTracker {
         return totalUtilities;
     }
 
-    public AdaptivePipeline getPipeline(){return pipeline; }
-
 
     /*
      ********************************************
      * Pipeline Manipulation                    *
      ********************************************
      */
+
+    public AdaptivePipeline getPipeline(){return pipeline; }
 
     /**
      * Offloads the pipeline's tail stage

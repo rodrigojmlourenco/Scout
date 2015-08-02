@@ -34,9 +34,6 @@ public class SettingsActivity extends ActionBarActivity implements SeekBar.OnSee
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        //
-        checkExtras(getIntent());
-
         try {
             offloadingManager = AdaptiveOffloadingManager.getInstance(ScoutApplication.getContext());
         } catch (InvalidRuleSetException e) {
@@ -58,7 +55,16 @@ public class SettingsActivity extends ActionBarActivity implements SeekBar.OnSee
                         .clear()
                         .commit();
 
+                /*
+                getSharedPreferences(ScoutProfiling.DATA_PLAN_PREFS, Context.MODE_PRIVATE)
+                        .edit()
+                        .clear()
+                        .commit();
+                */
+
                 Toast.makeText(SettingsActivity.this, getString(R.string.cleared_data_settings), Toast.LENGTH_SHORT).show();
+
+                MainActivity.ON_INITS_CHECKED = false;
             }
         });
 
@@ -143,15 +149,7 @@ public class SettingsActivity extends ActionBarActivity implements SeekBar.OnSee
         //offloadingManager.setTotalUtilityWeights((float)energyProgressValue / 100, (float)dataProgressValue / 100);
     }
 
-    private void checkExtras(Intent intent){
-        if(intent.hasExtra(SettingsExtras.EXTRA_DATA_PLAN)){
-            DataPlanUpdateDialog dialog = new DataPlanUpdateDialog();
-            dialog.show(getFragmentManager(), "Data Plan");
-        }
 
-    }
 
-    static interface SettingsExtras {
-        public static final String EXTRA_DATA_PLAN = "data_plan";
-    }
+
 }

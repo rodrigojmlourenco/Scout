@@ -8,6 +8,9 @@ import com.ideaimpl.patterns.pipeline.PipelineContext;
 import com.ideaimpl.patterns.pipeline.Stage;
 
 import org.apache.commons.collections4.queue.CircularFifoQueue;
+import org.apache.commons.math3.stat.StatUtils;
+
+import java.util.Arrays;
 
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.SensorPipelineContext;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.pipelines.StageProfiler;
@@ -122,8 +125,25 @@ public class OffloadingWrapperStage implements Stage {
         return stage.getClass();
     }
 
+    public double getMedianRunningTime(){
+
+        double median;
+        Long[] times = new Long[StageProfiler.NUM_PROFILING_SAMPLES];
+        executionTimes.toArray(times);
+
+        Arrays.sort(times);
+
+        if (times.length % 2 == 0)
+            median = ((double)times[StageProfiler.NUM_PROFILING_SAMPLES/2] + (double)times[StageProfiler.NUM_PROFILING_SAMPLES/2 - 1])/2;
+        else
+            median = (double) times[StageProfiler.NUM_PROFILING_SAMPLES/2];
+
+        return median;
+    }
+
     @Deprecated
     public long getAverageRunningTime(){
+
 
         long total = 0;
 
@@ -131,6 +151,42 @@ public class OffloadingWrapperStage implements Stage {
             total += time;
 
         return total / executionTimes.size();
+    }
+
+    public double getMedianOutputtedDataSize(){
+        double median;
+        Long[] data = new Long[StageProfiler.NUM_PROFILING_SAMPLES];
+
+        for(int i=0; i < StageProfiler.NUM_PROFILING_SAMPLES; i++)
+            data[i] = dataSizes.get(i).getGeneratedDataSize();
+
+
+        Arrays.sort(data);
+
+        if (data.length % 2 == 0)
+            median = ((double)data[StageProfiler.NUM_PROFILING_SAMPLES/2] + (double)data[StageProfiler.NUM_PROFILING_SAMPLES/2 - 1])/2;
+        else
+            median = (double) data[StageProfiler.NUM_PROFILING_SAMPLES/2];
+
+        return median;
+    }
+
+    public double getMedianInputtedDataSize(){
+        double median;
+        Long[] data = new Long[StageProfiler.NUM_PROFILING_SAMPLES];
+
+        for(int i=0; i < StageProfiler.NUM_PROFILING_SAMPLES; i++)
+            data[i] = dataSizes.get(i).getInputDataSize();
+
+
+        Arrays.sort(data);
+
+        if (data.length % 2 == 0)
+            median = ((double)data[StageProfiler.NUM_PROFILING_SAMPLES/2] + (double)data[StageProfiler.NUM_PROFILING_SAMPLES/2 - 1])/2;
+        else
+            median = (double) data[StageProfiler.NUM_PROFILING_SAMPLES/2];
+
+        return median;
     }
 
     @Deprecated

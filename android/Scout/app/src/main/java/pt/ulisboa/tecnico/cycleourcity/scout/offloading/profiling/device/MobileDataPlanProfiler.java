@@ -17,6 +17,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import pt.ulisboa.tecnico.cycleourcity.scout.ScoutApplication;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.exceptions.InvalidMobilePlanStateException;
 
 /**
  * Created by rodrigo.jm.lourenco on 28/07/2015.
@@ -45,11 +46,7 @@ public class MobileDataPlanProfiler extends BroadcastReceiver{
     private long
             dataPlan,           //IMMUTABLE
             limitDataUsage,         //IMMUTABLE
-            preShutdownDownloaded,
-            preShutdownUploaded,
             preShutdownUsage,
-            postShutdownDownloaded,
-            postShutdownUploaded,
             postShutdownUsage,
             pseudoRealDataUsage;
 
@@ -95,18 +92,13 @@ public class MobileDataPlanProfiler extends BroadcastReceiver{
 
         fetchState();
         updateState();
-        storeState();
+        //storeState();
 
     }
 
 
-    public void updateState(){
-
-        postShutdownDownloaded = TrafficStats.getMobileRxBytes();
-        postShutdownUploaded = TrafficStats.getMobileTxBytes();
-
-        postShutdownUsage = postShutdownDownloaded + postShutdownUploaded;
-
+    private void updateState(){
+        postShutdownUsage = TrafficStats.getMobileRxBytes() + TrafficStats.getMobileTxBytes();
         pseudoRealDataUsage = preShutdownUsage + postShutdownUsage;
     }
 
@@ -158,15 +150,8 @@ public class MobileDataPlanProfiler extends BroadcastReceiver{
         //Pseudo-Real Total data consumed
         state.addProperty(DataPlanStateFields.CONSUMED_DATA, pseudoRealDataUsage);
 
-        //Pre-Shutdown
         state.addProperty(DataPlanStateFields.PRE_USAGE, preShutdownUsage);
-        state.addProperty(DataPlanStateFields.PRE_UPLOAD, preShutdownUploaded);
-        state.addProperty(DataPlanStateFields.PRE_DOWNLOAD, preShutdownDownloaded);
-
-        //Post-Shutdown
         state.addProperty(DataPlanStateFields.POST_USAGE, preShutdownUsage);
-        state.addProperty(DataPlanStateFields.POST_UPLOAD, postShutdownUploaded);
-        state.addProperty(DataPlanStateFields.POST_DOWNLOAD, postShutdownDownloaded);
 
         return state;
     }
@@ -191,9 +176,9 @@ public class MobileDataPlanProfiler extends BroadcastReceiver{
 
     private void fetchState() {
 
-        String stateAsString = profilingPrefs.getString(ScoutProfiling.DATA_PLAN_PREFS, null);
+        String stateAsString = profilingPrefs.getString(ScoutProfiling.DATA_PLAN_PREFS, "");
 
-        if(stateAsString  == null) {
+        if(stateAsString.isEmpty() || stateAsString.equals("null")) {
             hasState = false;
             return;
         }
@@ -202,24 +187,21 @@ public class MobileDataPlanProfiler extends BroadcastReceiver{
         JsonObject state = (JsonObject) parser.parse(stateAsString);
 
         //Time Since Shutdown
-        lastUpdate          = state.get(DataPlanStateFields.TIME).getAsLong();
+        lastUpdate = state.get(DataPlanStateFields.TIME).getAsLong();
 
         //Immutable Values
         dataPlan = state.get(DataPlanStateFields.DATA_PLAN).getAsLong();
-        limitDataUsage      = state.get(DataPlanStateFields.DATA_LIMIT).getAsLong();
+        limitDataUsage = state.get(DataPlanStateFields.DATA_LIMIT).getAsLong();
 
         //Pre-Shutdown
-        preShutdownUploaded     = state.get(DataPlanStateFields.PRE_UPLOAD).getAsLong();
-        preShutdownDownloaded   = state.get(DataPlanStateFields.PRE_DOWNLOAD).getAsLong();
-        preShutdownUsage        = state.get(DataPlanStateFields.PRE_USAGE).getAsLong();
+        preShutdownUsage = state.get(DataPlanStateFields.PRE_USAGE).getAsLong();
 
         //Post-Shutdown
-        postShutdownUsage       = state.get(DataPlanStateFields.POST_USAGE).getAsLong();
-        postShutdownUploaded    = state.get(DataPlanStateFields.POST_UPLOAD).getAsLong();
-        postShutdownDownloaded  = state.get(DataPlanStateFields.POST_DOWNLOAD).getAsLong();
+        postShutdownUsage = state.get(DataPlanStateFields.POST_USAGE).getAsLong();
 
         //Pseudo-Real Total
-        pseudoRealDataUsage     = state.get(DataPlanStateFields.CONSUMED_DATA).getAsLong();
+        pseudoRealDataUsage = state.get(DataPlanStateFields.CONSUMED_DATA).getAsLong();
+
 
         hasState = true;
     }
@@ -247,8 +229,6 @@ public class MobileDataPlanProfiler extends BroadcastReceiver{
 
             lastUpdate              = 0;
             preShutdownUsage        = pseudoRealDataUsage;
-            preShutdownUploaded     = 0;
-            preShutdownDownloaded   = 0;
 
             storeState();
 

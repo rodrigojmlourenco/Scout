@@ -47,6 +47,7 @@ public class MainActivity extends ActionBarActivity {
 
     private final String LOG_TAG = "MainActivity";
 
+    public static boolean ON_INITS_CHECKED = false;
 
     //UI
     private Button startSession, stopSession, saveSession;
@@ -87,6 +88,8 @@ public class MainActivity extends ActionBarActivity {
     //END TESTING - SyncAdapters
 
     private ServiceConnection funfManagerConn = new ServiceConnection() {
+
+
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
 
@@ -370,6 +373,7 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        onInitChecks();
     }
 
     @Override
@@ -456,22 +460,26 @@ public class MainActivity extends ActionBarActivity {
     private boolean hasDataPlanSettings(){
         SharedPreferences profPrefs = getSharedPreferences(ScoutProfiling.PREFERENCES,Context.MODE_PRIVATE);
 
-        if(profPrefs.getString(ScoutProfiling.DATA_PLAN_PREFS,null)!=null)
-            return true;
-        else
+        String dataPlanState = profPrefs.getString(ScoutProfiling.DATA_PLAN_PREFS,null);
+
+        if(dataPlanState == null || dataPlanState.equals("null") || dataPlanState.isEmpty())
             return false;
+        else
+            return true;
     }
 
 
     private void onInitChecks(){
 
+        if(ON_INITS_CHECKED) return;
+
         boolean hasDataPlan = hasDataPlanSettings();
 
         Intent settingsIntent = new Intent(this, SettingsActivity.class);
-        if(!hasDataPlan) settingsIntent.putExtra(SettingsActivity.SettingsExtras.EXTRA_DATA_PLAN, true);
-
-        if(!hasDataPlan)
-            startActivity(settingsIntent);
+        if(!hasDataPlan) {
+            DataPlanUpdateDialog dialog = new DataPlanUpdateDialog();
+            dialog.show(getFragmentManager(), "Data Plan");
+        }
 
         //Check if calibrated
         boolean isCalibrated = true;
@@ -487,5 +495,7 @@ public class MainActivity extends ActionBarActivity {
             Intent intent = new Intent(this, CalibrateActivity.class);
             startActivity(intent);
         }
+
+        ON_INITS_CHECKED = true;
     }
 }

@@ -104,8 +104,6 @@ public class PartitionEngine {
                     enforcedRule.getTransmissionWeight());
     }
 
-
-
     /**
      * When executed this method trims each validated pipeline as to
      * employ the optimal configuration as enforced by the current Rule.
@@ -145,5 +143,10 @@ public class PartitionEngine {
             } catch (NothingToRetrieveException e) {
                 e.printStackTrace();
             }
+    }
+
+    protected void teardown(){
+        validatedPipelines.clear();
+        offloadTracker.teardown();
     }
 }

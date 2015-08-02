@@ -100,5 +100,7 @@ public class OffloadTracker {
             return configuration;
     }
 
-
+    protected void teardown(){
+        missingStages.clear();
+    }
 }

@@ -113,13 +113,9 @@ public class DataPlanUpdateDialog extends DialogFragment{
         state.addProperty(MobileDataPlanProfiler.DataPlanStateFields.DATA_LIMIT, limit);
 
         //Pre-Shutdown
-        state.addProperty(MobileDataPlanProfiler.DataPlanStateFields.PRE_DOWNLOAD, 0);
-        state.addProperty(MobileDataPlanProfiler.DataPlanStateFields.PRE_UPLOAD, 0);
         state.addProperty(MobileDataPlanProfiler.DataPlanStateFields.PRE_USAGE, used);
 
         //Post-Shutdown
-        state.addProperty(MobileDataPlanProfiler.DataPlanStateFields.POST_DOWNLOAD, 0);
-        state.addProperty(MobileDataPlanProfiler.DataPlanStateFields.POST_UPLOAD, 0);
         state.addProperty(MobileDataPlanProfiler.DataPlanStateFields.POST_USAGE, 0);
 
         //Pseudo-Real Consumed Data

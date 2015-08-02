@@ -6,6 +6,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Vibrator;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -239,6 +240,19 @@ public class CalibrateActivity extends ActionBarActivity
 
                     startButton.setText(getString(R.string.start_calibration));
                     Toast.makeText(CalibrateActivity.this, getString(R.string.finished_calibration), Toast.LENGTH_SHORT).show();
+
+                    Handler handler;
+                    Runnable delayRunnable;
+
+                    handler = new Handler();
+                    delayRunnable = new Runnable() {
+
+                        @Override
+                        public void run() {
+                            CalibrateActivity.this.finish();
+                        }
+                    };
+                    handler.postDelayed(delayRunnable, Toast.LENGTH_SHORT);
 
                 }else{
 

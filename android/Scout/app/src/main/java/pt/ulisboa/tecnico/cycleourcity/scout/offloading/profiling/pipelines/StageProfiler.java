@@ -28,7 +28,7 @@ public class StageProfiler {
     public final static String LOG_TAG ="StageProfiling";
 
     //Profiling configuration parameters
-    public static final Integer NUM_PROFILING_SAMPLES = 5;//512+1; //Make it odd for median
+    public static final Integer NUM_PROFILING_SAMPLES = 512+1; //Make it odd for median
 
     //Singleton
     private static StageProfiler STAGE_PROFILER = null;

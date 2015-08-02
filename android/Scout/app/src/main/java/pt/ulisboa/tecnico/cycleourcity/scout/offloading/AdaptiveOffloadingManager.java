@@ -59,6 +59,7 @@ public class AdaptiveOffloadingManager implements Observer{
     }
 
     public void onDestroy(){
+
         deviceState.teardown();
     }
 
@@ -67,6 +68,8 @@ public class AdaptiveOffloadingManager implements Observer{
      * Partition Engine                                                     *
      ************************************************************************
      */
+    public void resetPartitionEngine() { partitionEngine.teardown(); }
+
     public void validatePipeline(AdaptivePipeline pipeline) throws AdaptiveOffloadingException {
         partitionEngine.validatePipeline(pipeline);
     }

@@ -34,7 +34,7 @@ public class ScoutPipeline extends BasicPipeline {
     private final static String LOG_TAG = "ScoutPipeline";
 
 
-    public final static int PIPELINE_VERSION = 0;
+    public final static int PIPELINE_VERSION = 1;
 
     private String samplingTag = "scout";
 
@@ -202,6 +202,7 @@ public class ScoutPipeline extends BasicPipeline {
 
     @Override
     public void onDestroy() {
+        offloadingManager.resetPartitionEngine();
         mPipeline.stopSensingSession();
         wekaStorage.teardown();
         evaluationStorage.teardown();
