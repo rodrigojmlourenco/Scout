@@ -14,6 +14,24 @@ CycleOurCity goes Mobile - Scout
 
 <img src="./img/screenshot_plotting.png"  width="300" height="auto"/>
 
+
+----------
+##TODO
+- [x] Migrar package `MobileSensing` para Java nativo
+   - [x] Criar simulador, que usando as funcionalidades de `MobileSensing`, replica o funcionamento da aplicação
+   - [x] Testar simulador
+   - [ ] Melhorar a lib `MobileSensing` ao nível do *adaptive offloading*.
+- [x] Implementar arquitectura cliente-servidor
+   - [x] Criar web-service para receber as amostras sensoriais
+   - [ ] Implementar componente na aplicação Scout, responsável pelo envio das amostras
+   - [x] Lançar web-service **LANÇADO NO CLOUD SERVICE HEROKU**
+   - [ ] Modificar o web-service de forma a que este lide com objectos JSON (actualmente este está a lidar apenas com Strings)
+- [ ] Implementar o componente `AdaptiveOffloadinManager`
+   - [ ] Estudar como realizar a monitorização dos recursos do dispositivo 
+
+----------
+
+
 ## Index
 * [Mobile Sensing](#mobile-sensing)
 
@@ -27,7 +45,7 @@ CycleOurCity goes Mobile - Scout
 
 ## Mobile Sensing
 
-The <a href="./javadoc/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/MobileSensingPipeline.html">`MobileSensingPipeline`</a> is one of Scout's core components. and is responsible for connection the sensor captured data, gathered Funf's sensor probes, and the respective sensor pre-processing pipelines. This component is designed as a singleton, meaning that at each moment there is only a single instance in the application's scope, which is accessible to every Scout component.
+The <a href="./ScoutApp/javadoc/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/MobileSensingPipeline.html">`MobileSensingPipeline`</a> is one of Scout's core components. and is responsible for connection the sensor captured data, gathered Funf's sensor probes, and the respective sensor pre-processing pipelines. This component is designed as a singleton, meaning that at each moment there is only a single instance in the application's scope, which is accessible to every Scout component.
 
 The `MobileSensingPipeline` is designed to run a fixed rate, every few seconds (currently every 5s), once a sensing session has been initiated. At each iteration the `MobileSensingPipeline` dispatches all enqueue sensor samples to each sensor specific pipeline, in order to process thoses samples. Each sensor pipeline is executed asynchronously, as to avoid compromising the user's experience.
 
@@ -39,7 +57,7 @@ Fig. 1 - `MobileSensingPipeline` architectural overview.
 
 ### LocationPipeline
 
-The <a href="./javadoc/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/sensorpipeline/location/LocationPipeline.html">`LocationPipeline`</a> is a sensor specific pipeline responsible for processing location samples.
+The <a href="./ScoutApp/javadoc/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/sensorpipeline/location/LocationPipeline.html">`LocationPipeline`</a> is a sensor specific pipeline responsible for processing location samples.
 
 This pipeline has two main purposes:
 
