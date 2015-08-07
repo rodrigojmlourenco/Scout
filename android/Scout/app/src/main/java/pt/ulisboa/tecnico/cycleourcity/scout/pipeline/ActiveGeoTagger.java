@@ -25,6 +25,7 @@ import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.locat
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.stages.CommonStages;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.state.LocationState;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.state.data.Location;
+import pt.ulisboa.tecnico.cycleourcity.scout.storage.RouteStorage;
 
 /**
  * Created by rodrigo.jm.lourenco on 25/06/2015.
@@ -110,8 +111,10 @@ public class ActiveGeoTagger {
         PipelineConfiguration locationConfiguration = new PipelineConfiguration();
         locationConfiguration.addStage(new LocationStages.SortLocationsStage());
         locationConfiguration.addStage(new LocationStages.TrimStage());
+        locationConfiguration.addStage(new RouteStorage.RouteStorageStage("noisyGPS", RouteStorage.GPS_BASED_ALTITUDE));
         locationConfiguration.addStage(new LocationStages.AdmissionControlStage());
         locationConfiguration.addStage(new LocationStages.UpdateGeoTaggerStage(this.geoHistory));
+        locationConfiguration.addStage(new RouteStorage.RouteStorageStage("parsedGPS", RouteStorage.GPS_BASED_ALTITUDE));
         return locationConfiguration;
     }
 

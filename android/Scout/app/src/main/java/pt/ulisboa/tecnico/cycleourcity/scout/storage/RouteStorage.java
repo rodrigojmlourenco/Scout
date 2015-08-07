@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.cycleourcity.scout.storage;
 
+import android.util.Log;
+
 import com.google.gson.JsonObject;
 import com.ideaimpl.patterns.pipeline.PipelineContext;
 import com.ideaimpl.patterns.pipeline.Stage;
@@ -12,19 +14,18 @@ import org.alternativevision.gpx.beans.Waypoint;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils;
-import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exceptions.NoSuchDataFieldException;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.SensorPipelineContext;
-import pt.ulisboa.tecnico.cycleourcity.scout.storage.exceptions.GPXBuilderException;
 
 /**
  * @version 1.0
@@ -35,30 +36,34 @@ import pt.ulisboa.tecnico.cycleourcity.scout.storage.exceptions.GPXBuilderExcept
  */
 public class RouteStorage {
 
+    //Logging
+    private final String LOG_TAG = this.getClass().getSimpleName();
+
     private static RouteStorage GPX_PARSER = new RouteStorage();
 
 
     public final static String BASE_DIR_NAME = "/routes";
+    private static File BASE_DIR;
     public final static String FILE_EXTENSION = ".gpx";
 
-    public final static int GPS_BASED_LOCATION      = 0;
-    public final static int PRESSURE_BASED_LOCATION = 1;
+    public final static int GPS_BASED_ALTITUDE = 0;
+    public final static int PRESSURE_BASED_ALTITUDE = 1;
 
     //AlternativeVision GPX Parser
     private GPXParser parser = new GPXParser();
 
     private HashMap<String, File> routeFiles;
-    private HashMap<String, ArrayList<Waypoint>> tracks;
+    private ConcurrentHashMap<String, ArrayList<Waypoint>> tracks;
 
     //
 
 
     private RouteStorage(){
-        this.tracks = new HashMap<>();
+        this.tracks = new ConcurrentHashMap<>();
 
         routeFiles = new HashMap<>();
 
-        File BASE_DIR = new File(ScoutStorageManager.getApplicationFolder().toString()+"/"+BASE_DIR_NAME);
+        BASE_DIR = new File(ScoutStorageManager.getApplicationFolder().toString()+"/"+BASE_DIR_NAME);
         if(!BASE_DIR.exists()) BASE_DIR.mkdirs();
     }
 
@@ -72,7 +77,17 @@ public class RouteStorage {
         return tracks.get(routeID);
     }
 
+    private ArrayList<Waypoint> removeTrackByTypeID(String routeID){
+        if(tracks.containsKey(routeID))
+            return tracks.remove(routeID);
+        else
+            return null;
+    }
+
     private Waypoint generatePressureBasedWaypoint(JsonObject pressureSample){
+
+
+
         Waypoint waypoint = new Waypoint();
 
         if(!pressureSample.has(SensingUtils.LocationKeys.LOCATION)
@@ -83,7 +98,7 @@ public class RouteStorage {
 
         try {
             waypoint.setLatitude(location.get(SensingUtils.LocationKeys.LATITUDE).getAsDouble());
-            waypoint.setLongitude(location.get(SensingUtils.LocationKeys.LATITUDE).getAsDouble());
+            waypoint.setLongitude(location.get(SensingUtils.LocationKeys.LONGITUDE).getAsDouble());
             waypoint.setElevation(pressureSample.get(SensingUtils.PressureKeys.ALTITUDE).getAsDouble());
             waypoint.setTime(new Date());
         }catch (ClassCastException | NullPointerException e){
@@ -102,8 +117,8 @@ public class RouteStorage {
 
         try {
             waypoint.setLatitude(locationSample.get(SensingUtils.LocationKeys.LATITUDE).getAsDouble());
-            waypoint.setLongitude(locationSample.get(SensingUtils.LocationKeys.LATITUDE).getAsDouble());
-            waypoint.setElevation(locationSample.get(SensingUtils.PressureKeys.ALTITUDE).getAsDouble());
+            waypoint.setLongitude(locationSample.get(SensingUtils.LocationKeys.LONGITUDE).getAsDouble());
+            waypoint.setElevation(locationSample.get(SensingUtils.LocationKeys.ALTITUDE).getAsDouble());
             waypoint.setTime(new Date());
         }catch (ClassCastException | NullPointerException e){
             e.printStackTrace();
@@ -116,14 +131,16 @@ public class RouteStorage {
     //TODO: refractor all is incorrect
     public void addTrackPoint(String routeID, Integer type, JsonObject location){
 
+        if(location==null) return;
+
         Waypoint waypoint = null;
         ArrayList<Waypoint> track = retrieveTrackByTypeId(routeID);
 
         switch (type){
-            case GPS_BASED_LOCATION:
+            case PRESSURE_BASED_ALTITUDE:
                 waypoint = generatePressureBasedWaypoint(location);
                 break;
-            case PRESSURE_BASED_LOCATION:
+            case GPS_BASED_ALTITUDE:
                 waypoint = generateGPSBasedLocation(location);
                 break;
         }
@@ -141,21 +158,26 @@ public class RouteStorage {
 
         if(tracks.isEmpty()) return;
 
-        for(String routeID: tracks.keySet())
-            storeGPXTrack(routeID);
+        try {
+            for (String routeID : tracks.keySet())
+                storeGPXTrack(routeID);
+        }catch (Exception e){
+            Log.e(LOG_TAG, "["+e.getClass().getSimpleName()+"]:"+e.getMessage());
+        }
 
-        tracks.clear();
     }
 
-    //TODO: make async
-    public void storeGPXTrack(String routeID){
+    private void storeGPXTrack(final String routeID){
 
-        ArrayList<Waypoint> builtTrack = retrieveTrackByTypeId(routeID);
+        final ArrayList<Waypoint> builtTrack = removeTrackByTypeID(routeID);
 
-        if(builtTrack.isEmpty()) return;
+        if(builtTrack.isEmpty()) {
+            Log.d(LOG_TAG, "Skipping "+routeID+" no waypoints found.");
+            return;
+        }else
+            Log.d(LOG_TAG, "Saving "+routeID+" route, with "+builtTrack.size()+" waypoints.");
 
-
-        File gpxFile = new File(BASE_DIR_NAME, generateRouteFilename(routeID));
+        File gpxFile = new File(BASE_DIR, generateRouteFilename(routeID));
 
         GPX gpx = new GPX();
         Track track = new Track();
@@ -168,17 +190,29 @@ public class RouteStorage {
             parser.writeGPX(gpx, out);
             out.close();
         } catch (FileNotFoundException e) {
+            Log.w(LOG_TAG, routeID+"route storage failed, because "+e.getMessage());
             e.printStackTrace();
         } catch (ParserConfigurationException e) {
+            Log.w(LOG_TAG, routeID+"route storage failed, because "+e.getMessage());
             e.printStackTrace();
         } catch (TransformerException e) {
+            Log.w(LOG_TAG, routeID+"route storage failed, because "+e.getMessage());
             e.printStackTrace();
         } catch (IOException e) {
+            Log.w(LOG_TAG, routeID+"route storage failed, because "+e.getMessage());
             e.printStackTrace();
         }
+
+        /*
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+            }
+        }).run();
+        */
     }
 
-    public static abstract class RouteStorageStage implements Stage {
+    public static class RouteStorageStage implements Stage {
 
         protected int type;
         protected String routeID;
@@ -193,6 +227,8 @@ public class RouteStorage {
         public void execute(PipelineContext pipelineContext) {
             SensorPipelineContext ctx = (SensorPipelineContext)pipelineContext;
             JsonObject[] input = ctx.getInput();
+
+            if(input == null) return;
 
             for(JsonObject sample : input){
                 routeStorage.addTrackPoint(routeID, type, sample);

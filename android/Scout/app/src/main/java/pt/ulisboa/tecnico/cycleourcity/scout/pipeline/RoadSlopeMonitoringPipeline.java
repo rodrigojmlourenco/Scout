@@ -16,6 +16,7 @@ import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.SensorPipeli
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.SensorProcessingPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.stages.CommonStages;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.EvaluationSupportStorage;
+import pt.ulisboa.tecnico.cycleourcity.scout.storage.RouteStorage;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.ScoutStorageManager;
 
 /**
@@ -111,6 +112,7 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
         configuration.addStage(new RoadSlopeMonitoringStages.DeriveAltitudeStage());
         configuration.addStage(new RoadSlopeMonitoringStages.DeriveSlopeStage());
         if(storeInfo) configuration.addStage(new RoadSlopeMonitoringStages.StoreFeatureVectorStage());
+        configuration.addStage(new RouteStorage.RouteStorageStage("barometric", RouteStorage.PRESSURE_BASED_ALTITUDE));
 
         configuration.addFinalStage(new RoadSlopeMonitoringStages.UpdateInnerStateStage());
         configuration.addFinalStage(new CommonStages.FeatureStorageStage(storage));

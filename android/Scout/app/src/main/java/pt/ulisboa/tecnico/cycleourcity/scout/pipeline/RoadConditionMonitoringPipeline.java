@@ -117,7 +117,7 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
 
         configuration.addStage(new RoadConditionMonitoringStages.OverkillZFeatureExtractionStage());//LEARNING
         configuration.addStage(new RoadConditionMonitoringStages.TagForLearningStage());            //LEARNING
-        configuration.addStage(new RoadConditionMonitoringStages.StoreFeatureVectorStage());
+        configuration.addStage(new RoadConditionMonitoringStages.StoreWekaTrainingSampleStage());
 
         configuration.addFinalStage(new CommonStages.FeatureStorageStage(storage));
         configuration.addFinalStage(new RoadConditionMonitoringStages.FinalizeStage());
@@ -478,12 +478,13 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
             }
         }
 
-        public class StoreFeatureVectorStage implements Stage {
+        public class StoreWekaTrainingSampleStage implements Stage {
 
             private LearningSupportStorage wekaStorage = LearningSupportStorage.getInstance();
 
             @Override
             public void execute(PipelineContext pipelineContext) {
+
                 SensorPipelineContext ctx = (SensorPipelineContext) pipelineContext;
                 JsonObject[] input = ctx.getInput();
 

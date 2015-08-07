@@ -104,8 +104,9 @@ public class EvaluationSupportStorage {
                 writer = new FileWriter(testFile);
 
                 if (isComplex)
-                    writer.write(printComplexPressureHeader(printAccelerometerHeader(testID)));
-                else writer.write(printSimplePressureHeader(testID));
+                    writer.write(printComplexPressureHeader(testID));
+                else
+                    writer.write(printSimplePressureHeader(testID));
 
                 writer.close();
             }

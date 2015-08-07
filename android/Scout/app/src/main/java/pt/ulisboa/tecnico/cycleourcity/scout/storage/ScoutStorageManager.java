@@ -36,6 +36,9 @@ public class ScoutStorageManager implements StorageManager{
     //Logging
     private ScoutLogger logger = ScoutLogger.getInstance();
 
+    //GPX Routes
+    private RouteStorage routeStorage = RouteStorage.getInstance();
+
     private boolean empty = true;
 
     private NameValueDatabaseHelper dbHelper;
@@ -96,6 +99,8 @@ public class ScoutStorageManager implements StorageManager{
 
     @Override
     public void archive(final String tag) throws NothingToArchiveException{
+
+        routeStorage.storeAllGPXTracks();
 
         if(empty) throw new NothingToArchiveException();
 
