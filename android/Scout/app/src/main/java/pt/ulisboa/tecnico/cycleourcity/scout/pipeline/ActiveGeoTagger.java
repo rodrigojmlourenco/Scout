@@ -10,15 +10,17 @@ import com.google.gson.JsonObject;
 import com.ideaimpl.patterns.pipeline.PipelineContext;
 import com.ideaimpl.patterns.pipeline.Stage;
 
+import org.apache.commons.collections4.queue.CircularFifoQueue;
+
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedList;
-import java.util.Queue;
 
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils.RotationVectorKeys;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.location.LocationUtils;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.PipelineConfiguration;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.SensorPipelineContext;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.location.LocationSensorPipeline;
@@ -81,26 +83,6 @@ public class ActiveGeoTagger {
 
         new Thread(locationPipeline).start();
         new Thread(rotationVectorPipeline).start();
-        /*
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-                locationPipeline.run();
-                rotationVectorPipeline.run();
-
-                JsonObject[] locations = locationPipeline.consumeExtractedFeatures();
-                JsonObject[] rotations = rotationVectorPipeline.consumeExtractedFeatures();
-
-                Log.d(LOG_TAG, "Locations "+locations.length);
-                Log.d(LOG_TAG, "Rotations "+rotations.length);
-
-
-
-            }
-        }).start();
-        */
-
     }
 
     public void pushOrientation(JsonObject orientationSample){
@@ -111,6 +93,7 @@ public class ActiveGeoTagger {
         PipelineConfiguration locationConfiguration = new PipelineConfiguration();
         locationConfiguration.addStage(new LocationStages.SortLocationsStage());
         locationConfiguration.addStage(new LocationStages.TrimStage());
+        locationConfiguration.addStage(new LocationStages.CheckMovementStage());
         locationConfiguration.addStage(new RouteStorage.RouteStorageStage("noisyGPS", RouteStorage.GPS_BASED_ALTITUDE));
         locationConfiguration.addStage(new LocationStages.AdmissionControlStage());
         locationConfiguration.addStage(new LocationStages.UpdateGeoTaggerStage(this.geoHistory));
@@ -161,12 +144,12 @@ public class ActiveGeoTagger {
         //Sync
         private final Object lock = new Object();
 
-        private Queue<JsonObject> geoTags;
-        private Queue<JsonObject> rotationTags;
+        private CircularFifoQueue<JsonObject> geoTags;
+        private CircularFifoQueue<JsonObject> rotationTags;
 
         protected History(){
-            geoTags = new LinkedList();
-            rotationTags = new LinkedList<>();
+            geoTags = new CircularFifoQueue<>(5);
+            rotationTags = new CircularFifoQueue<>(5);
         }
 
         public boolean isEmpty(){
@@ -269,6 +252,38 @@ public class ActiveGeoTagger {
 
                 output[0] = trimLocationSample(input[0]);
                 ctx.setInput(output);
+            }
+        }
+
+        class CheckMovementStage implements Stage {
+
+            public void addTravelledDistance(JsonObject baseLocation, JsonObject location){
+                double  speed   = location.get(SensingUtils.LocationKeys.SPEED).getAsDouble(),
+                        fromLat = baseLocation.get(SensingUtils.LocationKeys.LATITUDE).getAsDouble(),
+                        fromLon = baseLocation.get(SensingUtils.LocationKeys.LONGITUDE).getAsDouble(),
+                        toLat   = location.get(SensingUtils.LocationKeys.LATITUDE).getAsDouble(),
+                        toLon   = location.get(SensingUtils.LocationKeys.LONGITUDE).getAsDouble(),
+                        distance= LocationUtils.calculateDistance(fromLat, fromLon, toLat, toLon);
+
+                boolean isStationary = LocationUtils.isStationary(distance, speed);
+
+                //location.addProperty(SensingUtils.LocationKeys.TRAVELLED_DISTANCE, distance);
+                location.addProperty(SensingUtils.LocationKeys.IS_STATIONARY, isStationary);
+
+            }
+
+            @Override
+            public void execute(PipelineContext pipelineContext) {
+                SensorPipelineContext ctx = (SensorPipelineContext) pipelineContext;
+                JsonObject[] input = ctx.getInput();
+
+                if(input == null || input.length < 2) return;
+
+                JsonObject baseLocation = input[0];
+                for(int i=1; i < input.length; i++)
+                    addTravelledDistance(baseLocation, input[i]);
+
+
             }
         }
 

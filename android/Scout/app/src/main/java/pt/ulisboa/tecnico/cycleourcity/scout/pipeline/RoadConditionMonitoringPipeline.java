@@ -150,12 +150,19 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
         public static class ValidationStage implements Stage {
 
             private boolean validSample(JsonObject sample){
-                return sample.has(SensingUtils.MotionKeys.LOCATION) &&
+                boolean valid = sample.has(SensingUtils.MotionKeys.LOCATION) &&
                         ! (sample.get(SensingUtils.MotionKeys.LOCATION) instanceof JsonNull) &&
                         sample.has(SensingUtils.MotionKeys.ROTATION) &&
                         ! (sample.get(SensingUtils.MotionKeys.ROTATION) instanceof JsonNull) &&
                         sample.has(SensingUtils.MotionKeys.CALIBRATION) &&
                         ! (sample.get(SensingUtils.MotionKeys.CALIBRATION) instanceof JsonNull);
+
+                if(valid){ //Invalidate if stationary
+                    JsonObject location = (JsonObject) sample.get(SensingUtils.LocationKeys.LOCATION);
+                    return location.has(SensingUtils.LocationKeys.IS_STATIONARY) &&
+                            !location.get(SensingUtils.LocationKeys.IS_STATIONARY).getAsBoolean();
+                }else
+                    return false;
             }
 
             @Override
@@ -343,9 +350,9 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
                         rms;                //Root Mean Squares
 
                 int zeroCrossings,
-                    meanCrossings,
-                    medianCrossings,
-                    rangeCrossings;
+                        meanCrossings,
+                        medianCrossings,
+                        rangeCrossings;
 
 
                 numSamples = values.length;

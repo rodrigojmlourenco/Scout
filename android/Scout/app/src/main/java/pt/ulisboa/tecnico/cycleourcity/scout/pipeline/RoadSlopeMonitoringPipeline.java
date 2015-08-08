@@ -140,15 +140,27 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
          */
         public class ValidationStage implements Stage {
 
+            public boolean isValid(JsonObject sample){
+                boolean valid = sample.has(SensingUtils.LocationKeys.LOCATION) &&
+                        sample.get(SensingUtils.LocationKeys.LOCATION) instanceof JsonObject;
+
+                if(valid){ //Invalidate if stationary
+                    JsonObject location = (JsonObject) sample.get(SensingUtils.LocationKeys.LOCATION);
+                    return  location.has(SensingUtils.LocationKeys.IS_STATIONARY) &&
+                            !location.get(SensingUtils.LocationKeys.IS_STATIONARY).getAsBoolean();
+                }else
+                    return false;
+            }
+
             @Override
             public void execute(PipelineContext pipelineContext) {
                 SensorPipelineContext ctx = (SensorPipelineContext) pipelineContext;
                 JsonObject[] input = ctx.getInput();
 
+                JsonObject location;
                 List<JsonObject> validSamples = new ArrayList<>();
                 for(JsonObject sample : input){
-                    if( sample.has(SensingUtils.LocationKeys.LOCATION) &&
-                            sample.get(SensingUtils.LocationKeys.LOCATION) instanceof JsonObject)
+                    if(isValid(sample))
                         validSamples.add(sample);
                 }
 

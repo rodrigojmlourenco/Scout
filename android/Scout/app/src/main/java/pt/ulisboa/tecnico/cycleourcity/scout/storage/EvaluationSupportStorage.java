@@ -164,6 +164,8 @@ public class EvaluationSupportStorage {
 
             } catch (IOException e) {
                 e.printStackTrace();
+            } catch (NullPointerException e){
+                registerNewAccelerometerTest(testID);
             }
         }
     }
@@ -180,6 +182,8 @@ public class EvaluationSupportStorage {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (NullPointerException e){
+            registerNewPressureTest(testID, false);
         }
     }
 
@@ -197,6 +201,8 @@ public class EvaluationSupportStorage {
 
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (NullPointerException e){
+            registerNewPressureTest(testID, true);
         }
     }
 
