@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.cycleourcity.scout.learning;
+package pt.ulisboa.tecnico.cycleourcity.scout.classification;
 
 /**
  * Created by rodrigo.jm.lourenco on 15/07/2015.
@@ -35,6 +35,12 @@ public class PavementType {
     }
 
     public String getPavementType(){
+        synchronized (lock){
+            return String.valueOf(pavementType);
+        }
+    }
+
+    public String getPavementTypeAsString(){
         synchronized (lock){
             switch (pavementType){
                 case asphalt:

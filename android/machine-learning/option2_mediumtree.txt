@@ -1,0 +1,111 @@
+=== Run information ===
+
+Scheme:weka.classifiers.trees.J48 -C 0.25 -M 2
+Relation:     pavement-weka.filters.unsupervised.attribute.Remove-R2,9,11-14-weka.filters.unsupervised.attribute.Remove-R1
+Instances:    1978
+Attributes:   8
+              variance
+              stdDev
+              range
+              max
+              min
+              rms
+              meanCrossings
+              class
+Test mode:evaluate on training data
+
+=== Classifier model (full training set) ===
+
+J48 pruned tree
+------------------
+
+rms <= 3.335484
+|   meanCrossings <= 144
+|   |   variance <= 1.444214: CobblestoneBad (5.0)
+|   |   variance > 1.444214
+|   |   |   meanCrossings <= 121
+|   |   |   |   variance <= 3.789713: AsphaltGood (2.0)
+|   |   |   |   variance > 3.789713: CobblestoneBad (3.0)
+|   |   |   meanCrossings > 121: AsphaltGood (6.0)
+|   meanCrossings > 144
+|   |   rms <= 2.523847: AsphaltGood (568.0/1.0)
+|   |   rms > 2.523847
+|   |   |   min <= -9.16505: AsphaltGood (20.0/2.0)
+|   |   |   min > -9.16505
+|   |   |   |   variance <= 7.834415: AsphaltGood (9.0/1.0)
+|   |   |   |   variance > 7.834415: CobblestoneGood (5.0)
+rms > 3.335484
+|   variance <= 77.334899
+|   |   max <= 17.969101
+|   |   |   meanCrossings <= 163
+|   |   |   |   meanCrossings <= 145
+|   |   |   |   |   variance <= 16.656637: CobblestoneBad (2.0)
+|   |   |   |   |   variance > 16.656637
+|   |   |   |   |   |   variance <= 57.620903: AsphaltBad (39.0/4.0)
+|   |   |   |   |   |   variance > 57.620903: CobblestoneBad (2.0)
+|   |   |   |   meanCrossings > 145
+|   |   |   |   |   max <= 15.143273
+|   |   |   |   |   |   meanCrossings <= 153
+|   |   |   |   |   |   |   meanCrossings <= 150: CobblestoneGood (2.0)
+|   |   |   |   |   |   |   meanCrossings > 150: AsphaltBad (2.0)
+|   |   |   |   |   |   meanCrossings > 153: CobblestoneGood (9.0)
+|   |   |   |   |   max > 15.143273
+|   |   |   |   |   |   variance <= 25.60135
+|   |   |   |   |   |   |   variance <= 21.476511: AsphaltBad (4.0)
+|   |   |   |   |   |   |   variance > 21.476511
+|   |   |   |   |   |   |   |   max <= 16.272984: CobblestoneBad (2.0)
+|   |   |   |   |   |   |   |   max > 16.272984: AsphaltBad (2.0)
+|   |   |   |   |   |   variance > 25.60135
+|   |   |   |   |   |   |   variance <= 53.546981
+|   |   |   |   |   |   |   |   range <= 40.301949: CobblestoneGood (20.0/8.0)
+|   |   |   |   |   |   |   |   range > 40.301949: AsphaltBad (9.0)
+|   |   |   |   |   |   |   variance > 53.546981: CobblestoneGood (5.0/1.0)
+|   |   |   meanCrossings > 163: CobblestoneGood (584.0/44.0)
+|   |   max > 17.969101
+|   |   |   max <= 18.280821
+|   |   |   |   variance <= 38.792347: AsphaltBad (12.0/1.0)
+|   |   |   |   variance > 38.792347
+|   |   |   |   |   meanCrossings <= 165: AsphaltBad (26.0/3.0)
+|   |   |   |   |   meanCrossings > 165: CobblestoneGood (35.0/11.0)
+|   |   |   max > 18.280821: AsphaltBad (207.0/29.0)
+|   variance > 77.334899
+|   |   variance <= 102.585187
+|   |   |   range <= 50.503662: CobblestoneBad (58.0/25.0)
+|   |   |   range > 50.503662: AsphaltBad (32.0/7.0)
+|   |   variance > 102.585187: CobblestoneBad (308.0/8.0)
+
+Number of Leaves  : 	28
+
+Size of the tree : 	55
+
+
+Time taken to build model: 0.03 seconds
+
+=== Evaluation on training set ===
+=== Summary ===
+
+Correctly Classified Instances        1833               92.6694 %
+Incorrectly Classified Instances       145                7.3306 %
+Kappa statistic                          0.9001
+Mean absolute error                      0.0606
+Root mean squared error                  0.174
+Relative absolute error                 16.4493 %
+Root relative squared error             40.5585 %
+Total Number of Instances             1978
+
+=== Detailed Accuracy By Class ===
+
+               TP Rate   FP Rate   Precision   Recall  F-Measure   ROC Area  Class
+                 1         0.003      0.993     1         0.997      1        AsphaltGood
+                 0.757     0.028      0.868     0.757     0.808      0.947    AsphaltBad
+                 0.963     0.047      0.903     0.963     0.932      0.977    CobblestoneGood
+                 0.923     0.021      0.913     0.923     0.918      0.987    CobblestoneBad
+Weighted Avg.    0.927     0.025      0.926     0.927     0.925      0.98
+
+=== Confusion Matrix ===
+
+   a   b   c   d   <-- classified as
+ 601   0   0   0 |   a = AsphaltGood
+   3 289  60  30 |   b = AsphaltBad
+   0  20 596   3 |   c = CobblestoneGood
+   1  24   4 347 |   d = CobblestoneBad

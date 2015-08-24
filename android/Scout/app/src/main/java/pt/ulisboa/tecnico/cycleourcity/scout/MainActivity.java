@@ -38,7 +38,7 @@ import pt.ulisboa.tecnico.cycleourcity.scout.calibration.SensorCalibrator;
 import pt.ulisboa.tecnico.cycleourcity.scout.calibration.exceptions.NotYetCalibratedException;
 import pt.ulisboa.tecnico.cycleourcity.scout.config.ScoutConfigManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.config.exceptions.NotInitializedException;
-import pt.ulisboa.tecnico.cycleourcity.scout.learning.PavementType;
+import pt.ulisboa.tecnico.cycleourcity.scout.classification.PavementType;
 import pt.ulisboa.tecnico.cycleourcity.scout.logging.ScoutLogger;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.AdaptiveOffloadingManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.device.ScoutProfiling;
@@ -289,6 +289,10 @@ public class MainActivity extends ActionBarActivity {
                 toggleAdaptiveOffloading(isChecked);
             }
         });
+
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setLogo(R.mipmap.biker);
+        getSupportActionBar().setDisplayUseLogoEnabled(true);
 
         return true;
     }

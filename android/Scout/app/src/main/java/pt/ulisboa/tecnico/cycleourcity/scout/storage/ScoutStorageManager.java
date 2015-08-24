@@ -29,6 +29,7 @@ import pt.ulisboa.tecnico.cycleourcity.scout.storage.gpx.GPXBuilder;
 public class ScoutStorageManager implements StorageManager{
 
     private static ScoutStorageManager INSTANCE = new ScoutStorageManager();
+
     private final static String NAME = "Scout";
     private final static String LOG_TAG = "ScoutStorageManager";
     private final static int DB_VERSION = 1;
@@ -38,6 +39,9 @@ public class ScoutStorageManager implements StorageManager{
 
     //GPX Routes
     private RouteStorage routeStorage = RouteStorage.getInstance();
+
+    //Classification
+    private ClassificationEvaluationStorage classificationStorage = ClassificationEvaluationStorage.getInstance();
 
     private boolean empty = true;
 
@@ -101,6 +105,8 @@ public class ScoutStorageManager implements StorageManager{
     public void archive(final String tag) throws NothingToArchiveException{
 
         routeStorage.storeAllGPXTracks();
+
+        classificationStorage.export();
 
         if(empty) throw new NothingToArchiveException();
 

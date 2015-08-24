@@ -1,0 +1,103 @@
+=== Run information ===
+
+Scheme:weka.classifiers.trees.J48 -C 0.25 -M 2
+Relation:     pavement-weka.filters.unsupervised.attribute.Remove-R2,9,11-14
+Instances:    1978
+Attributes:   9
+              mean
+              variance
+              stdDev
+              range
+              max
+              min
+              rms
+              meanCrossings
+              class
+Test mode:evaluate on training data
+
+=== Classifier model (full training set) ===
+
+J48 pruned tree
+------------------
+
+rms <= 3.335484
+|   meanCrossings <= 144
+|   |   variance <= 1.444214: CobblestoneBad (5.0)
+|   |   variance > 1.444214
+|   |   |   meanCrossings <= 121
+|   |   |   |   variance <= 3.789713: AsphaltGood (2.0)
+|   |   |   |   variance > 3.789713: CobblestoneBad (3.0)
+|   |   |   meanCrossings > 121: AsphaltGood (6.0)
+|   meanCrossings > 144
+|   |   rms <= 2.523847: AsphaltGood (568.0/1.0)
+|   |   rms > 2.523847
+|   |   |   min <= -9.16505: AsphaltGood (20.0/2.0)
+|   |   |   min > -9.16505
+|   |   |   |   variance <= 7.834415: AsphaltGood (9.0/1.0)
+|   |   |   |   variance > 7.834415: CobblestoneGood (5.0)
+rms > 3.335484
+|   variance <= 77.334899
+|   |   max <= 17.969101
+|   |   |   meanCrossings <= 163
+|   |   |   |   mean <= 0.194112
+|   |   |   |   |   meanCrossings <= 145
+|   |   |   |   |   |   variance <= 24.356624: CobblestoneBad (3.0/1.0)
+|   |   |   |   |   |   variance > 24.356624
+|   |   |   |   |   |   |   variance <= 57.620903: AsphaltBad (21.0/2.0)
+|   |   |   |   |   |   |   variance > 57.620903: CobblestoneBad (2.0)
+|   |   |   |   |   meanCrossings > 145
+|   |   |   |   |   |   range <= 40.522709: CobblestoneGood (29.0/6.0)
+|   |   |   |   |   |   range > 40.522709
+|   |   |   |   |   |   |   variance <= 53.546981: AsphaltBad (6.0)
+|   |   |   |   |   |   |   variance > 53.546981: CobblestoneGood (3.0/1.0)
+|   |   |   |   mean > 0.194112: AsphaltBad (34.0/3.0)
+|   |   |   meanCrossings > 163: CobblestoneGood (584.0/44.0)
+|   |   max > 17.969101
+|   |   |   meanCrossings <= 157
+|   |   |   |   mean <= 0.668421: AsphaltBad (96.0/5.0)
+|   |   |   |   mean > 0.668421: CobblestoneBad (4.0/1.0)
+|   |   |   meanCrossings > 157
+|   |   |   |   mean <= 0.552506
+|   |   |   |   |   max <= 18.280821
+|   |   |   |   |   |   variance <= 51.275231: AsphaltBad (19.0/4.0)
+|   |   |   |   |   |   variance > 51.275231
+|   |   |   |   |   |   |   mean <= -0.31065: AsphaltBad (4.0)
+|   |   |   |   |   |   |   mean > -0.31065: CobblestoneGood (28.0/6.0)
+|   |   |   |   |   max > 18.280821
+|   |   |   |   |   |   meanCrossings <= 220: AsphaltBad (115.0/14.0)
+|   |   |   |   |   |   meanCrossings > 220
+|   |   |   |   |   |   |   range <= 46.03492: CobblestoneGood (2.0)
+|   |   |   |   |   |   |   range > 46.03492: AsphaltBad (2.0/1.0)
+|   |   |   |   mean > 0.552506
+|   |   |   |   |   variance <= 48.002318: AsphaltBad (5.0/2.0)
+|   |   |   |   |   variance > 48.002318: CobblestoneBad (5.0)
+|   variance > 77.334899
+|   |   variance <= 102.585187
+|   |   |   mean <= -0.131413
+|   |   |   |   max <= 18.410961: CobblestoneGood (3.0/1.0)
+|   |   |   |   max > 18.410961
+|   |   |   |   |   variance <= 95.787158: AsphaltBad (42.0/2.0)
+|   |   |   |   |   variance > 95.787158
+|   |   |   |   |   |   rms <= 10.008368: CobblestoneBad (5.0/1.0)
+|   |   |   |   |   |   rms > 10.008368: AsphaltBad (3.0)
+|   |   |   mean > -0.131413: CobblestoneBad (37.0/3.0)
+|   |   variance > 102.585187
+|   |   |   mean <= -0.736409
+|   |   |   |   variance <= 123.611402: AsphaltBad (7.0/1.0)
+|   |   |   |   variance > 123.611402: CobblestoneBad (33.0/1.0)
+|   |   |   mean > -0.736409: CobblestoneBad (268.0/1.0)
+
+Number of Leaves  : 	34
+
+Size of the tree : 	67
+
+
+Time taken to build model: 0.04 seconds
+
+=== Evaluation on training set ===
+=== Summary ===
+
+Correctly Classified Instances        1874               94.7422 %
+Incorrectly Classified Instances       104                5.2578 %
+Kappa statistic                          0.9284
+Mean absolute error                      0.0466

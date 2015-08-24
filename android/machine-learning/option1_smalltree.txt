@@ -1,0 +1,82 @@
+=== Run information ===
+
+Scheme:weka.classifiers.trees.J48 -C 0.25 -M 2
+Relation:     pavement-weka.filters.unsupervised.attribute.Remove-R2,9,11-14-weka.filters.unsupervised.attribute.Remove-R1-weka.filters.unsupervised.attribute.Remove-R7
+Instances:    1978
+Attributes:   7
+              variance
+              stdDev
+              range
+              max
+              min
+              rms
+              class
+Test mode:evaluate on training data
+
+=== Classifier model (full training set) ===
+
+J48 pruned tree
+------------------
+
+rms <= 3.335484
+|   rms <= 2.523847
+|   |   rms <= 1.160521
+|   |   |   range <= 12.762338
+|   |   |   |   variance <= 0.416339: CobblestoneBad (2.0)
+|   |   |   |   variance > 0.416339: AsphaltGood (9.0)
+|   |   |   range > 12.762338: CobblestoneBad (4.0)
+|   |   rms > 1.160521: AsphaltGood (565.0/2.0)
+|   rms > 2.523847
+|   |   rms <= 2.840665: AsphaltGood (21.0/2.0)
+|   |   rms > 2.840665
+|   |   |   range <= 20.768969: CobblestoneGood (6.0/1.0)
+|   |   |   range > 20.768969: AsphaltGood (11.0/1.0)
+rms > 3.335484
+|   variance <= 77.334899
+|   |   max <= 17.969101: CobblestoneGood (682.0/112.0)
+|   |   max > 17.969101
+|   |   |   max <= 18.277355
+|   |   |   |   variance <= 52.557136: AsphaltBad (32.0/5.0)
+|   |   |   |   variance > 52.557136: CobblestoneGood (40.0/18.0)
+|   |   |   max > 18.277355: AsphaltBad (208.0/29.0)
+|   variance > 77.334899
+|   |   variance <= 102.585187
+|   |   |   range <= 50.503662: CobblestoneBad (58.0/25.0)
+|   |   |   range > 50.503662: AsphaltBad (32.0/7.0)
+|   |   variance > 102.585187: CobblestoneBad (308.0/8.0)
+
+Number of Leaves  : 	14
+
+Size of the tree : 	27
+
+
+Time taken to build model: 0.02 seconds
+
+=== Evaluation on training set ===
+=== Summary ===
+
+Correctly Classified Instances        1768               89.3832 %
+Incorrectly Classified Instances       210               10.6168 %
+Kappa statistic                          0.8545
+Mean absolute error                      0.0859
+Root mean squared error                  0.2073
+Relative absolute error                 23.3382 %
+Root relative squared error             48.3105 %
+Total Number of Instances             1978
+
+=== Detailed Accuracy By Class ===
+
+               TP Rate   FP Rate   Precision   Recall  F-Measure   ROC Area  Class
+                 1         0.004      0.992     1         0.996      0.999    AsphaltGood
+                 0.605     0.026      0.849     0.605     0.706      0.91     AsphaltBad
+                 0.964     0.096      0.82      0.964     0.886      0.951    CobblestoneGood
+                 0.902     0.021      0.911     0.902     0.906      0.976    CobblestoneBad
+Weighted Avg.    0.894     0.04       0.895     0.894     0.889      0.963
+
+=== Confusion Matrix ===
+
+   a   b   c   d   <-- classified as
+ 601   0   0   0 |   a = AsphaltGood
+   2 231 119  30 |   b = AsphaltBad
+   0  19 597   3 |   c = CobblestoneGood
+   3  22  12 339 |   d = CobblestoneBad

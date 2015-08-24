@@ -14,7 +14,9 @@ import java.util.List;
 
 import pt.ulisboa.tecnico.cycleourcity.scout.calibration.ScoutCalibrationManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.calibration.exceptions.UninitializedException;
-import pt.ulisboa.tecnico.cycleourcity.scout.learning.PavementType;
+import pt.ulisboa.tecnico.cycleourcity.scout.classification.BaseRoadClassificationStage;
+import pt.ulisboa.tecnico.cycleourcity.scout.classification.PavementType;
+import pt.ulisboa.tecnico.cycleourcity.scout.classification.PreciseRoadClassificationStage;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.timedomain.EnvelopeMetrics;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.timedomain.RMS;
@@ -118,6 +120,10 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
         configuration.addStage(new RoadConditionMonitoringStages.OverkillZFeatureExtractionStage());//LEARNING
         configuration.addStage(new RoadConditionMonitoringStages.TagForLearningStage());            //LEARNING
         configuration.addStage(new RoadConditionMonitoringStages.StoreWekaTrainingSampleStage());
+
+        //Classification
+        configuration.addStage(new BaseRoadClassificationStage());
+        configuration.addStage(new PreciseRoadClassificationStage());
 
         configuration.addFinalStage(new CommonStages.FeatureStorageStage(storage));
         configuration.addFinalStage(new RoadConditionMonitoringStages.FinalizeStage());
@@ -436,11 +442,12 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
 
                 if(input.length == 1 && input[0]!=null){
                     PavementType type = PavementType.getInstance();
-                    input[0].addProperty("CLASS", type.getPavementType());
+                    input[0].addProperty("CLASS", type.getPavementTypeAsString());
                 }
 
             }
         }
+
 
         //Storage Stages - for graph construction and learning
         public abstract class StoreValuesForTestStage implements Stage{
@@ -501,3 +508,6 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
         }
     }
 }
+
+
+
