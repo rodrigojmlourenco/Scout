@@ -77,12 +77,30 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" >
 
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="70dp"
                     android:text="@string/asphalt_good"
                     android:id="@+id/goodAsphaltBtn"
-                    android:layout_weight="0.33"
+                    android:layout_weight="0.25"
+                    android:layout_marginLeft="6dp"
+                    android:layout_marginRight="6dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@android:drawable/btn_default" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="70dp"
+                    android:text="@string/asphalt_bad"
+                    android:id="@+id/badAsphaltBtn"
+                    android:layout_weight="0.25"
                     android:layout_marginLeft="6dp"
                     android:layout_marginRight="6dp"
                     android:layout_marginTop="2dp"
@@ -104,55 +122,15 @@
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="70dp"
-                    android:text="@string/gravel_good"
-                    android:id="@+id/goodGravelBtn"
-                    android:layout_weight="0.33"
-                    android:layout_marginLeft="6dp"
-                    android:layout_marginRight="6dp"
-                    android:layout_marginTop="2dp"
-                    android:layout_marginBottom="2dp"
-                    android:background="@android:drawable/btn_default" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="70dp"
-                    android:text="@string/asphalt_bad"
-                    android:id="@+id/badAsphaltBtn"
-                    android:layout_weight="0.33"
-                    android:layout_marginLeft="6dp"
-                    android:layout_marginRight="6dp"
-                    android:layout_marginTop="2dp"
-                    android:layout_marginBottom="2dp"
-                    android:background="@android:drawable/btn_default" />
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="70dp"
                     android:text="@string/cobblestone_bad"
                     android:id="@+id/badCobblestoneBtn"
-                    android:layout_weight="0.33"
+                    android:layout_weight="0.25"
                     android:layout_marginLeft="6dp"
                     android:layout_marginRight="6dp"
                     android:layout_marginTop="2dp"
                     android:layout_marginBottom="2dp"
                     android:background="@android:drawable/btn_default" />
 
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="70dp"
-                    android:text="@string/gravel_bad"
-                    android:id="@+id/badGravelBtn"
-                    android:layout_weight="0.33"
-                    android:layout_marginLeft="6dp"
-                    android:layout_marginRight="6dp"
-                    android:layout_marginTop="2dp"
-                    android:layout_marginBottom="2dp"
-                    android:background="@android:drawable/btn_default" />
             </TableRow>
 
         </TableLayout>

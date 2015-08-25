@@ -116,21 +116,25 @@ public class ClassificationEvaluationStorage {
         public String getName(){return  this.name; }
 
         private float getPrecision(){
-            return truePositives/classifications;
+            return (float)truePositives/classifications;
         }
 
         private float getFNRate(){
-            return falseNegatives /classifications;
+            return (float)falseNegatives /classifications;
         }
 
         public String dumpHeader(){
             return name + " - " + dateFormat.format(new Date())+"\n\n"+
-                    "#Classifications | Precision | FN Rate"+"\n";
+                    "#Classifications | TP Count | FN Count | Precision | FN Rate"+"\n";
         }
 
         public String dumpInfo(){
             return  dumpHeader()+
-                    classifications + " | " + getPrecision() + " | " + getFNRate()+"\n";
+                    classifications + " | " +
+                    truePositives + " | " +
+                    falseNegatives+ " | " +
+                    getPrecision()+ " | " +
+                    getFNRate()+"\n";
         }
     }
 }

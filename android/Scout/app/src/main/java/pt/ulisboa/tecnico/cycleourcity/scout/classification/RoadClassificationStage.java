@@ -1,9 +1,12 @@
 package pt.ulisboa.tecnico.cycleourcity.scout.classification;
 
+import android.content.Context;
+
 import com.google.gson.JsonObject;
 import com.ideaimpl.patterns.pipeline.PipelineContext;
 import com.ideaimpl.patterns.pipeline.Stage;
 
+import pt.ulisboa.tecnico.cycleourcity.scout.ScoutApplication;
 import pt.ulisboa.tecnico.cycleourcity.scout.classification.exceptions.InvalidFeatureVectorException;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.SensorPipelineContext;
@@ -16,6 +19,7 @@ public abstract class RoadClassificationStage implements Stage {
 
     //Testing
     protected String NAME;
+    private Context ctx = ScoutApplication.getContext();
     private final ClassificationEvaluationStorage storage = ClassificationEvaluationStorage.getInstance();
 
     //Logging
@@ -44,10 +48,14 @@ public abstract class RoadClassificationStage implements Stage {
 
         if(input == null) return; //Avoid NullPointerException
 
+        //TODO: the result must replace the input, this is just for tests!!!
         for(int i=0; i < input.length; i++)
             try {
                 JsonObject aux = generateClassification(input[i]);
-                storage.registerClassification(NAME, aux.get(CLASSIFICATION).getAsString());
+                String classification = aux.get(CLASSIFICATION).getAsString();
+
+                storage.registerClassification(NAME, classification);
+
             } catch (InvalidFeatureVectorException e) {
                 e.printStackTrace();
             }

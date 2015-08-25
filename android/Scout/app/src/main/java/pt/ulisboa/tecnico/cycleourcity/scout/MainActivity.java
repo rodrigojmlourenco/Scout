@@ -431,17 +431,17 @@ public class MainActivity extends ActionBarActivity {
 
 
     private Drawable btnDefaultBG;
-    private Button goodAsphaltBtn, goodCobblestoneBtn, goodGravelBtn,
-                    badAsphaltBtn, badCobblestoneBtn, badGravelBtn;
+    private Button goodAsphaltBtn, goodCobblestoneBtn,
+                    badAsphaltBtn, badCobblestoneBtn ;
+
+    private PavementType.Pavements activePavement = PavementType.Pavements.undefined;
 
     private void setupLandscapeModeWidgets(){
 
         goodAsphaltBtn      = (Button) findViewById(R.id.goodAsphaltBtn);
         goodCobblestoneBtn  = (Button) findViewById(R.id.goodCobblestoneBtn);
-        goodGravelBtn       = (Button) findViewById(R.id.goodGravelBtn);
         badAsphaltBtn       = (Button) findViewById(R.id.badAsphaltBtn);
         badCobblestoneBtn   = (Button) findViewById(R.id.badCobblestoneBtn);
-        badGravelBtn        = (Button) findViewById(R.id.badGravelBtn);
 
         btnDefaultBG = goodAsphaltBtn.getBackground();
 
@@ -459,17 +459,11 @@ public class MainActivity extends ActionBarActivity {
                     case R.id.goodCobblestoneBtn:
                         pavement = PavementType.Pavements.CobblestoneGood;
                         break;
-                    case R.id.goodGravelBtn:
-                        pavement = PavementType.Pavements.GravelGood;
-                        break;
                     case R.id.badAsphaltBtn:
                         pavement = PavementType.Pavements.AsphaltBad;
                         break;
                     case R.id.badCobblestoneBtn:
                         pavement = PavementType.Pavements.CobblestoneBad;
-                        break;
-                    case R.id.badGravelBtn:
-                        pavement = PavementType.Pavements.GravelGood;
                         break;
                     default:
                         pavement = PavementType.Pavements.undefined;
@@ -477,24 +471,24 @@ public class MainActivity extends ActionBarActivity {
 
                 goodAsphaltBtn.setBackground(btnDefaultBG);
                 goodCobblestoneBtn.setBackground(btnDefaultBG);
-                goodGravelBtn.setBackground(btnDefaultBG);
                 badAsphaltBtn.setBackground(btnDefaultBG);
                 badCobblestoneBtn.setBackground(btnDefaultBG);
-                badGravelBtn.setBackground(btnDefaultBG);
 
-                ((Button)v).setBackground(getDrawable(R.color.cyan));
-
-                pavementType.setPavementType(pavement);
+                if(activePavement.equals(pavement)) { //De-activate
+                    pavementType.setPavementType(PavementType.Pavements.undefined);
+                    activePavement = PavementType.Pavements.undefined;
+                } else {
+                    v.setBackground(getDrawable(R.color.cyan));
+                    pavementType.setPavementType(pavement);
+                    activePavement = pavement;
+                }
             }
         };
 
         goodAsphaltBtn.setOnClickListener(pavementButtonListener);
         goodCobblestoneBtn.setOnClickListener(pavementButtonListener);
-        goodGravelBtn.setOnClickListener(pavementButtonListener);
         badAsphaltBtn.setOnClickListener(pavementButtonListener);
         badCobblestoneBtn.setOnClickListener(pavementButtonListener);
-        badGravelBtn.setOnClickListener(pavementButtonListener);
-
     }
 
     private void setupPortraitModeWidgets(){

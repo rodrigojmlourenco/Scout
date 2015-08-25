@@ -52,7 +52,7 @@ public class PreciseRoadClassificationStage extends RoadClassificationStage{
             rms             = featureVector.get(SensingUtils.FeatureVectorKeys.RMS).getAsDouble();
             meanCrossings   = featureVector.get(SensingUtils.FeatureVectorKeys.MEAN_CROSSING).getAsDouble();
         }catch (NullPointerException | ClassCastException e){
-            throw new InvalidFeatureVectorException();
+            throw new InvalidFeatureVectorException(e.getMessage());
         }
 
         PavementType.Pavements pavementType;
