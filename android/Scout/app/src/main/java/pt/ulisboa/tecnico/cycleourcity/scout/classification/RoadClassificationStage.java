@@ -48,13 +48,19 @@ public abstract class RoadClassificationStage implements Stage {
 
         if(input == null) return; //Avoid NullPointerException
 
+        long start, stop;
+
         //TODO: the result must replace the input, this is just for tests!!!
         for(int i=0; i < input.length; i++)
             try {
+
+                start = System.nanoTime();//4TESTING
                 JsonObject aux = generateClassification(input[i]);
+                stop = System.nanoTime();//4TESTING
+
                 String classification = aux.get(CLASSIFICATION).getAsString();
 
-                storage.registerClassification(NAME, classification);
+                storage.registerClassification(NAME, classification, (stop-start));
 
             } catch (InvalidFeatureVectorException e) {
                 e.printStackTrace();

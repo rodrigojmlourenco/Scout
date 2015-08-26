@@ -20,6 +20,7 @@ public class ClassificationEvaluationStorage {
     private final String BASE_DIR_NAME = "classifications";
     private PavementType humanClassification;
     private HashMap<String, ClassificationInstance> classificationInstanceMap;
+    private HashMap<String, File> classifiers;
 
     //Sync
     private final Object lock = new Object();
@@ -27,6 +28,7 @@ public class ClassificationEvaluationStorage {
     protected ClassificationEvaluationStorage(){
         humanClassification = PavementType.getInstance();
         this.classificationInstanceMap = new HashMap<>();
+        classifiers = new HashMap<>();
 
         BASE_DIR = new File(ScoutStorageManager.getApplicationFolder().toString() + "/" + BASE_DIR_NAME);
         if (!BASE_DIR.exists()) BASE_DIR.mkdirs();
@@ -44,25 +46,43 @@ public class ClassificationEvaluationStorage {
     }
 
     private void registerClassifier(String classifier){
+
+        String filename = "classificationsFrom_"+ classifier + "_" + System.currentTimeMillis() + FILE_EXTENTION;
+        File classifierFile = new File(BASE_DIR, filename);
+
         classificationInstanceMap.put(classifier, new ClassificationInstance(classifier));
+        classifiers.put(classifier, classifierFile);
     }
 
-    public void registerClassification(String classifier, String pavement){
+    private String dumpCurrentClassification(String human, String computed, long elapsedTime){
+        return human + " | " + computed + " | " + elapsedTime +"\n";
+    }
+
+    public void registerClassification(String classifier, String pavement, long elapsedTime){
 
         synchronized (lock) {
             if (!classificationInstanceMap.containsKey(classifier))
                 registerClassifier(classifier);
 
             //Ignore the following instances of pavement types
-            if(pavement.equals(String.valueOf(PavementType.Pavements.GravelBad))
-                || pavement.equals(String.valueOf(PavementType.Pavements.GravelGood))
-                || pavement.equals(String.valueOf(PavementType.Pavements.undefined)))
+            String human = humanClassification.getPavementType();
+            if(human.equals(String.valueOf(PavementType.Pavements.GravelBad))
+                || human.equals(String.valueOf(PavementType.Pavements.GravelGood))
+                || human.equals(String.valueOf(PavementType.Pavements.undefined)))
                 return;
 
-            if (humanClassification.getPavementType().equals(pavement))
+            if (human.equals(pavement))
                 classificationInstanceMap.get(classifier).registerTruePositive();
             else
                 classificationInstanceMap.get(classifier).registerFalseNegative();
+
+            try {
+                FileWriter writer = new FileWriter(classifiers.get(classifier), true);
+                writer.write(dumpCurrentClassification(human, pavement, elapsedTime));
+                writer.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
