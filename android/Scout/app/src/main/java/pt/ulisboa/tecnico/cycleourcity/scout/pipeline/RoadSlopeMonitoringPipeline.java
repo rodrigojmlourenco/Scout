@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.cycleourcity.scout.pipeline;
 
+import android.util.Log;
+
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.ideaimpl.patterns.pipeline.PipelineContext;

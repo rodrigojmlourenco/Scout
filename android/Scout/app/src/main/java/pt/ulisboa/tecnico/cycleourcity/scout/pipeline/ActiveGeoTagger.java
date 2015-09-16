@@ -302,6 +302,7 @@ public class ActiveGeoTagger {
                 admissionPipeline.addStage(new CommonStages.HeuristicsAdmissionControlStage.GPSSpeedOutlier());
                 admissionPipeline.addStage(new HighTravelSpeedOutlier());
                 admissionPipeline.addStage(new OverlappingLocationsOutlier());
+
                 admissionPipeline.addErrorStage(new CommonStages.HeuristicsAdmissionControlStage.InvalidateSample());
             }
 
