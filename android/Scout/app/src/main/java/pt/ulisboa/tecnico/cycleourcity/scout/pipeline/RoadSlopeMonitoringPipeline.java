@@ -106,7 +106,7 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
 
         PipelineConfiguration configuration = new PipelineConfiguration();
 
-        configuration.addStage(new RoadSlopeMonitoringStages.ValidationStage());
+        configuration.addStage(new RoadSlopeMonitoringStages.ValidationStage(false));
         if(storeInfo) configuration.addStage(new RoadSlopeMonitoringStages.StoreRawValuesStage());
         //configuration.addStage(new RoadSlopeMonitoringStages.LowPassFilterStage()); //TODO
         //configuration.addStage(new RoadSlopeMonitoringStages.StoreFilteredValuesStage());
@@ -142,11 +142,18 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
          */
         public class ValidationStage implements Stage {
 
+            private final boolean discardStationary;
+
+            public ValidationStage(boolean discardStationary){
+                super();
+                this.discardStationary = discardStationary;
+            }
+
             public boolean isValid(JsonObject sample){
                 boolean valid = sample.has(SensingUtils.LocationKeys.LOCATION) &&
                         sample.get(SensingUtils.LocationKeys.LOCATION) instanceof JsonObject;
 
-                if(valid){ //Invalidate if stationary
+                if(discardStationary & valid){ //Invalidate if stationary
                     JsonObject location = (JsonObject) sample.get(SensingUtils.LocationKeys.LOCATION);
                     return  location.has(SensingUtils.LocationKeys.IS_STATIONARY) &&
                             !location.get(SensingUtils.LocationKeys.IS_STATIONARY).getAsBoolean();

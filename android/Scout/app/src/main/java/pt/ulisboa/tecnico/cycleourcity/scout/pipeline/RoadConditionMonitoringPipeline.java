@@ -102,12 +102,32 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
      * may then be used to generate graphs as to better understand the impact of these stages.
      * @return RoadConditionMonitoringPipeline's configuration
      */
-    public static PipelineConfiguration generateRoadConditionMonitoringPipelineConfiguration(){
+    public static PipelineConfiguration generateRoadConditionMonitoringPipelineConfiguration(boolean offloadingEnabled){
         ScoutStorageManager storage = ScoutStorageManager.getInstance();
 
         PipelineConfiguration configuration = new PipelineConfiguration();
 
-        configuration.addStage(new RoadConditionMonitoringStages.ValidationStage());
+        //Adaptive Stages
+        configuration.addStage(new RoadConditionMonitoringStages.ValidationStage(false));
+        configuration.addStage(new RoadConditionMonitoringStages.NormalizationStage());
+        configuration.addStage(new RoadConditionMonitoringStages.ProjectionStage());
+        configuration.addStage(new RoadConditionMonitoringStages.FeatureExtractionStage());
+        configuration.addStage(new PreciseRoadClassificationStage());
+
+        //Final Stages
+        configuration.addFinalStage(new CommonStages.FeatureStorageStage(storage));
+        configuration.addFinalStage(new RoadConditionMonitoringStages.FinalizeStage());
+
+        return configuration;
+    }
+
+    @Deprecated
+    public static PipelineConfiguration generateRoadConditionMonitoringPipelineConfigurationTests(){
+        ScoutStorageManager storage = ScoutStorageManager.getInstance();
+
+        PipelineConfiguration configuration = new PipelineConfiguration();
+
+        configuration.addStage(new RoadConditionMonitoringStages.ValidationStage(true));
 
         configuration.addStage(new RoadConditionMonitoringStages.StoreRawValuesStage());            //TESTING
 
@@ -155,6 +175,13 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
          */
         public static class ValidationStage implements Stage {
 
+            private final boolean discardStationary;
+
+            public ValidationStage(boolean discardStationary){
+                super();
+                this.discardStationary = discardStationary;
+            }
+
             private boolean validSample(JsonObject sample){
                 boolean valid = sample.has(SensingUtils.MotionKeys.LOCATION) &&
                         ! (sample.get(SensingUtils.MotionKeys.LOCATION) instanceof JsonNull) &&
@@ -163,7 +190,7 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
                         sample.has(SensingUtils.MotionKeys.CALIBRATION) &&
                         ! (sample.get(SensingUtils.MotionKeys.CALIBRATION) instanceof JsonNull);
 
-                if(valid){ //Invalidate if stationary
+                if(discardStationary & valid){ //Invalidate if stationary
                     JsonObject location = (JsonObject) sample.get(SensingUtils.LocationKeys.LOCATION);
                     return location.has(SensingUtils.LocationKeys.IS_STATIONARY) &&
                             !location.get(SensingUtils.LocationKeys.IS_STATIONARY).getAsBoolean();
@@ -398,6 +425,95 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
                 featureVector.addProperty(SensingUtils.FeatureVectorKeys.MEAN_CROSSING, meanCrossings);
                 featureVector.addProperty(SensingUtils.FeatureVectorKeys.MEDIAN_CROSSING, medianCrossings);
                 featureVector.addProperty(SensingUtils.FeatureVectorKeys.RANGE_CROSSING, rangeCrossings);
+
+                //Location Property
+                featureVector.addProperty(SensingUtils.LocationKeys.SPEED, location.get(SensingUtils.LocationKeys.SPEED).getAsString());
+                featureVector.add(SensingUtils.LocationKeys.LOCATION, location);
+
+                return featureVector;
+            }
+
+            @Override
+            public void execute(PipelineContext pipelineContext) {
+                SensorPipelineContext ctx = (SensorPipelineContext) pipelineContext;
+                JsonObject[] input = ctx.getInput();
+
+                int i=0;
+                double[] zValues = new double[input.length];
+                JsonObject featureVector=null, location = null;
+
+                location = (JsonObject) input[0].get(SensingUtils.LocationKeys.LOCATION);
+
+                for (JsonObject sample : input)
+                    zValues[i++] = sample.get(SensingUtils.MotionKeys.PROJECTED_Z).getAsFloat();
+
+                featureVector = constructFeatureVector(zValues, location);
+
+                JsonObject[] output = new JsonObject[1];
+                output[0] = featureVector;
+                ctx.setInput(output);
+            }
+        }
+
+        /**
+         * This stage is responsible for computing the feature vector, where the feature vector
+         * is comprised of almost all of the time domain-based features described by
+         * <a href="http://web.ist.utl.pt/~diogo.ferreira/papers/figo10preprocessing.pdf">[Figo:2010]</a>
+         * <br>
+         * More specifically this stage will compute the following stages:<br>
+         * <ul>
+         *     <li>Variance</li>
+         *     <li>Maximum</li>
+         *     <li>Minimum</li>
+         *     <li>Range</li>
+         *     <li>Root Mean Squares</li>
+         *     <li>Mean-Crossings</li>
+         * </ul>
+         * <br>
+         * There is actually no need to compute all of these features, however since at this stage
+         * it is still not clear which features improve the classification process, all possible
+         * features will be extracted.
+         */
+        public class FeatureExtractionStage implements Stage {
+
+            private JsonObject constructFeatureVector(double[] values, JsonObject location){
+
+                JsonObject featureVector = new JsonObject();
+
+                int numSamples;
+                double  mean,
+                        variance,
+                        range, max, min,
+                        rms;                //Root Mean Squares
+
+                int meanCrossings;
+
+
+
+                numSamples = values.length;
+
+                mean        = StatisticalMetrics.calculateMean(values);
+                variance    = StatisticalMetrics.calculateVariance(values);
+                range       = EnvelopeMetrics.calculateRange(values);
+                max         = EnvelopeMetrics.calculateMax(values);
+                min         = EnvelopeMetrics.calculateMin(values);
+                rms         = RMS.calculateRootMeanSquare(values);
+                meanCrossings   = TimeDomainMetrics.countZeroCrossings(values, mean);
+
+                //Base Properties
+                featureVector.addProperty(SensingUtils.GeneralFields.SENSOR_TYPE, RoadConditionMonitoringPipeline.SENSOR_TYPE);
+                featureVector.addProperty(SensingUtils.GeneralFields.TIMESTAMP, location.get(SensingUtils.GeneralFields.TIMESTAMP).getAsString());
+                featureVector.addProperty(SensingUtils.GeneralFields.SCOUT_TIME, System.nanoTime());
+
+                //Feature Properties
+                featureVector.addProperty(SensingUtils.FeatureVectorKeys.NUM_SAMPLES, numSamples);
+                featureVector.addProperty(SensingUtils.FeatureVectorKeys.MEAN, mean);
+                featureVector.addProperty(SensingUtils.FeatureVectorKeys.VARIANCE, variance);
+                featureVector.addProperty(SensingUtils.FeatureVectorKeys.MAX, max);
+                featureVector.addProperty(SensingUtils.FeatureVectorKeys.MIN, min);
+                featureVector.addProperty(SensingUtils.FeatureVectorKeys.RANGE, range);
+                featureVector.addProperty(SensingUtils.FeatureVectorKeys.RMS, rms);
+                featureVector.addProperty(SensingUtils.FeatureVectorKeys.MEAN_CROSSING, meanCrossings);
 
                 //Location Property
                 featureVector.addProperty(SensingUtils.LocationKeys.SPEED, location.get(SensingUtils.LocationKeys.SPEED).getAsString());

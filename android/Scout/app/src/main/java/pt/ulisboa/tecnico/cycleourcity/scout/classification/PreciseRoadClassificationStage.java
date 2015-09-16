@@ -12,8 +12,8 @@ import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils;
  * <br>
  * Tree Size:<br>
  *     <ul>
- *         <li>Nodes: 28</li>
- *         <li>Leafs: 55</li>
+ *         <li>Leafs: 28</li>
+ *         <li>Nodes: 55</li>
  *     </ul>
  * <br>
  * Features required:<br>

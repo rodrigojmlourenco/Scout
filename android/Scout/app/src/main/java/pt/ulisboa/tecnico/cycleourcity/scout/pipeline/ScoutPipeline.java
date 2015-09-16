@@ -67,7 +67,7 @@ public class ScoutPipeline extends BasicPipeline {
         mPipeline.setWindowSize(3);
 
         RoadConditionMonitoringPipeline rPipeline = new RoadConditionMonitoringPipeline(
-                RoadConditionMonitoringPipeline.generateRoadConditionMonitoringPipelineConfiguration());
+                RoadConditionMonitoringPipeline.generateRoadConditionMonitoringPipelineConfiguration(false));
 
 
         RoadSlopeMonitoringPipeline sPipeline = new RoadSlopeMonitoringPipeline(
