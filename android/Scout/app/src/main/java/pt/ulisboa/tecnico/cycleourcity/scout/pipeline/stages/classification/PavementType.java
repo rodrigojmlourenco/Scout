@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.cycleourcity.scout.classification;
+package pt.ulisboa.tecnico.cycleourcity.scout.pipeline.stages.classification;
 
 /**
  * Created by rodrigo.jm.lourenco on 15/07/2015.

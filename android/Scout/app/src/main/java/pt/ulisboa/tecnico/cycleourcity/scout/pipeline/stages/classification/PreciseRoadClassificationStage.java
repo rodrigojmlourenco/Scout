@@ -1,10 +1,10 @@
-package pt.ulisboa.tecnico.cycleourcity.scout.classification;
+package pt.ulisboa.tecnico.cycleourcity.scout.pipeline.stages.classification;
 
 import android.util.Log;
 
 import com.google.gson.JsonObject;
 
-import pt.ulisboa.tecnico.cycleourcity.scout.classification.exceptions.InvalidFeatureVectorException;
+import pt.ulisboa.tecnico.cycleourcity.scout.pipeline.stages.classification.exceptions.InvalidFeatureVectorException;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils;
 
 /**

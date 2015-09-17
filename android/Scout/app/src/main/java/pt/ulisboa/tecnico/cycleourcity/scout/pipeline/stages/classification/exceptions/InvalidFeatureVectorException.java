@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.cycleourcity.scout.classification.exceptions;
+package pt.ulisboa.tecnico.cycleourcity.scout.pipeline.stages.classification.exceptions;
 
 /**
  * Created by rodrigo.jm.lourenco on 24/08/2015.

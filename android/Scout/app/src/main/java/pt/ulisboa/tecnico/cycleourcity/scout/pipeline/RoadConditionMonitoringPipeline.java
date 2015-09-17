@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.cycleourcity.scout.pipeline;
 
 import android.opengl.Matrix;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonNull;
@@ -14,9 +15,9 @@ import java.util.List;
 
 import pt.ulisboa.tecnico.cycleourcity.scout.calibration.ScoutCalibrationManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.calibration.exceptions.UninitializedException;
-import pt.ulisboa.tecnico.cycleourcity.scout.classification.BaseRoadClassificationStage;
-import pt.ulisboa.tecnico.cycleourcity.scout.classification.PavementType;
-import pt.ulisboa.tecnico.cycleourcity.scout.classification.PreciseRoadClassificationStage;
+import pt.ulisboa.tecnico.cycleourcity.scout.pipeline.stages.classification.BaseRoadClassificationStage;
+import pt.ulisboa.tecnico.cycleourcity.scout.pipeline.stages.classification.PavementType;
+import pt.ulisboa.tecnico.cycleourcity.scout.pipeline.stages.classification.PreciseRoadClassificationStage;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.timedomain.EnvelopeMetrics;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.timedomain.RMS;
@@ -26,6 +27,7 @@ import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.PipelineConf
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.SensorPipelineContext;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.SensorProcessingPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.stages.CommonStages;
+import pt.ulisboa.tecnico.cycleourcity.scout.pipeline.stages.UploadResultStage;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.EvaluationSupportStorage;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.LearningSupportStorage;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.ScoutStorageManager;
@@ -42,6 +44,9 @@ import pt.ulisboa.tecnico.cycleourcity.scout.storage.ScoutStorageManager;
  *
  */
 public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
+
+    public static final boolean VERBOSE= true;
+    public static final String LOG_TAG = "RCMPipeline";
 
     private ScoutCalibrationManager calibrationManager = null;
     public final static int SENSOR_TYPE = SensingUtils.Sensors.LINEAR_ACCELERATION;
@@ -108,15 +113,17 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
         PipelineConfiguration configuration = new PipelineConfiguration();
 
         //Adaptive Stages
-        configuration.addStage(new RoadConditionMonitoringStages.ValidationStage(false));
+        configuration.addStage(new RoadConditionMonitoringStages.ValidationStage(true)); //TODO: POR A FALSE
         configuration.addStage(new RoadConditionMonitoringStages.NormalizationStage());
         configuration.addStage(new RoadConditionMonitoringStages.ProjectionStage());
         configuration.addStage(new RoadConditionMonitoringStages.FeatureExtractionStage());
         configuration.addStage(new PreciseRoadClassificationStage());
 
         //Final Stages
+        configuration.addFinalStage(new UploadResultStage());
         configuration.addFinalStage(new CommonStages.FeatureStorageStage(storage));
         configuration.addFinalStage(new RoadConditionMonitoringStages.FinalizeStage());
+
 
         return configuration;
     }
@@ -158,8 +165,6 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
      */
     public static interface RoadConditionMonitoringStages{
 
-        public final String LOG_TAG = "RoadConditionMonitoring";
-
         /**
          * This stage is responsible for validating the linear acceleration samples, where a sample
          * is said to be valid if it contains:
@@ -190,12 +195,12 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
                         sample.has(SensingUtils.MotionKeys.CALIBRATION) &&
                         ! (sample.get(SensingUtils.MotionKeys.CALIBRATION) instanceof JsonNull);
 
-                if(discardStationary & valid){ //Invalidate if stationary
+                if(!discardStationary & valid){ //Invalidate if stationary
                     JsonObject location = (JsonObject) sample.get(SensingUtils.LocationKeys.LOCATION);
                     return location.has(SensingUtils.LocationKeys.IS_STATIONARY) &&
                             !location.get(SensingUtils.LocationKeys.IS_STATIONARY).getAsBoolean();
                 }else
-                    return false;
+                    return valid;
             }
 
             @Override
@@ -208,6 +213,7 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
 
                 if(validSamples.isEmpty()) {
                     String error = "There are no complete samples in this iteration";
+                    if(VERBOSE) Log.i(LOG_TAG, error);
                     ctx.addError(error);
                 }else{
                     JsonObject[] validated = new JsonObject[validSamples.size()];
@@ -255,6 +261,7 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
                 for(JsonObject sample : ctx.getInput())
                     normalizeSample(sample);
 
+                if(VERBOSE) Log.i(LOG_TAG, "All " + ctx.getInput().length + " samples have been normalized.");
             }
         }
 
@@ -277,6 +284,8 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
 
                 for(JsonObject sample : input)
                     projectToAbsoluteCoordinates(sample);
+
+                if(VERBOSE) Log.i(LOG_TAG, "All "+input.length+" samples have been projected.");
             }
 
             private float[] extractAccelerationValues(JsonObject sample){
@@ -541,6 +550,8 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
                 JsonObject[] output = new JsonObject[1];
                 output[0] = featureVector;
                 ctx.setInput(output);
+
+                if(VERBOSE) Log.i(LOG_TAG, "The samples have been transformed into a feature vector.");
             }
         }
 

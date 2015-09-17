@@ -28,6 +28,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.JsonObject;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,8 +40,9 @@ import pt.ulisboa.tecnico.cycleourcity.scout.calibration.SensorCalibrator;
 import pt.ulisboa.tecnico.cycleourcity.scout.calibration.exceptions.NotYetCalibratedException;
 import pt.ulisboa.tecnico.cycleourcity.scout.config.ScoutConfigManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.config.exceptions.NotInitializedException;
-import pt.ulisboa.tecnico.cycleourcity.scout.classification.PavementType;
+import pt.ulisboa.tecnico.cycleourcity.scout.pipeline.stages.classification.PavementType;
 import pt.ulisboa.tecnico.cycleourcity.scout.logging.ScoutLogger;
+import pt.ulisboa.tecnico.cycleourcity.scout.network.CycleOurCityClient;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.AdaptiveOffloadingManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.device.ScoutProfiling;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.exceptions.InvalidRuleSetException;
@@ -219,9 +222,7 @@ public class MainActivity extends ActionBarActivity {
 
         };
 
-        //BEGIN TESTING
 
-        //END TESTING
 
         tagText = (EditText) findViewById(R.id.tag);
 
@@ -492,6 +493,31 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void setupPortraitModeWidgets(){
+
+        //BEGIN TESTING
+        final CycleOurCityClient client = CycleOurCityClient.getInstance();
+        netTestBtn = (Button) findViewById(R.id.netTestBtn);
+        netTestBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        JsonObject testSample = new JsonObject();
+                        testSample.addProperty("_id", 1);
+                        testSample.addProperty("data", "this is some sensor data");
+
+                        client.upload(testSample);
+                    }
+                }).start();
+
+
+            }
+        });
+        //END TESTING
+
+
         //Pavement Type Group
         final PavementType pavementType = PavementType.getInstance();
         pavementTypeGroup = (RadioGroup) findViewById(R.id.pavementTypeGroup);

@@ -8,7 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 
-import pt.ulisboa.tecnico.cycleourcity.scout.classification.PavementType;
+import pt.ulisboa.tecnico.cycleourcity.scout.pipeline.stages.classification.PavementType;
 
 /**
  * Created by rodrigo.jm.lourenco on 24/08/2015.

@@ -301,7 +301,7 @@ public class ActiveGeoTagger {
                 admissionPipeline.addStage(new CommonStages.HeuristicsAdmissionControlStage.SatellitesOutlier());
                 admissionPipeline.addStage(new CommonStages.HeuristicsAdmissionControlStage.GPSSpeedOutlier());
                 admissionPipeline.addStage(new HighTravelSpeedOutlier());
-                admissionPipeline.addStage(new OverlappingLocationsOutlier());
+                //admissionPipeline.addStage(new OverlappingLocationsOutlier()); TODO: DECOMMENT
 
                 admissionPipeline.addErrorStage(new CommonStages.HeuristicsAdmissionControlStage.InvalidateSample());
             }

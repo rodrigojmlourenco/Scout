@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.cycleourcity.scout.classification;
+package pt.ulisboa.tecnico.cycleourcity.scout.pipeline.stages.classification;
 
 import android.content.Context;
 
@@ -7,7 +7,7 @@ import com.ideaimpl.patterns.pipeline.PipelineContext;
 import com.ideaimpl.patterns.pipeline.Stage;
 
 import pt.ulisboa.tecnico.cycleourcity.scout.ScoutApplication;
-import pt.ulisboa.tecnico.cycleourcity.scout.classification.exceptions.InvalidFeatureVectorException;
+import pt.ulisboa.tecnico.cycleourcity.scout.pipeline.stages.classification.exceptions.InvalidFeatureVectorException;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.SensorPipelineContext;
 import pt.ulisboa.tecnico.cycleourcity.scout.pipeline.RoadConditionMonitoringPipeline;
@@ -45,6 +45,7 @@ public abstract class RoadClassificationStage implements Stage {
     public final void execute(PipelineContext pipelineContext) {
         SensorPipelineContext ctx = (SensorPipelineContext)pipelineContext;
         JsonObject[] input = ctx.getInput();
+        JsonObject[] output= new JsonObject[input.length];
 
         if(input == null) return; //Avoid NullPointerException
 
@@ -53,17 +54,11 @@ public abstract class RoadClassificationStage implements Stage {
         //TODO: the result must replace the input, this is just for tests!!!
         for(int i=0; i < input.length; i++)
             try {
-
-                start = System.nanoTime();//4TESTING
-                JsonObject aux = generateClassification(input[i]);
-                stop = System.nanoTime();//4TESTING
-
-                String classification = aux.get(CLASSIFICATION).getAsString();
-
-                storage.registerClassification(NAME, classification, (stop-start));
-
+                output[i] = generateClassification(input[i]);
             } catch (InvalidFeatureVectorException e) {
                 e.printStackTrace();
             }
+
+        ctx.setOutput(output);
     }
 }

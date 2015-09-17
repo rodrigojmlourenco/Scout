@@ -17,6 +17,7 @@ import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.PipelineConf
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.SensorPipelineContext;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.SensorProcessingPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.stages.CommonStages;
+import pt.ulisboa.tecnico.cycleourcity.scout.pipeline.stages.UploadResultStage;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.EvaluationSupportStorage;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.RouteStorage;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.ScoutStorageManager;
@@ -117,7 +118,9 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
         configuration.addStage(new RouteStorage.RouteStorageStage("barometric", RouteStorage.PRESSURE_BASED_ALTITUDE));
 
         configuration.addFinalStage(new RoadSlopeMonitoringStages.UpdateInnerStateStage());
+        configuration.addFinalStage(new UploadResultStage());
         configuration.addFinalStage(new CommonStages.FeatureStorageStage(storage));
+
 
         return configuration;
     }
@@ -153,12 +156,12 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
                 boolean valid = sample.has(SensingUtils.LocationKeys.LOCATION) &&
                         sample.get(SensingUtils.LocationKeys.LOCATION) instanceof JsonObject;
 
-                if(discardStationary & valid){ //Invalidate if stationary
+                if(!discardStationary & valid){ //Invalidate if stationary
                     JsonObject location = (JsonObject) sample.get(SensingUtils.LocationKeys.LOCATION);
                     return  location.has(SensingUtils.LocationKeys.IS_STATIONARY) &&
                             !location.get(SensingUtils.LocationKeys.IS_STATIONARY).getAsBoolean();
                 }else
-                    return false;
+                    return valid;
             }
 
             @Override
