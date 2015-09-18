@@ -12,6 +12,7 @@ import java.util.List;
 
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.location.LocationUtils;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.timedomain.EnvelopeMetrics;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.timedomain.StatisticalMetrics;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.PipelineConfiguration;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.SensorPipelineContext;
@@ -107,7 +108,7 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
 
         PipelineConfiguration configuration = new PipelineConfiguration();
 
-        configuration.addStage(new RoadSlopeMonitoringStages.ValidationStage(false));
+        configuration.addStage(new RoadSlopeMonitoringStages.ValidationStage(true)); //TODO: POR A FALSE
         if(storeInfo) configuration.addStage(new RoadSlopeMonitoringStages.StoreRawValuesStage());
         //configuration.addStage(new RoadSlopeMonitoringStages.LowPassFilterStage()); //TODO
         //configuration.addStage(new RoadSlopeMonitoringStages.StoreFilteredValuesStage());
@@ -116,6 +117,7 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
         configuration.addStage(new RoadSlopeMonitoringStages.DeriveSlopeStage());
         if(storeInfo) configuration.addStage(new RoadSlopeMonitoringStages.StoreFeatureVectorStage());
         configuration.addStage(new RouteStorage.RouteStorageStage("barometric", RouteStorage.PRESSURE_BASED_ALTITUDE));
+        configuration.addStage(new RoadSlopeMonitoringStages.QualificationStage());
 
         configuration.addFinalStage(new RoadSlopeMonitoringStages.UpdateInnerStateStage());
         configuration.addFinalStage(new UploadResultStage());
@@ -216,18 +218,18 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
             public JsonObject mergeSamples(double[] pressures, JsonObject location, JsonObject prevPressure) {
 
                 JsonObject mergedSample = new JsonObject();
-                double averagePressure = 0, variance = 0, stdDev = 0;
+                double medianPressure = 0, variance = 0, stdDev = 0;
                 int samplingSize = pressures.length;
                 String locationTimestamp = location.get(SensingUtils.GeneralFields.TIMESTAMP).getAsString();
 
                 stdDev = StatisticalMetrics.calculateMean(pressures);
                 variance = StatisticalMetrics.calculateVariance(pressures);
-                averagePressure = StatisticalMetrics.calculateMean(pressures);
+                medianPressure = EnvelopeMetrics.calculateMedian(pressures);
 
                 mergedSample.addProperty(SensingUtils.GeneralFields.SENSOR_TYPE, SensingUtils.Sensors.PRESSURE);
                 mergedSample.addProperty(SensingUtils.GeneralFields.TIMESTAMP, locationTimestamp);
                 mergedSample.addProperty(SensingUtils.GeneralFields.SCOUT_TIME, System.nanoTime());
-                mergedSample.addProperty(SensingUtils.PressureKeys.PRESSURE, averagePressure);
+                mergedSample.addProperty(SensingUtils.PressureKeys.PRESSURE, medianPressure);
                 mergedSample.addProperty(SensingUtils.PressureKeys.VARIANCE, variance);
                 mergedSample.addProperty(SensingUtils.PressureKeys.STDEV, stdDev);
                 mergedSample.addProperty(SensingUtils.PressureKeys.SAMPLES, samplingSize);
@@ -410,6 +412,60 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
                 for(JsonObject featureVector : input)
                     if(featureVector != null)
                         storage.storeComplexPressureTestValue(TEST_ID, featureVector);
+
+            }
+        }
+
+
+        public class QualificationStage implements Stage{
+
+
+
+            private void qualifySlope(JsonObject slope) {
+
+                float slopeDegree = slope.get(SensingUtils.PressureKeys.SLOPE).getAsFloat();
+
+                if (slopeDegree < -0.24) {
+                    slope.addProperty("class", 1);
+                    return;
+                }
+
+                if (slopeDegree >= -0.24 && slopeDegree <= -0.01) {
+                    slope.addProperty("class", 2);
+                    return;
+                }
+
+                if (slopeDegree > -0.01 && slopeDegree < 0.01){
+                    slope.addProperty("class", 3);
+                    return;
+                }
+
+                if(slopeDegree >= 0.01 && slopeDegree <= 0.13) {
+                    slope.addProperty("class", 4);
+                    return;
+                }
+
+                if(slopeDegree > 0.13 && slopeDegree <= 0.2){
+                    slope.addProperty("class", 5);
+                    return;
+                }
+
+                if(slopeDegree > 0.2){
+                    slope.addProperty("class", 6);
+                    return;
+                }
+            }
+
+            @Override
+            public void execute(PipelineContext pipelineContext) {
+                SensorPipelineContext ctx = (SensorPipelineContext)pipelineContext;
+                JsonObject[] input = ctx.getInput();
+
+                if(input == null) return; //Avoid NullPointerException
+
+                for(JsonObject slope : input){
+                    qualifySlope(slope);
+                }
 
             }
         }
