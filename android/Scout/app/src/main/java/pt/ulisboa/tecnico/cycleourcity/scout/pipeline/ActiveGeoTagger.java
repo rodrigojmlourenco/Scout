@@ -157,12 +157,14 @@ public class ActiveGeoTagger {
                     SensingUtils.LocationKeys.SPEED,
                     location.get(SensingUtils.LocationKeys.SPEED).getAsString());
 
-            cleaned.addProperty(
-                    SensingUtils.LocationKeys.IS_STATIONARY,
-                    location.get(SensingUtils.LocationKeys.IS_STATIONARY).getAsString());
+            if(location.has(SensingUtils.LocationKeys.IS_STATIONARY))
+                cleaned.addProperty(
+                        SensingUtils.LocationKeys.IS_STATIONARY,
+                        location.get(SensingUtils.LocationKeys.IS_STATIONARY).getAsString());
 
         }catch (NullPointerException | UnsupportedOperationException e){
             Log.e("ERROR", e.getMessage()+" in "+String.valueOf(location));
+            e.printStackTrace();
         }
 
 
