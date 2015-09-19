@@ -13,6 +13,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.IOException;
 
+import pt.ulisboa.tecnico.cycleourcity.scout.network.stages.strategies.BatchingStrategy;
 import pt.ulisboa.tecnico.cycleourcity.scout.network.stages.strategies.EagerStrategy;
 import pt.ulisboa.tecnico.cycleourcity.scout.network.stages.strategies.UploadingStrategy;
 
@@ -26,7 +27,8 @@ public class CycleOurCityClient {
     private UploadingStrategy strategy;
 
     private CycleOurCityClient(){
-        strategy = new EagerStrategy();
+        //strategy = new EagerStrategy();
+        strategy = new BatchingStrategy(100000); //100KB buffer
     }
 
     static public CycleOurCityClient getInstance(){
