@@ -76,11 +76,6 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
      *         @see pt.ulisboa.tecnico.cycleourcity.scout.pipeline.RoadSlopeMonitoringPipeline.RoadSlopeMonitoringStages.ValidationStage
      *     </li>
      *     <li>
-     *         LowPassFilter: applies a low-pass filter as to smooth the data and reduce the noise.
-     *         TODO
-     *         @see pt.ulisboa.tecnico.cycleourcity.scout.pipeline.RoadSlopeMonitoringPipeline.RoadSlopeMonitoringStages.LowPassFilterStage
-     *     </li>
-     *     <li>
      *         MergeSamplesStage: merges all the samples into a single sample by averaging all the
      *         pressure values.
      *         @see pt.ulisboa.tecnico.cycleourcity.scout.pipeline.RoadSlopeMonitoringPipeline.RoadSlopeMonitoringStages.MergeSamplesStage
@@ -108,21 +103,15 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
 
         PipelineConfiguration configuration = new PipelineConfiguration();
 
-        configuration.addStage(new RoadSlopeMonitoringStages.ValidationStage(true)); //TODO: POR A FALSE
-        if(storeInfo) configuration.addStage(new RoadSlopeMonitoringStages.StoreRawValuesStage());
-        //configuration.addStage(new RoadSlopeMonitoringStages.LowPassFilterStage()); //TODO
-        //configuration.addStage(new RoadSlopeMonitoringStages.StoreFilteredValuesStage());
+        configuration.addStage(new RoadSlopeMonitoringStages.ValidationStage(false));
         configuration.addStage(new RoadSlopeMonitoringStages.MergeSamplesStage());
         configuration.addStage(new RoadSlopeMonitoringStages.DeriveAltitudeStage());
         configuration.addStage(new RoadSlopeMonitoringStages.DeriveSlopeStage());
-        if(storeInfo) configuration.addStage(new RoadSlopeMonitoringStages.StoreFeatureVectorStage());
-        configuration.addStage(new RouteStorage.RouteStorageStage("barometric", RouteStorage.PRESSURE_BASED_ALTITUDE));
         configuration.addStage(new RoadSlopeMonitoringStages.QualificationStage());
 
         configuration.addFinalStage(new RoadSlopeMonitoringStages.UpdateInnerStateStage());
         configuration.addFinalStage(new UploadResultStage());
         configuration.addFinalStage(new CommonStages.FeatureStorageStage(storage));
-
 
         return configuration;
     }
@@ -191,14 +180,7 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
             }
         }
 
-        //TODO: must be implemented
-        public class LowPassFilterStage implements Stage {
 
-            @Override
-            public void execute(PipelineContext pipelineContext) {
-
-            }
-        }
 
         /**
          * This stage merges all the pressure samples into a single one. The new single sample

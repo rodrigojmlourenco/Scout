@@ -51,7 +51,6 @@ public abstract class RoadClassificationStage implements Stage {
 
         long start, stop;
 
-        //TODO: the result must replace the input, this is just for tests!!!
         for(int i=0; i < input.length; i++)
             try {
                 output[i] = generateClassification(input[i]);

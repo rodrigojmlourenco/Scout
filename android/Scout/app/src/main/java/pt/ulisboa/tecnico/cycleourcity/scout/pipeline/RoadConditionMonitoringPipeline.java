@@ -113,7 +113,7 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
         PipelineConfiguration configuration = new PipelineConfiguration();
 
         //Adaptive Stages
-        configuration.addStage(new RoadConditionMonitoringStages.ValidationStage(true)); //TODO: POR A FALSE
+        configuration.addStage(new RoadConditionMonitoringStages.ValidationStage(false));
         configuration.addStage(new RoadConditionMonitoringStages.NormalizationStage());
         configuration.addStage(new RoadConditionMonitoringStages.ProjectionStage());
         configuration.addStage(new RoadConditionMonitoringStages.FeatureExtractionStage());
