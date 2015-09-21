@@ -12,9 +12,7 @@ import android.util.Log;
 
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.provider.ScoutProvider;
 
-/**
- * Created by rodrigo.jm.lourenco on 27/07/2015.
- */
+@Deprecated
 public class ScoutSyncAdapter extends AbstractThreadedSyncAdapter{
 
 
@@ -60,7 +58,7 @@ public class ScoutSyncAdapter extends AbstractThreadedSyncAdapter{
             SyncResult syncResult) {
 
 
-        //TODO
+
         /* 1. Query the results, and convert them to a JsonArray
         Cursor cursor = scoutContentResolver.query(ScoutProvider.CONTENT_URI, null, null, null, null);
 

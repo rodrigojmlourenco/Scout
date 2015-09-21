@@ -13,9 +13,7 @@ import java.util.Objects;
 
 import pt.ulisboa.tecnico.cycleourcity.scout.network.exceptions.UnableToInitiateSessionException;
 
-/**
- * Created by rodrigo.jm.lourenco on 27/07/2015.
- */
+@Deprecated
 public class ScoutRemoteClient {
 
     private final Webb webb;
@@ -58,7 +56,6 @@ public class ScoutRemoteClient {
         return CLIENT;
     }
 
-    //TODO: rever o output e tratamento de erros
     public int requestSession() throws UnableToInitiateSessionException{
 
         JSONObject response = webb
@@ -76,7 +73,6 @@ public class ScoutRemoteClient {
         throw new UnableToInitiateSessionException();
     }
 
-    //TODO: rever o output e tratamento de erros
     public int terminateSession(int sessionID){
         JSONObject response = webb
                 .post(ScoutProxyEndpoints.TERMINATE_SESSION)
@@ -91,7 +87,6 @@ public class ScoutRemoteClient {
     }
 
 
-    //TODO: rever o output e tratamento de erros
     public int publishProcessedSamples(int sessionID, long timestamp, JsonObject[] processedSamples){
 
         JsonArray samplesAsJSONArray = new JsonArray();
