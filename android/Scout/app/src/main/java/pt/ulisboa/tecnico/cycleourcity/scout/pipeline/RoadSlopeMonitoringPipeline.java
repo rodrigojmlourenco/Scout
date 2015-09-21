@@ -12,6 +12,7 @@ import java.util.List;
 
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.location.LocationUtils;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.timedomain.EnvelopeMetrics;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.timedomain.StatisticalMetrics;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.PipelineConfiguration;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.SensorPipelineContext;
@@ -212,7 +213,8 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
 
                 stdDev = StatisticalMetrics.calculateMean(pressures);
                 variance = StatisticalMetrics.calculateVariance(pressures);
-                averagePressure = StatisticalMetrics.calculateMean(pressures);
+                //averagePressure = StatisticalMetrics.calculateMean(pressures);
+                averagePressure = EnvelopeMetrics.calculateMedian(pressures);
 
                 mergedSample.addProperty(SensingUtils.GeneralFields.SENSOR_TYPE, SensingUtils.Sensors.PRESSURE);
                 mergedSample.addProperty(SensingUtils.GeneralFields.TIMESTAMP, locationTimestamp);

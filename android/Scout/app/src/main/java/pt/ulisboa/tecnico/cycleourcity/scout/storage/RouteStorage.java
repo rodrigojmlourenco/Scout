@@ -86,8 +86,6 @@ public class RouteStorage {
 
     private Waypoint generatePressureBasedWaypoint(JsonObject pressureSample){
 
-
-
         Waypoint waypoint = new Waypoint();
 
         if(!pressureSample.has(SensingUtils.LocationKeys.LOCATION)
@@ -96,11 +94,17 @@ public class RouteStorage {
 
         JsonObject location = (JsonObject) pressureSample.get(SensingUtils.LocationKeys.LOCATION);
 
+        float slope = -1;
+        if(pressureSample.has(SensingUtils.PressureKeys.SLOPE))
+            slope = pressureSample.get(SensingUtils.PressureKeys.SLOPE).getAsFloat();
+
         try {
             waypoint.setLatitude(location.get(SensingUtils.LocationKeys.LATITUDE).getAsDouble());
             waypoint.setLongitude(location.get(SensingUtils.LocationKeys.LONGITUDE).getAsDouble());
             waypoint.setElevation(pressureSample.get(SensingUtils.PressureKeys.ALTITUDE).getAsDouble());
             waypoint.setTime(new Date());
+            waypoint.setComment("Slope = "+slope);
+            waypoint.setDescription("Slope = "+slope);
         }catch (ClassCastException | NullPointerException e){
             e.printStackTrace();
             return null;

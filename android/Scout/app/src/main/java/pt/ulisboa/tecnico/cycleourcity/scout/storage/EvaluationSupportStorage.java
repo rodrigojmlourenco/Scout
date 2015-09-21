@@ -72,7 +72,7 @@ public class EvaluationSupportStorage {
 
     private String printComplexPressureHeader(String testID){
         return "Test["+testID+"] - "+dateFormat.format(new Date())+"\n\n"+
-                "time || pressure || altitude || distance (delta) || slope\n";
+                "time || pressure || altitude || distance (delta) || slope || location\n";
     }
 
     private void registerNewAccelerometerTest(String testID){
@@ -141,13 +141,19 @@ public class EvaluationSupportStorage {
 
     private String parseComplexPressureSample(JsonObject sample){
 
+        JsonObject location = (JsonObject) sample.get(SensingUtils.LocationKeys.LOCATION);
+        String locPair = location.get(SensingUtils.LocationKeys.LATITUDE).getAsString()+", "+
+                location.get(SensingUtils.LocationKeys.LONGITUDE).getAsString();
+
+
         return  sample.get(SensingUtils.GeneralFields.SCOUT_TIME).getAsString()+" || "+
                 sample.get(SensingUtils.PressureKeys.PRESSURE).getAsString()+" || "+
                 sample.get(SensingUtils.PressureKeys.ALTITUDE).getAsString()+" || "+
                 (sample.has(SensingUtils.PressureKeys.TRAVELLED_DISTANCE) ?
                         sample.get(SensingUtils.PressureKeys.TRAVELLED_DISTANCE).getAsString(): "n/a")+ " || " +
                 (sample.has(SensingUtils.PressureKeys.SLOPE) ?
-                        sample.get(SensingUtils.PressureKeys.SLOPE).getAsString(): "n/a")+ "\n";
+                        sample.get(SensingUtils.PressureKeys.SLOPE).getAsString(): "n/a") + " || " +
+                locPair + "\n";
     }
 
     public void storeAccelerometerTestValue(String testID, JsonObject value){
