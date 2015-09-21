@@ -8,16 +8,17 @@ import com.ideaimpl.patterns.pipeline.Stage;
 import java.util.ArrayList;
 import java.util.List;
 
+import pt.ulisboa.tecnico.cycleourcity.evalscout.pipeline.stages.UploadResultStage;
 import pt.ulisboa.tecnico.cycleourcity.evalscout.storage.EvaluationSupportStorage;
+import pt.ulisboa.tecnico.cycleourcity.evalscout.storage.ScoutStorageManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.location.LocationUtils;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.timedomain.EnvelopeMetrics;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.timedomain.StatisticalMetrics;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.PipelineConfiguration;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.SensorPipelineContext;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.SensorProcessingPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.stages.CommonStages;
-import pt.ulisboa.tecnico.cycleourcity.evalscout.storage.RouteStorage;
-import pt.ulisboa.tecnico.cycleourcity.evalscout.storage.ScoutStorageManager;
 
 /**
  * @version 1.0
@@ -69,27 +70,18 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
      *     <li>
      *         ValidationStage: checks if all samples possess all required fields, while discarding
      *         invalid samples.
-     *         @see RoadSlopeMonitoringPipeline.RoadSlopeMonitoringStages.ValidationStage
-     *     </li>
-     *     <li>
-     *         LowPassFilter: applies a low-pass filter as to smooth the data and reduce the noise.
-     *         TODO
-     *         @see RoadSlopeMonitoringPipeline.RoadSlopeMonitoringStages.LowPassFilterStage
      *     </li>
      *     <li>
      *         MergeSamplesStage: merges all the samples into a single sample by averaging all the
      *         pressure values.
-     *         @see RoadSlopeMonitoringPipeline.RoadSlopeMonitoringStages.MergeSamplesStage
      *     </li>
      *     <li>
      *         DeriveAltitudeStage: derives the altitude, of the current location, from the registered
      *         atmospheric pressure, as is performed natively by the Android's <a href="https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/hardware/SensorManager.java">SensorManager</a>.
-     *         @see RoadSlopeMonitoringPipeline.RoadSlopeMonitoringStages.DeriveAltitudeStage
      *     </li>
      *     <li>
      *         DeriveSlopeStage: derives the slope given the current and previous atmospheric pressures,
      *         as well as the current a previous locations (used to derice the distance travelled).
-     *         @see RoadSlopeMonitoringPipeline.RoadSlopeMonitoringStages.DeriveSlopeStage
      *     </li>
      * </ol>
      * <br>
@@ -104,17 +96,14 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
 
         PipelineConfiguration configuration = new PipelineConfiguration();
 
-        configuration.addStage(new RoadSlopeMonitoringStages.ValidationStage());
-        if(storeInfo) configuration.addStage(new RoadSlopeMonitoringStages.StoreRawValuesStage());
-        //configuration.addStage(new RoadSlopeMonitoringStages.LowPassFilterStage()); //TODO
-        //configuration.addStage(new RoadSlopeMonitoringStages.StoreFilteredValuesStage());
+        configuration.addStage(new RoadSlopeMonitoringStages.ValidationStage(false));
         configuration.addStage(new RoadSlopeMonitoringStages.MergeSamplesStage());
         configuration.addStage(new RoadSlopeMonitoringStages.DeriveAltitudeStage());
         configuration.addStage(new RoadSlopeMonitoringStages.DeriveSlopeStage());
-        if(storeInfo) configuration.addStage(new RoadSlopeMonitoringStages.StoreFeatureVectorStage());
-        configuration.addStage(new RouteStorage.RouteStorageStage("barometric", RouteStorage.PRESSURE_BASED_ALTITUDE));
+        configuration.addStage(new RoadSlopeMonitoringStages.QualificationStage());
 
         configuration.addFinalStage(new RoadSlopeMonitoringStages.UpdateInnerStateStage());
+        configuration.addFinalStage(new UploadResultStage());
         configuration.addFinalStage(new CommonStages.FeatureStorageStage(storage));
 
         return configuration;
@@ -140,16 +129,23 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
          */
         public class ValidationStage implements Stage {
 
+            private final boolean discardStationary;
+
+            public ValidationStage(boolean discardStationary){
+                super();
+                this.discardStationary = discardStationary;
+            }
+
             public boolean isValid(JsonObject sample){
                 boolean valid = sample.has(SensingUtils.LocationKeys.LOCATION) &&
                         sample.get(SensingUtils.LocationKeys.LOCATION) instanceof JsonObject;
 
-                if(valid){ //Invalidate if stationary
+                if(!discardStationary & valid){ //Invalidate if stationary
                     JsonObject location = (JsonObject) sample.get(SensingUtils.LocationKeys.LOCATION);
                     return  location.has(SensingUtils.LocationKeys.IS_STATIONARY) &&
                             !location.get(SensingUtils.LocationKeys.IS_STATIONARY).getAsBoolean();
                 }else
-                    return false;
+                    return valid;
             }
 
             @Override
@@ -177,14 +173,7 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
             }
         }
 
-        //TODO: must be implemented
-        public class LowPassFilterStage implements Stage {
 
-            @Override
-            public void execute(PipelineContext pipelineContext) {
-
-            }
-        }
 
         /**
          * This stage merges all the pressure samples into a single one. The new single sample
@@ -204,18 +193,18 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
             public JsonObject mergeSamples(double[] pressures, JsonObject location, JsonObject prevPressure) {
 
                 JsonObject mergedSample = new JsonObject();
-                double averagePressure = 0, variance = 0, stdDev = 0;
+                double medianPressure = 0, variance = 0, stdDev = 0;
                 int samplingSize = pressures.length;
                 String locationTimestamp = location.get(SensingUtils.GeneralFields.TIMESTAMP).getAsString();
 
                 stdDev = StatisticalMetrics.calculateMean(pressures);
                 variance = StatisticalMetrics.calculateVariance(pressures);
-                averagePressure = StatisticalMetrics.calculateMean(pressures);
+                medianPressure = EnvelopeMetrics.calculateMedian(pressures);
 
                 mergedSample.addProperty(SensingUtils.GeneralFields.SENSOR_TYPE, SensingUtils.Sensors.PRESSURE);
                 mergedSample.addProperty(SensingUtils.GeneralFields.TIMESTAMP, locationTimestamp);
                 mergedSample.addProperty(SensingUtils.GeneralFields.SCOUT_TIME, System.nanoTime());
-                mergedSample.addProperty(SensingUtils.PressureKeys.PRESSURE, averagePressure);
+                mergedSample.addProperty(SensingUtils.PressureKeys.PRESSURE, medianPressure);
                 mergedSample.addProperty(SensingUtils.PressureKeys.VARIANCE, variance);
                 mergedSample.addProperty(SensingUtils.PressureKeys.STDEV, stdDev);
                 mergedSample.addProperty(SensingUtils.PressureKeys.SAMPLES, samplingSize);
@@ -398,6 +387,60 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
                 for(JsonObject featureVector : input)
                     if(featureVector != null)
                         storage.storeComplexPressureTestValue(TEST_ID, featureVector);
+
+            }
+        }
+
+
+        public class QualificationStage implements Stage{
+
+
+
+            private void qualifySlope(JsonObject slope) {
+
+                float slopeDegree = slope.get(SensingUtils.PressureKeys.SLOPE).getAsFloat();
+
+                if (slopeDegree < -0.24) {
+                    slope.addProperty("class", 1);
+                    return;
+                }
+
+                if (slopeDegree >= -0.24 && slopeDegree <= -0.01) {
+                    slope.addProperty("class", 2);
+                    return;
+                }
+
+                if (slopeDegree > -0.01 && slopeDegree < 0.01){
+                    slope.addProperty("class", 3);
+                    return;
+                }
+
+                if(slopeDegree >= 0.01 && slopeDegree <= 0.13) {
+                    slope.addProperty("class", 4);
+                    return;
+                }
+
+                if(slopeDegree > 0.13 && slopeDegree <= 0.2){
+                    slope.addProperty("class", 5);
+                    return;
+                }
+
+                if(slopeDegree > 0.2){
+                    slope.addProperty("class", 6);
+                    return;
+                }
+            }
+
+            @Override
+            public void execute(PipelineContext pipelineContext) {
+                SensorPipelineContext ctx = (SensorPipelineContext)pipelineContext;
+                JsonObject[] input = ctx.getInput();
+
+                if(input == null) return; //Avoid NullPointerException
+
+                for(JsonObject slope : input){
+                    qualifySlope(slope);
+                }
 
             }
         }

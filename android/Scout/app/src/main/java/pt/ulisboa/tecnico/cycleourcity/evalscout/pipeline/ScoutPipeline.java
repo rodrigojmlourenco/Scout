@@ -10,20 +10,19 @@ import java.util.List;
 import edu.mit.media.funf.FunfManager;
 import edu.mit.media.funf.json.IJsonObject;
 import edu.mit.media.funf.pipeline.BasicPipeline;
+import pt.ulisboa.tecnico.cycleourcity.evalscout.ScoutApplication;
 import pt.ulisboa.tecnico.cycleourcity.evalscout.evaluation.EvaluationDefaultConfigurations;
 import pt.ulisboa.tecnico.cycleourcity.evalscout.evaluation.GenericSensorPipeline;
 import pt.ulisboa.tecnico.cycleourcity.evalscout.offloading.AdaptiveOffloadingManager;
+import pt.ulisboa.tecnico.cycleourcity.evalscout.offloading.exceptions.AdaptiveOffloadingException;
 import pt.ulisboa.tecnico.cycleourcity.evalscout.offloading.ruleset.exceptions.InvalidRuleSetException;
+import pt.ulisboa.tecnico.cycleourcity.evalscout.storage.EvaluationSupportStorage;
 import pt.ulisboa.tecnico.cycleourcity.evalscout.storage.LearningSupportStorage;
-import pt.ulisboa.tecnico.cycleourcity.evalscout.ScoutApplication;
+import pt.ulisboa.tecnico.cycleourcity.evalscout.storage.ScoutStorageManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.MobileSensing;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exceptions.MobileSensingException;
-import pt.ulisboa.tecnico.cycleourcity.evalscout.offloading.exceptions.AdaptiveOffloadingException;
-import pt.ulisboa.tecnico.cycleourcity.evalscout.storage.EvaluationSupportStorage;
-import pt.ulisboa.tecnico.cycleourcity.evalscout.storage.ScoutStorageManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.PipelineConfiguration;
-import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.SensorProcessingPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.exceptions.NothingToArchiveException;
 
 /**

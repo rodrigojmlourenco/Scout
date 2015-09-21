@@ -27,7 +27,6 @@ import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.locat
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.stages.CommonStages;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.state.LocationState;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.state.data.Location;
-import pt.ulisboa.tecnico.cycleourcity.evalscout.storage.RouteStorage;
 
 /**
  * Created by rodrigo.jm.lourenco on 25/06/2015.
@@ -50,15 +49,9 @@ public class ActiveGeoTagger {
         this.geoHistory = new History();
 
         //Location Sensor Pipeline
-        //ConfigurationCaretaker locationCaretaker = new ConfigurationCaretaker();
-        //locationCaretaker.setOriginalPipelineConfiguration(geoTaggingLocationConfiguration());
-        //locationPipeline = new LocationSensorPipeline(locationCaretaker);
         locationPipeline = new LocationSensorPipeline(geoTaggingLocationConfiguration());
 
         //Orientation Sensor Pipeline
-        //ConfigurationCaretaker rotationVectorCaretaker = new ConfigurationCaretaker();
-        //rotationVectorCaretaker.setOriginalPipelineConfiguration(getRotationVectorConfiguration());
-        //rotationVectorPipeline = new RotationVectorSensorPipeline(rotationVectorCaretaker);
         rotationVectorPipeline = new RotationVectorSensorPipeline(getRotationVectorConfiguration());
     }
 
@@ -91,13 +84,13 @@ public class ActiveGeoTagger {
 
     private PipelineConfiguration geoTaggingLocationConfiguration(){
         PipelineConfiguration locationConfiguration = new PipelineConfiguration();
+
         locationConfiguration.addStage(new LocationStages.SortLocationsStage());
         locationConfiguration.addStage(new LocationStages.TrimStage());
         locationConfiguration.addStage(new LocationStages.CheckMovementStage());
-        locationConfiguration.addStage(new RouteStorage.RouteStorageStage("noisyGPS", RouteStorage.GPS_BASED_ALTITUDE));
         locationConfiguration.addStage(new LocationStages.AdmissionControlStage());
         locationConfiguration.addStage(new LocationStages.UpdateGeoTaggerStage(this.geoHistory));
-        locationConfiguration.addStage(new RouteStorage.RouteStorageStage("parsedGPS", RouteStorage.GPS_BASED_ALTITUDE));
+
         return locationConfiguration;
     }
 
@@ -123,8 +116,53 @@ public class ActiveGeoTagger {
         rotationTagSample(sample);
     }
 
+    private JsonObject cleanLocation(JsonObject location){
+
+        if(location==null) return null;
+
+        JsonObject cleaned = new JsonObject();
+
+        try {
+            cleaned.addProperty(
+                    SensingUtils.GeneralFields.TIMESTAMP,
+                    location.get(SensingUtils.GeneralFields.TIMESTAMP).getAsString());
+
+            cleaned.addProperty(
+                    SensingUtils.GeneralFields.SCOUT_TIME,
+                    location.get(SensingUtils.GeneralFields.SCOUT_TIME).getAsString());
+
+            cleaned.addProperty(
+                    SensingUtils.LocationKeys.LATITUDE,
+                    location.get(SensingUtils.LocationKeys.LATITUDE).getAsString());
+
+            cleaned.addProperty(
+                    SensingUtils.LocationKeys.LONGITUDE,
+                    location.get(SensingUtils.LocationKeys.LONGITUDE).getAsString());
+
+            cleaned.addProperty(
+                    SensingUtils.LocationKeys.ALTITUDE,
+                    location.get(SensingUtils.LocationKeys.ALTITUDE).getAsString());
+
+            cleaned.addProperty(
+                    SensingUtils.LocationKeys.SPEED,
+                    location.get(SensingUtils.LocationKeys.SPEED).getAsString());
+
+            if(location.has(SensingUtils.LocationKeys.IS_STATIONARY))
+                cleaned.addProperty(
+                        SensingUtils.LocationKeys.IS_STATIONARY,
+                        location.get(SensingUtils.LocationKeys.IS_STATIONARY).getAsString());
+
+        }catch (NullPointerException | UnsupportedOperationException e){
+            Log.e("ERROR", e.getMessage()+" in "+String.valueOf(location));
+            e.printStackTrace();
+        }
+
+
+        return cleaned;
+    }
+
     public void geoTagSample(JsonObject sample){
-        JsonObject location = geoHistory.getLastKnownLocation();
+        JsonObject location =  cleanLocation(geoHistory.getLastKnownLocation());
         sample.add(SensingUtils.MotionKeys.LOCATION, location);
     }
 
@@ -209,14 +247,25 @@ public class ActiveGeoTagger {
                 JsonObject[] input = ctx.getInput();
 
                 Arrays.sort(input, new Comparator<JsonObject>() {
-                    @Override
-                    public int compare(JsonObject l1, JsonObject l2) {
-                        BigInteger scoutTime1 = new BigInteger(l1.get(SensingUtils.LocationKeys.ELAPSED_TIME_NANOS).getAsString()),
-                            scoutTime2 = new BigInteger(l2.get(SensingUtils.LocationKeys.ELAPSED_TIME_NANOS).getAsString());
+                            @Override
+                            public int compare(JsonObject l1, JsonObject l2) {
 
-                        return scoutTime2.compareTo(scoutTime1);
-                    }
-                });
+                                String s1 = "0", s2= "0";
+                                try {
+                                    s1 = l1.get(SensingUtils.LocationKeys.ELAPSED_TIME_NANOS).getAsString();
+                                    s2 = l2.get(SensingUtils.LocationKeys.ELAPSED_TIME_NANOS).getAsString();
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }
+
+                                BigInteger scoutTime1 = new BigInteger(s1),
+                                        scoutTime2 = new BigInteger(s2);
+
+                                return scoutTime2.compareTo(scoutTime1);
+                            }
+                        }
+
+                );
 
                 ctx.setInput(input);
             }
@@ -301,7 +350,8 @@ public class ActiveGeoTagger {
                 admissionPipeline.addStage(new CommonStages.HeuristicsAdmissionControlStage.SatellitesOutlier());
                 admissionPipeline.addStage(new CommonStages.HeuristicsAdmissionControlStage.GPSSpeedOutlier());
                 admissionPipeline.addStage(new HighTravelSpeedOutlier());
-                admissionPipeline.addStage(new OverlappingLocationsOutlier());
+                //admissionPipeline.addStage(new OverlappingLocationsOutlier());
+
                 admissionPipeline.addErrorStage(new CommonStages.HeuristicsAdmissionControlStage.InvalidateSample());
             }
 
@@ -353,7 +403,7 @@ public class ActiveGeoTagger {
                     if(calculatedSpeed > LocationState.MAX_SPEED)
                         mediationContext.invalidateSample(
                                 "Discarded, calculated speed is too high ("+
-                                calculatedSpeed+")");
+                                        calculatedSpeed+")");
                 }
             }
 
@@ -400,6 +450,7 @@ public class ActiveGeoTagger {
                 ctx.setOutput(input); //USELESS - throws exception if not used SOLVE THIS TODO
             }
         }
+
     }
 
     protected interface RotationStages {
