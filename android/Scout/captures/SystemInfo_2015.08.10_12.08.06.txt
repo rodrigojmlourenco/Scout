@@ -1,0 +1,222 @@
+CURRENT STATS:
+System memory usage:
+  SOff/Norm: 3 samples:
+    Cached: 109MB min, 162MB avg, 196MB max
+    Free: 44MB min, 57MB avg, 82MB max
+    ZRam: 0.00 min, 0.00 avg, 0.00 max
+    Kernel: 190MB min, 192MB avg, 194MB max
+    Native: 62MB min, 71MB avg, 87MB max
+  SOn /Norm: 1 samples:
+    Cached: 149MB min, 149MB avg, 149MB max
+    Free: 42MB min, 42MB avg, 42MB max
+    ZRam: 0.00 min, 0.00 avg, 0.00 max
+    Kernel: 189MB min, 189MB avg, 189MB max
+    Native: 61MB min, 61MB avg, 61MB max
+
+Per-Package Stats:
+  * pt.ulisboa.tecnico.cycleourcity.evalscout / u0a138 / v1:
+      * pt.ulisboa.tecnico.cycleourcity.evalscout / u0a138 / v1:
+               TOTAL: 98% (5.0MB-50MB-73MB/4.0MB-49MB-71MB over 40)
+                 Top: 33% (31MB-62MB-73MB/29MB-60MB-71MB over 31)
+              Imp Fg: 0.03%
+             Service: 65% (5.0MB-11MB-42MB/4.0MB-9.6MB-40MB over 9)
+          (Last Act): 0.01%
+            (Cached): 0.18%
+      * edu.mit.media.funf.FunfManager:
+        Process: pt.ulisboa.tecnico.cycleourcity.evalscout
+            Running count 33 / time 98%
+            Started count 6 / time 66%
+              Bound count 31 / time 40%
+          Executing count 45 / time 2.4%
+
+Summary:
+  * pt.ulisboa.tecnico.cycleourcity.evalscout / u0a138 / v1:
+           TOTAL: 98% (5.0MB-50MB-73MB/4.0MB-49MB-71MB over 40)
+             Top: 33% (31MB-62MB-73MB/29MB-60MB-71MB over 31)
+          Imp Fg: 0.03%
+         Service: 65% (5.0MB-11MB-42MB/4.0MB-9.6MB-40MB over 9)
+      (Last Act): 0.01%
+        (Cached): 0.18%
+
+Run time Stats:
+  SOff/Norm: +24m26s178ms
+  SOn /Norm: +1h56m53s941ms (running)
+      TOTAL: +2h21m20s119ms
+
+Memory usage:
+  Kernel : 191MB (31 samples)
+  Native : 69MB (31 samples)
+  Persist: 193MB (75 samples)
+  Top    : 221MB (188 samples)
+  ImpFg  : 147MB (504 samples)
+  ImpBg  : 19MB (106 samples)
+  Service: 343MB (954 samples)
+  Receivr: 214KB (928 samples)
+  Home   : 95MB (12 samples)
+  LastAct: 47MB (85 samples)
+  CchAct : 160MB (63 samples)
+  CchCAct: 93MB (39 samples)
+  CchEmty: 170MB (527 samples)
+  Cached : 159MB (31 samples)
+  Free   : 54MB (31 samples)
+  TOTAL  : 1.9GB
+  ServRst: 312 (45 samples)
+
+          Start time: 2015-08-10 08:48:53
+  Total elapsed time: +3h19m9s312ms (partial) libart.so
+
+AGGREGATED OVER LAST 24 HOURS:
+System memory usage:
+  SOff/Norm: 13 samples:
+    Cached: 0.00 min, 101MB avg, 480MB max
+    Free: 41MB min, 58MB avg, 102MB max
+    ZRam: 0.00 min, 0.00 avg, 0.00 max
+    Kernel: 153MB min, 184MB avg, 206MB max
+    Native: 62MB min, 67MB avg, 87MB max
+       Mod : 1 samples:
+    Cached: 0.00 min, 0.00 avg, 0.00 max
+    Free: 47MB min, 47MB avg, 47MB max
+    ZRam: 0.00 min, 0.00 avg, 0.00 max
+    Kernel: 169MB min, 169MB avg, 169MB max
+    Native: 66MB min, 66MB avg, 66MB max
+  SOn /Norm: 17 samples:
+    Cached: 0.00 min, 135MB avg, 584MB max
+    Free: 40MB min, 88MB avg, 290MB max
+    ZRam: 0.00 min, 0.00 avg, 0.00 max
+    Kernel: 150MB min, 180MB avg, 205MB max
+    Native: 61MB min, 67MB avg, 92MB max
+       Mod : 3 samples:
+    Cached: 0.00 min, 50MB avg, 151MB max
+    Free: 51MB min, 225MB avg, 543MB max
+    ZRam: 0.00 min, 0.00 avg, 0.00 max
+    Kernel: 138MB min, 163MB avg, 182MB max
+    Native: 67MB min, 71MB avg, 78MB max
+
+Per-Package Stats:
+  * pt.ulisboa.tecnico.cycleourcity.evalscout / u0a138 / v1:
+      * pt.ulisboa.tecnico.cycleourcity.evalscout / u0a138 / v1:
+               TOTAL: 100% (4.3MB-21MB-73MB/3.6MB-20MB-71MB over 119)
+                 Top: 6.0% (31MB-62MB-73MB/29MB-60MB-71MB over 31)
+              Imp Fg: 0.01%
+             Service: 94% (4.3MB-6.8MB-42MB/3.6MB-5.9MB-40MB over 88)
+            (Cached): 0.03%
+      * pt.ulisboa.tecnico.cycleourcity.evalscout:sync / u0a138 / v1:
+      * pt.ulisboa.tecnico.cycleourcity.evalscout.network.ScoutSyncService:
+        Process: pt.ulisboa.tecnico.cycleourcity.evalscout:sync
+            Running count 1 / time 0.00%
+              Bound count 1 / time 0.00%
+          Executing count 2 / time 0.00%
+      * edu.mit.media.funf.FunfManager:
+        Process: pt.ulisboa.tecnico.cycleourcity.evalscout
+            Running count 40 / time 99%
+            Started count 13 / time 94%
+              Bound count 31 / time 7.2%
+          Executing count 91 / time 0.44%
+
+Summary:
+  * pt.ulisboa.tecnico.cycleourcity.evalscout / u0a138 / v1:
+           TOTAL: 100% (4.3MB-21MB-73MB/3.6MB-20MB-71MB over 119)
+             Top: 6.0% (31MB-62MB-73MB/29MB-60MB-71MB over 31)
+          Imp Fg: 0.01%
+         Service: 94% (4.3MB-6.8MB-42MB/3.6MB-5.9MB-40MB over 88)
+        (Cached): 0.03%
+  * pt.ulisboa.tecnico.cycleourcity.evalscout:sync / u0a138 / v1:
+
+Run time Stats:
+  SOff/Norm: +4h22m18s93ms
+       Mod : +6m16s152ms
+  SOn /Norm: +8h12m54s696ms
+       Mod : +16m44s228ms
+       Low : +58s368ms
+       Crit: +4m9s801ms
+      TOTAL: +13h3m21s338ms
+
+Memory usage:
+  Kernel : 181MB (203 samples)
+  Native : 67MB (203 samples)
+  Persist: 223MB (1464 samples)
+  Top    : 279MB (2644 samples)
+  ImpFg  : 157MB (5070 samples)
+  ImpBg  : 25MB (1975 samples)
+  Backup : 477 (31 samples)
+  Service: 296MB (10567 samples)
+  Receivr: 223KB (9176 samples)
+  Home   : 97MB (270 samples)
+  LastAct: 32MB (2096 samples)
+  CchAct : 185MB (1243 samples)
+  CchCAct: 79MB (320 samples)
+  CchEmty: 140MB (4152 samples)
+  Cached : 122MB (203 samples)
+  Free   : 81MB (203 samples)
+  TOTAL  : 1.9GB
+  ServRst: 34KB (2067 samples)
+
+          Start time: 2015-08-09 09:41:52
+  Total elapsed time: +1d2h25m46s38ms (partial) libart.so
+
+AGGREGATED OVER LAST 3 HOURS:
+System memory usage:
+  SOff/Norm: 3 samples:
+    Cached: 109MB min, 162MB avg, 196MB max
+    Free: 44MB min, 57MB avg, 82MB max
+    ZRam: 0.00 min, 0.00 avg, 0.00 max
+    Kernel: 190MB min, 192MB avg, 194MB max
+    Native: 62MB min, 71MB avg, 87MB max
+  SOn /Norm: 1 samples:
+    Cached: 149MB min, 149MB avg, 149MB max
+    Free: 42MB min, 42MB avg, 42MB max
+    ZRam: 0.00 min, 0.00 avg, 0.00 max
+    Kernel: 189MB min, 189MB avg, 189MB max
+    Native: 61MB min, 61MB avg, 61MB max
+
+Per-Package Stats:
+  * pt.ulisboa.tecnico.cycleourcity.evalscout / u0a138 / v1:
+      * pt.ulisboa.tecnico.cycleourcity.evalscout / u0a138 / v1:
+               TOTAL: 98% (5.0MB-50MB-73MB/4.0MB-49MB-71MB over 40)
+                 Top: 33% (31MB-62MB-73MB/29MB-60MB-71MB over 31)
+              Imp Fg: 0.03%
+             Service: 65% (5.0MB-11MB-42MB/4.0MB-9.6MB-40MB over 9)
+          (Last Act): 0.01%
+            (Cached): 0.18%
+      * edu.mit.media.funf.FunfManager:
+        Process: pt.ulisboa.tecnico.cycleourcity.evalscout
+            Running count 33 / time 98%
+            Started count 6 / time 66%
+              Bound count 31 / time 40%
+          Executing count 45 / time 2.4%
+
+Summary:
+  * pt.ulisboa.tecnico.cycleourcity.evalscout / u0a138 / v1:
+           TOTAL: 98% (5.0MB-50MB-73MB/4.0MB-49MB-71MB over 40)
+             Top: 33% (31MB-62MB-73MB/29MB-60MB-71MB over 31)
+          Imp Fg: 0.03%
+         Service: 65% (5.0MB-11MB-42MB/4.0MB-9.6MB-40MB over 9)
+      (Last Act): 0.01%
+        (Cached): 0.18%
+
+Run time Stats:
+  SOff/Norm: +24m26s178ms
+  SOn /Norm: +1h56m54s68ms
+      TOTAL: +2h21m20s246ms
+
+Memory usage:
+  Kernel : 191MB (31 samples)
+  Native : 69MB (31 samples)
+  Persist: 193MB (75 samples)
+  Top    : 221MB (188 samples)
+  ImpFg  : 147MB (504 samples)
+  ImpBg  : 19MB (106 samples)
+  Service: 343MB (954 samples)
+  Receivr: 214KB (928 samples)
+  Home   : 95MB (12 samples)
+  LastAct: 47MB (85 samples)
+  CchAct : 160MB (63 samples)
+  CchCAct: 93MB (39 samples)
+  CchEmty: 170MB (527 samples)
+  Cached : 159MB (31 samples)
+  Free   : 54MB (31 samples)
+  TOTAL  : 1.9GB
+  ServRst: 312 (45 samples)
+
+          Start time: 2015-08-10 08:48:53
+  Total elapsed time: +3h19m9s429ms (partial) libart.so

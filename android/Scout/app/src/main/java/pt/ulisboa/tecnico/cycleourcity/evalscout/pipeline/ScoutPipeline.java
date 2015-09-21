@@ -5,9 +5,13 @@ import android.util.Log;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.util.List;
+
 import edu.mit.media.funf.FunfManager;
 import edu.mit.media.funf.json.IJsonObject;
 import edu.mit.media.funf.pipeline.BasicPipeline;
+import pt.ulisboa.tecnico.cycleourcity.evalscout.evaluation.EvaluationDefaultConfigurations;
+import pt.ulisboa.tecnico.cycleourcity.evalscout.evaluation.GenericSensorPipeline;
 import pt.ulisboa.tecnico.cycleourcity.evalscout.offloading.AdaptiveOffloadingManager;
 import pt.ulisboa.tecnico.cycleourcity.evalscout.offloading.ruleset.exceptions.InvalidRuleSetException;
 import pt.ulisboa.tecnico.cycleourcity.evalscout.storage.LearningSupportStorage;
@@ -18,6 +22,8 @@ import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exceptions.MobileSens
 import pt.ulisboa.tecnico.cycleourcity.evalscout.offloading.exceptions.AdaptiveOffloadingException;
 import pt.ulisboa.tecnico.cycleourcity.evalscout.storage.EvaluationSupportStorage;
 import pt.ulisboa.tecnico.cycleourcity.evalscout.storage.ScoutStorageManager;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.PipelineConfiguration;
+import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.SensorProcessingPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.exceptions.NothingToArchiveException;
 
 /**
@@ -56,6 +62,11 @@ public class ScoutPipeline extends BasicPipeline {
     }
 
 
+    /*
+    EVALUTATION
+     */
+    private boolean EVAL_BASELINE = true;
+
     private boolean isInstantiated = false;
     synchronized private void instantiateScoutSensing() throws AdaptiveOffloadingException {
 
@@ -63,25 +74,20 @@ public class ScoutPipeline extends BasicPipeline {
 
         geoTagger = ActiveGeoTagger.getInstance();
 
+        //Mobile Sensing Component Config
         mPipeline = new MobileSensing();
         mPipeline.setWindowSize(3);
+        mPipeline.runAnyway(true);
 
-        RoadConditionMonitoringPipeline rPipeline = new RoadConditionMonitoringPipeline(
-                RoadConditionMonitoringPipeline.generateRoadConditionMonitoringPipelineConfiguration());
+        /* EVALUATION */
+        List<PipelineConfiguration> pipelineConfigs = EvaluationDefaultConfigurations.generateConfigurationB();
+        for(PipelineConfiguration config : pipelineConfigs){
+            GenericSensorPipeline p = new GenericSensorPipeline(0, config);
+            mPipeline.addSensorProcessingPipeline(p);
+            offloadingManager.validatePipeline(p);
+        }
 
-
-        RoadSlopeMonitoringPipeline sPipeline = new RoadSlopeMonitoringPipeline(
-                RoadSlopeMonitoringPipeline.generateRoadSlopeMonitoringPipelineConfiguration(true));
-
-        //Scout Profiling
-        offloadingManager.validatePipeline(rPipeline);
-        offloadingManager.validatePipeline(sPipeline);
-
-        mPipeline.addSensorProcessingPipeline(rPipeline);
-        mPipeline.addSensorProcessingPipeline(sPipeline);
-
-        offloadingManager.optimizePipelines();
-
+        //offloadingManager.optimizePipelines();
         isInstantiated = true;
     }
 
@@ -123,13 +129,6 @@ public class ScoutPipeline extends BasicPipeline {
 
                 break;
             case ACTION_PROFILE:
-                /* DEPRECATED
-                if(offloadingManager.isProfilingEnabled()) {
-                    if (offloadingManager.isProfiling())
-                        offloadingManager.stopProfiling();
-                    else
-                        offloadingManager.startProfiling();
-                }*/
                 break;
             default:
                 Log.e(LOG_TAG, "ScoutPipeline doesn't support the "+action+" action.");
@@ -140,6 +139,8 @@ public class ScoutPipeline extends BasicPipeline {
 
     @Override
     public void onDataReceived(IJsonObject probeConfig, IJsonObject data) {
+
+        //if(EVAL_BASELINE) return;
 
         JsonObject jsonData = data.getAsJsonObject(),
                     jsonConfig = probeConfig.getAsJsonObject();

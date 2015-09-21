@@ -1,0 +1,29 @@
+# Grupo de testes 3 - Real-world scenarios
+
+São escolhidas 4 estradas diferentes, cada uma representativa de cada uma das
+quatro possíveis classes {AsphaltGood, AsphaltBad, CobbleStoneGood, CobblestoneBad}.
+Estas são escolhidas tendo em conta dois principais factores:
+ - Estradas/Segmentos popularmente classificados no CycleOurCity
+ - Facilidade de replicar a experiência (declive, transito são factores que dificultam a repetição)
+
+Após uma análise detalhada da base de dados do CycleOurCity foram escolhidas,
+tendo em conta o número de vezes que foram classificadas, foram escolhidas
+as seguintes estradas/segmentos:
+
+  - #4: Rua Pascoal de Melo (4 classificações)
+  - #3: A Determinar (Ciclovia descendente na Av. da Liberdade)
+  - #2: A Determinar (Ribeira das Naus, Calçada do Parque das Nações)
+  - #1: A Determinar (Calçada do Rossio)
+
+A adicionalmente e por popularidade foram ainda escolhidas para verificar a
+precisão da inferência do declive as seguintes duas rotas:
+ - {Declive Suave} Rua Pascoal de Melo
+ - {Declive Acentuado} Rua António Pereira Carrilho
+
+Cada uma das ruas/segmentos deverá ser atravessado uma total de 10 vezes, para
+reduzir possíveis divergências nas experiências.
+
+NOTA IMPORTANTE:
+Dado que o CycleOurCity não se encontra tão classificado como era esperado
+será necessário requisitar o preenchimento de questionário, para permitir a
+aquisição de uma base de conhecimento popular mais completa.

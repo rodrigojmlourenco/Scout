@@ -1,0 +1,20 @@
+Parsing file 'pascoal_precise.txt'.
+Average Classification Time: 0.0977ms
+
+
+Class		| TP	| FN 
+AsphaltGood	| 114	| 18
+AsphaltBad	| 0	| 0
+CobblestoneGood	| 0	| 0
+CobblestoneBad	| 0	| 0
+
+
+Class		| TP	| FP
+AsphaltGood	| 114	| 0
+AsphaltBad	| 0	| 2
+CobblestoneGood	| 0	| 14
+CobblestoneBad	| 0	| 2
+
+
+Samples | Precision	| FP Rate	| FN Rate
+132 	| 0.864		| 0.136		| 0.136

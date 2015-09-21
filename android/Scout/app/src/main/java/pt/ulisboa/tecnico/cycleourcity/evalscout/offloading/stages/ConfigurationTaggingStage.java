@@ -38,6 +38,8 @@ public class ConfigurationTaggingStage implements Stage {
         SensorPipelineContext ctx = (SensorPipelineContext)pipelineContext;
         JsonObject[] input = ctx.getInput();
 
+        if(input == null) return; //Avoid NullPointerException
+
         //JsonParser parser = new JsonParser();
         for(JsonObject sample : input){
             try {

@@ -1,0 +1,6 @@
+Regex para limpar os gpx
+(<ele>.*</ele>)|(<time>.*</time>)|(<desc>.*</desc>)|(<trkpt .*>)|(</trkpt>)|(<trkseg>)|(</trkseg>)|(<trk>)|(</trk>)|(<gpx>)|(</gpx>)
+
+(<cmt>Slope = )|(</cmt>)
+
+Empty lines: ^(?:[\t ]*(?:\r?\n|\r))+

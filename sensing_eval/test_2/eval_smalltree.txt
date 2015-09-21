@@ -1,0 +1,21 @@
+Parsing file 'smalltree_j48.txt'.
+Average Classification Time: 0.1065ms
+
+
+Class		| TP	| FN
+CobblestoneGood	| 226	| 9
+CobblestoneBad	| 144	| 31
+AsphaltBad	| 54	| 83
+AsphaltGood	| 364	| 9
+
+
+
+Class		| TP	| FP
+CobblestoneGood	| 226	| 76
+CobblestoneBad	| 144	| 19
+AsphaltBad	| 54	| 32
+AsphaltGood	| 364	| 5
+
+
+Samples | Precision	| FP Rate	| FN Rate
+920 	| 0.857		| 0.143		| 0.143

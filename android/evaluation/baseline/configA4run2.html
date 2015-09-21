@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html><head>
+
+<title>Battery Historian analysis for baseline\configA4run2.txt</title>
+<p>Battery Historian analysis for baseline\configA4run2.txt</p>
+
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+      <script type="text/javascript" src="https://www.google.com/jsapi?autoload={'modules':[{'name':'visualization','version':'1','packages':['timeline']}]}"></script>
+    
+<script type="text/javascript">
+google.setOnLoadCallback(drawChart);
+
+
+    var dataTable;
+    var chart;
+    var options;
+    var default_width = 3000
+function drawChart() {
+
+    container = document.getElementById('chart');
+    chart = new google.visualization.Timeline(container);
+
+    dataTable = new google.visualization.DataTable();
+    dataTable.addColumn({ type: 'string', id: 'Position' });
+    dataTable.addColumn({ type: 'string', id: 'Name' });
+    dataTable.addColumn({ type: 'date', id: 'Start' });
+    dataTable.addColumn({ type: 'date', id: 'End' });
+    dataTable.addRows([
+
+['battery_level', 'battery_level=054(+14m06s-+14m06s)', new Date(1439478240 * 1000), new Date(1439478241 * 1000)],
+['battery_level', 'battery_level=055(+10m55s-+10m55s)', new Date(1439478049 * 1000), new Date(1439478050 * 1000)],
+['battery_level', 'battery_level=056(+7m15s-+7m15s)', new Date(1439477829 * 1000), new Date(1439477830 * 1000)],
+['battery_level', 'battery_level=051(+23m53s-+23m53s)', new Date(1439478827 * 1000), new Date(1439478828 * 1000)],
+['battery_level', 'battery_level=053(+17m00s-+17m00s)', new Date(1439478414 * 1000), new Date(1439478415 * 1000)],
+['battery_level', 'battery_level=057(+3m42s-+3m42s)', new Date(1439477616 * 1000), new Date(1439477617 * 1000)],
+['battery_level', 'battery_level=058(0s-0s)', new Date(1439477394 * 1000), new Date(1439477395 * 1000)],
+['battery_level', 'battery_level=052(+23m35s-+23m35s)', new Date(1439478809 * 1000), new Date(1439478810 * 1000)],
+['plugged', '+plugged(0s-+3s)', new Date(1439477394 * 1000), new Date(1439477397 * 1000)],
+['plugged', '+plugged(+25m48s-+25m55s)', new Date(1439478942 * 1000), new Date(1439478949 * 1000)],
+['screen', '+screen(0s-+25m55s)', new Date(1439477394 * 1000), new Date(1439478949 * 1000)],
+['top', '+top=u0a138:"pt.ulisboa.tecnico.cycleourcity.evalscout"(0s-+25m55s)', new Date(1439477394 * 1000), new Date(1439478949 * 1000)],
+['sync', '+sync=u0a49:"com.google.android.apps.bigtop.provider.bigtopprovider/com.google/rodrigo.jm.lourenco@gmail.com"(+23m40s-+24m07s)', new Date(1439478814 * 1000), new Date(1439478841 * 1000)],
+['sync', '+sync=u0a41:"gmail-ls/com.google/rodrigo.jm.lourenco@gmail.com"(+23m40s-+24m05s)', new Date(1439478814 * 1000), new Date(1439478839 * 1000)],
+['wake_lock *', '+wake_lock(0s-+25m55s)', new Date(1439477394 * 1000), new Date(1439478949 * 1000)],
+['running', '+running(0s-+25m55s)', new Date(1439477394 * 1000), new Date(1439478949 * 1000)],
+['mobile_radio', '+mobile_radio(+13m32s-+13m42s)', new Date(1439478206 * 1000), new Date(1439478216 * 1000)],
+['mobile_radio', '+mobile_radio(+15s-+35s)', new Date(1439477409 * 1000), new Date(1439477429 * 1000)],
+['mobile_radio', '+mobile_radio(+13m10s-+13m21s)', new Date(1439478184 * 1000), new Date(1439478195 * 1000)],
+['mobile_radio', '+mobile_radio(+3m31s-+3m44s)', new Date(1439477605 * 1000), new Date(1439477618 * 1000)],
+['mobile_radio', '+mobile_radio(+7m11s-+7m22s)', new Date(1439477825 * 1000), new Date(1439477836 * 1000)],
+['mobile_radio', '+mobile_radio(+4m38s-+4m49s)', new Date(1439477672 * 1000), new Date(1439477683 * 1000)],
+['mobile_radio', '+mobile_radio(+3m05s-+3m16s)', new Date(1439477579 * 1000), new Date(1439477590 * 1000)],
+['mobile_radio', '+mobile_radio(+13m50s-+13m52s)', new Date(1439478224 * 1000), new Date(1439478226 * 1000)],
+['mobile_radio', '+mobile_radio(+7m27s-+7m38s)', new Date(1439477841 * 1000), new Date(1439477852 * 1000)],
+['mobile_radio', '+mobile_radio(+12m48s-+13m05s)', new Date(1439478162 * 1000), new Date(1439478179 * 1000)],
+['mobile_radio', '+mobile_radio(+4m17s-+4m27s)', new Date(1439477651 * 1000), new Date(1439477661 * 1000)],
+['mobile_radio', '+mobile_radio(+6m26s-+6m37s)', new Date(1439477780 * 1000), new Date(1439477791 * 1000)],
+['mobile_radio', '+mobile_radio(+3s-+6s)', new Date(1439477397 * 1000), new Date(1439477400 * 1000)],
+['mobile_radio', '+mobile_radio(+7m00s-+7m10s)', new Date(1439477814 * 1000), new Date(1439477824 * 1000)],
+['mobile_radio', '+mobile_radio(+37s-+52s)', new Date(1439477431 * 1000), new Date(1439477446 * 1000)],
+['mobile_radio', '+mobile_radio(+1m16s-+1m27s)', new Date(1439477470 * 1000), new Date(1439477481 * 1000)],
+['mobile_radio', '+mobile_radio(+5m53s-+6m20s)', new Date(1439477747 * 1000), new Date(1439477774 * 1000)],
+['data_conn', 'data_conn=none(+7m42s-+7m42s)', new Date(1439477856 * 1000), new Date(1439477857 * 1000)],
+['data_conn', 'data_conn=lte(+15s-+15s)', new Date(1439477409 * 1000), new Date(1439477410 * 1000)],
+['data_conn', 'data_conn=none(+13m52s-+13m52s)', new Date(1439478226 * 1000), new Date(1439478227 * 1000)],
+['data_conn', 'data_conn=lte(+12m48s-+12m48s)', new Date(1439478162 * 1000), new Date(1439478163 * 1000)],
+['data_conn', 'data_conn=lte(0s-0s)', new Date(1439477394 * 1000), new Date(1439477395 * 1000)],
+['data_conn', 'data_conn=none(+6s-+6s)', new Date(1439477400 * 1000), new Date(1439477401 * 1000)],
+['conn', '-conn=TYPE_WIFI(+15s-+15s)', new Date(1439477409 * 1000), new Date(1439477410 * 1000)],
+['conn', '+conn=TYPE_MOBILE(+16s-+7m12s)', new Date(1439477410 * 1000), new Date(1439477826 * 1000)],
+['conn', '+conn=TYPE_MOBILE(+13m10s-+13m21s)', new Date(1439478184 * 1000), new Date(1439478195 * 1000)],
+['conn', '+conn=TYPE_WIFI(+7m12s-+12m48s)', new Date(1439477826 * 1000), new Date(1439478162 * 1000)],
+['conn', '+conn=TYPE_MOBILE(+12m48s-+12m52s)', new Date(1439478162 * 1000), new Date(1439478166 * 1000)],
+['conn', '-conn=TYPE_WIFI(+12m48s-+12m48s)', new Date(1439478162 * 1000), new Date(1439478163 * 1000)],
+['conn', '+conn=TYPE_WIFI(+13m22s-+25m55s)', new Date(1439478196 * 1000), new Date(1439478949 * 1000)],
+['conn', '+conn=TYPE_WIFI(+12m53s-+13m10s)', new Date(1439478167 * 1000), new Date(1439478184 * 1000)],
+['wifi', '+wifi(0s-+25m55s)', new Date(1439477394 * 1000), new Date(1439478949 * 1000)],
+['wifi_full_lock', '+wifi_full_lock(+14m54s-+14m57s)', new Date(1439478288 * 1000), new Date(1439478291 * 1000)],
+['wifi_full_lock', '+wifi_full_lock(+20m00s-+20m03s)', new Date(1439478594 * 1000), new Date(1439478597 * 1000)],
+['wifi_full_lock', '+wifi_full_lock(+25m21s-+25m25s)', new Date(1439478915 * 1000), new Date(1439478919 * 1000)],
+['wifi_full_lock', '+wifi_full_lock(+4m20s-+4m20s)', new Date(1439477654 * 1000), new Date(1439477655 * 1000)],
+['wifi_full_lock', '+wifi_full_lock(+9m33s-+9m33s)', new Date(1439477967 * 1000), new Date(1439477968 * 1000)],
+['wifi_scan', '+wifi_scan(+16s-+18s)', new Date(1439477410 * 1000), new Date(1439477412 * 1000)],
+['wifi_scan', '+wifi_scan(+25m21s-+25m25s)', new Date(1439478915 * 1000), new Date(1439478919 * 1000)],
+['wifi_scan', '+wifi_scan(+13m10s-+13m13s)', new Date(1439478184 * 1000), new Date(1439478187 * 1000)],
+['wifi_scan', '+wifi_scan(+7m12s-+7m15s)', new Date(1439477826 * 1000), new Date(1439477829 * 1000)],
+['wifi_scan', '+wifi_scan(+12m48s-+12m51s)', new Date(1439478162 * 1000), new Date(1439478165 * 1000)],
+['wifi_scan', '+wifi_scan(+13m22s-+13m25s)', new Date(1439478196 * 1000), new Date(1439478199 * 1000)],
+['wifi_scan', '+wifi_scan(+12m53s-+12m56s)', new Date(1439478167 * 1000), new Date(1439478170 * 1000)],
+['wifi_scan', '+wifi_scan(+20m00s-+20m03s)', new Date(1439478594 * 1000), new Date(1439478597 * 1000)],
+['wifi_running', '+wifi_running(0s-+25m55s)', new Date(1439477394 * 1000), new Date(1439478949 * 1000)],
+['wifi_suppl', 'wifi_suppl=scanning(+1m18s-+1m18s)', new Date(1439477472 * 1000), new Date(1439477473 * 1000)],
+['wifi_suppl', 'wifi_suppl=disconn(+48s-+48s)', new Date(1439477442 * 1000), new Date(1439477443 * 1000)],
+['wifi_suppl', 'wifi_suppl=scanning(+49s-+49s)', new Date(1439477443 * 1000), new Date(1439477444 * 1000)],
+['wifi_suppl', 'wifi_suppl=completed(+52s-+52s)', new Date(1439477446 * 1000), new Date(1439477447 * 1000)],
+['wifi_suppl', 'wifi_suppl=completed(+7m11s-+7m11s)', new Date(1439477825 * 1000), new Date(1439477826 * 1000)],
+['wifi_suppl', 'wifi_suppl=disconn(+12m41s-+12m41s)', new Date(1439478155 * 1000), new Date(1439478156 * 1000)],
+['wifi_suppl', 'wifi_suppl=scanning(+16s-+16s)', new Date(1439477410 * 1000), new Date(1439477411 * 1000)],
+['wifi_suppl', 'wifi_suppl=scanning(+12m48s-+12m48s)', new Date(1439478162 * 1000), new Date(1439478163 * 1000)],
+['wifi_suppl', 'wifi_suppl=completed(+23m55s-+23m55s)', new Date(1439478829 * 1000), new Date(1439478830 * 1000)],
+['wifi_suppl', 'wifi_suppl=completed(0s-0s)', new Date(1439477394 * 1000), new Date(1439477395 * 1000)],
+['wifi_suppl', 'wifi_suppl=disconn(+1m07s-+1m07s)', new Date(1439477461 * 1000), new Date(1439477462 * 1000)],
+['wifi_suppl', 'wifi_suppl=completed(+12m52s-+12m52s)', new Date(1439478166 * 1000), new Date(1439478167 * 1000)],
+['wifi_suppl', 'wifi_suppl=disconn(+8s-+8s)', new Date(1439477402 * 1000), new Date(1439477403 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=1(+8m14s-+8m14s)', new Date(1439477888 * 1000), new Date(1439477889 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=2(+8m17s-+8m17s)', new Date(1439477891 * 1000), new Date(1439477892 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=4(+12m41s-+12m41s)', new Date(1439478155 * 1000), new Date(1439478156 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=2(+14m50s-+14m50s)', new Date(1439478284 * 1000), new Date(1439478285 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=1(+16m03s-+16m03s)', new Date(1439478357 * 1000), new Date(1439478358 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=1(+8m29s-+8m29s)', new Date(1439477903 * 1000), new Date(1439477904 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=1(+17m07s-+17m07s)', new Date(1439478421 * 1000), new Date(1439478422 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=1(0s-0s)', new Date(1439477394 * 1000), new Date(1439477395 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=2(+8m33s-+8m33s)', new Date(1439477907 * 1000), new Date(1439477908 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=2(+12m51s-+12m51s)', new Date(1439478165 * 1000), new Date(1439478166 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=2(+23m35s-+23m35s)', new Date(1439478809 * 1000), new Date(1439478810 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=1(+12m56s-+12m56s)', new Date(1439478170 * 1000), new Date(1439478171 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=1(+25m45s-+25m45s)', new Date(1439478939 * 1000), new Date(1439478940 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=1(+23m38s-+23m38s)', new Date(1439478812 * 1000), new Date(1439478813 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=4(+11s-+11s)', new Date(1439477405 * 1000), new Date(1439477406 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=2(+13m00s-+13m00s)', new Date(1439478174 * 1000), new Date(1439478175 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=2(+15m11s-+15m11s)', new Date(1439478305 * 1000), new Date(1439478306 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=1(+13m04s-+13m04s)', new Date(1439478178 * 1000), new Date(1439478179 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=1(+15m14s-+15m14s)', new Date(1439478308 * 1000), new Date(1439478309 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=2(+15m48s-+15m48s)', new Date(1439478342 * 1000), new Date(1439478343 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=2(+23m53s-+23m53s)', new Date(1439478827 * 1000), new Date(1439478828 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=2(+25m48s-+25m48s)', new Date(1439478942 * 1000), new Date(1439478943 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=2(+15m35s-+15m35s)', new Date(1439478329 * 1000), new Date(1439478330 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=2(+17m00s-+17m00s)', new Date(1439478414 * 1000), new Date(1439478415 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=2(+7m11s-+7m11s)', new Date(1439477825 * 1000), new Date(1439477826 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=1(+15m45s-+15m45s)', new Date(1439478339 * 1000), new Date(1439478340 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=1(+52s-+52s)', new Date(1439477446 * 1000), new Date(1439477447 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=2(+55s-+55s)', new Date(1439477449 * 1000), new Date(1439477450 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=1(+58s-+58s)', new Date(1439477452 * 1000), new Date(1439477453 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=1(+25m52s-+25m52s)', new Date(1439478946 * 1000), new Date(1439478947 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=1(+11m41s-+11m41s)', new Date(1439478095 * 1000), new Date(1439478096 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=1(+7m26s-+7m26s)', new Date(1439477840 * 1000), new Date(1439477841 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=2(+1m04s-+1m04s)', new Date(1439477458 * 1000), new Date(1439477459 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=2(+7m29s-+7m29s)', new Date(1439477843 * 1000), new Date(1439477844 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=1(+13m55s-+13m55s)', new Date(1439478229 * 1000), new Date(1439478230 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=2(+13m58s-+13m58s)', new Date(1439478232 * 1000), new Date(1439478233 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=1(+14m01s-+14m01s)', new Date(1439478235 * 1000), new Date(1439478236 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=2(+14m04s-+14m04s)', new Date(1439478238 * 1000), new Date(1439478239 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=2(+25m55s-+25m55s)', new Date(1439478949 * 1000), new Date(1439478950 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=1(+14m53s-+14m53s)', new Date(1439478287 * 1000), new Date(1439478288 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=1(+14m13s-+14m13s)', new Date(1439478247 * 1000), new Date(1439478248 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=2(+13m52s-+13m52s)', new Date(1439478226 * 1000), new Date(1439478227 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=2(+14m22s-+14m22s)', new Date(1439478256 * 1000), new Date(1439478257 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=1(+14m26s-+14m26s)', new Date(1439478260 * 1000), new Date(1439478261 * 1000)],
+['wifi_signal_strength', 'wifi_signal_strength=1(+1m07s-+1m07s)', new Date(1439477461 * 1000), new Date(1439477462 * 1000)],
+['phone_signal_strength', 'phone_signal_strength=moderate(+10m55s-+10m55s)', new Date(1439478049 * 1000), new Date(1439478050 * 1000)],
+['phone_signal_strength', 'phone_signal_strength=great(0s-0s)', new Date(1439477394 * 1000), new Date(1439477395 * 1000)],
+['phone_signal_strength', 'phone_signal_strength=great(+10m57s-+10m57s)', new Date(1439478051 * 1000), new Date(1439478052 * 1000)],
+['audio', '+audio(0s-+25m55s)', new Date(1439477394 * 1000), new Date(1439478949 * 1000)],
+['status', 'status=charging(0s-0s)', new Date(1439477394 * 1000), new Date(1439477395 * 1000)],
+['status', 'status=discharging(+3s-+3s)', new Date(1439477397 * 1000), new Date(1439477398 * 1000)],
+['status', 'status=charging(+25m48s-+25m48s)', new Date(1439478942 * 1000), new Date(1439478943 * 1000)],
+['health', 'health=good(0s-0s)', new Date(1439477394 * 1000), new Date(1439477395 * 1000)],
+['plug', 'plug=usb(0s-0s)', new Date(1439477394 * 1000), new Date(1439477395 * 1000)],
+['plug', 'plug=none(+3s-+3s)', new Date(1439477397 * 1000), new Date(1439477398 * 1000)],
+['plug', 'plug=usb(+25m48s-+25m48s)', new Date(1439478942 * 1000), new Date(1439478943 * 1000)],
+]);
+	options = {
+	timeline: { colorByRowLabel: true},
+	'width': 3000,
+	'height': 3000, 
+	colors: ['#4070cf', '#2e8b57', '#cbb69d', '#dc3912', 
+	'#9900aa', '#cbb69d', '#990099', '#aa0000', 
+	'#4070cf', '#ff6a19', '#119fc8', '#888888', 
+	'#888888', '#109618', '#119fc8', '#9900aa', 
+	'#dc3912', '#990099', '#9ac658', '#888888', 
+	'#888888', '#4070cf', '#4070cf', ]
+	};
+
+
+  //make sure allocate enough vertical space
+  options['height'] = dataTable.getNumberOfRows() * 40;
+  chart.draw(dataTable, options);
+
+  //get vertical coordinate of scale bar
+  var svg = document.getElementById('chart').getElementsByTagName('svg')[0];
+  var label = svg.children[2].children[0];
+  var y = label.getAttribute('y');
+  //plus height of scale bar
+  var chart_div_height = parseInt(y) + 50;
+  var chart_height = chart_div_height;
+
+  //set chart height to exact height
+  options['height'] = chart_height;
+  $('#chart').css('height', chart_div_height);
+  svg.setAttribute('height', chart_height);
+  var content = $('#chart').children()[0];
+  $(content).css('height', chart_height);
+  var inner = $(content).children()[0];
+  $(inner).css('height', chart_height);
+}
+
+
+function redrawChart() {
+    var scale = document.getElementById("scale").value;
+    scale = scale.replace('%', '') / 100
+    options['width'] = scale * default_width;
+    chart.draw(dataTable, options);
+}
+
+</script>
+<style>
+#redrawButton{
+width:100px;
+}
+</style>
+
+</head>
+<body>
+
+<div id="chart">
+<b>WARNING: Visualizer disabled. If you see this message, download the HTML then open it.</b>
+</div>
+<p><b>WARNING:</b>
+<br>*: wake_lock field only shows the first/last wakelock held 
+when the system is awake. For more detail, use wake_lock_in.<br>To enable full wakelock reporting (post-KitKat only) : 
+<br>adb shell dumpsys batterystats --enable full-wake-history</p>
+<pre>(Local time 15:49:54 - 16:15:49, 25m elapsed)</pre>
+<p>
+Zoom: <input id="scale" type="text" value="100%"></input><button type="button" id="redrawButton"onclick="redrawChart()">redraw</button></p>
+</p>
+
+<b>Event summary:
+</b><br><pre>
+total: 0.000 mAh, 0 events
+</pre>
+
+<br /><b>Proc/stat summary</b><ul>
+<li>Total User Time: 0ms</li>
+<li>Total System Time: 0ms</li>
+<li>Total IO Time: 0ms</li>
+<li>Total Irq Time: 0ms</li>
+<li>Total Soft Irq Time: 0ms</li>
+<li>Total Idle Time: 0ms</li>
+</ul>
+<pre>Process table:
+
+</pre>
+
+</body>
+</html>

@@ -1,0 +1,39 @@
+#3 - Asfalto/Betuminiso em más condições
+
+Resumo: embora hajam classificações, numa análise inicial penso que a Rua Conde
+        Redondo não deve ser considerada de classe #2.
+
++-----------------------------------+
+| Name                              |
++-----------------------------------+
+| Rua do Conde de Redondo           |
+| Rua Professor Francisco Gentil    |
+| Rua Fernando Namora               |
++-----------------------------------+
+
++-------+----------------------------------------------------+-------+--------+
+| Id    | Name                                               | count |  Users |
++-------+----------------------------------------------------+-------+--------+
+| 60717 | Rua do Conde de Redondo                            |     2 |    2   |
+| 60719 | Rua do Conde de Redondo                            |     2 |    2   |
+| 60721 | Rua do Conde de Redondo                            |     2 |    2   |
+| 60723 | Rua do Conde de Redondo                            |     2 |    2   |
+| 63223 | Rua do Conde de Redondo                            |     2 |    2   |
+| 29118 | Rua Professor Francisco Gentil                     |     2 |    2   | -> 50%-#1, 50%->3 [DIVERGENTES]
+|  3100 | Rua Fernando Namora                                |     2 |    2   | -> 50%-#3, 50%->4 [DIVERGENTES]
++-------+----------------------------------------------------+-------+--------+
+
++-------+---------------------------+---------+
+| Id    | Route                     | Length  |
++-------+---------------------------+---------+
+| 60717 | http://bit.ly/1LyTkD4     |  100m   |
+| 60719 | http://bit.ly/1NSERz8     |   77m   |
+| 60721 | http://bit.ly/1hEJrXX     |   80m   |
+| 60723 | http://bit.ly/1hEJrXX     |   77m   |
+| 63223 | http://bit.ly/1NHnDXt     |   82m   |
+| 29118 | http://bit.ly/1V7Z1ta     |   52m   |
+|  3100 | http://bit.ly/1hZM4TS     |   15m   | -> Demasiado curta, mas faz ligação com a Francisco Gentil
++-------+---------------------------+---------+
+
+NOTA: Embora ainda não tenha passado na rua, pelo GoogleStreetView a conde redondo
+      parece estar em boas condições

@@ -1,0 +1,20 @@
+Parsing file 'naus_base.txt'.
+Average Classification Time: 0.1241ms
+
+
+Class		        | TP	| FN
+AsphaltGood	    | 0	  | 0
+AsphaltBad	    | 0	  | 0
+CobblestoneGood	| 0	  | 0
+CobblestoneBad	| 173	| 3
+
+
+Class		        | TP	| FP
+AsphaltGood	    | 0	  | 0
+AsphaltBad	    | 0	  | 2
+CobblestoneGood	| 0	  | 1
+CobblestoneBad	| 173	| 0
+
+
+Samples | Precision	| FP Rate	| FN Rate
+176 	  | 0.983		  | 0.017		| 0.017

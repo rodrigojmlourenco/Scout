@@ -1,0 +1,20 @@
+Parsing file 'class4\class4_precise.txt'.
+Average Classification Time: 0.0992ms
+
+
+Class		| TP	| FN 
+AsphaltGood	| 362	| 11
+AsphaltBad	| 0	| 0
+CobblestoneGood	| 0	| 0
+CobblestoneBad	| 0	| 0
+
+
+Class		| TP	| FP
+AsphaltGood	| 362	| 0
+AsphaltBad	| 0	| 2
+CobblestoneGood	| 0	| 6
+CobblestoneBad	| 0	| 3
+
+
+Samples | Precision	| FP Rate	| FN Rate
+373 	| 0.971		| 0.029		| 0.029

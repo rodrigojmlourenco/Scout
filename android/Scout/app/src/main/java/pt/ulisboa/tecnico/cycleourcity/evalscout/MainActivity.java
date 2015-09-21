@@ -28,6 +28,9 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,6 +39,7 @@ import edu.mit.media.funf.pipeline.BasicPipeline;
 import pt.ulisboa.tecnico.cycleourcity.evalscout.config.ScoutConfigManager;
 import pt.ulisboa.tecnico.cycleourcity.evalscout.offloading.AdaptiveOffloadingManager;
 import pt.ulisboa.tecnico.cycleourcity.evalscout.offloading.profiling.device.ScoutProfiling;
+import pt.ulisboa.tecnico.cycleourcity.evalscout.offloading.profiling.pipelines.StageProfiler;
 import pt.ulisboa.tecnico.cycleourcity.evalscout.offloading.ruleset.exceptions.InvalidRuleSetException;
 import pt.ulisboa.tecnico.cycleourcity.evalscout.pipeline.ScoutPipeline;
 import pt.ulisboa.tecnico.cycleourcity.evalscout.storage.provider.ScoutProviderObserver;
@@ -226,7 +230,7 @@ public class MainActivity extends ActionBarActivity {
         tagText = (EditText) findViewById(pt.ulisboa.tecnico.cycleourcity.evalscout.R.id.tag);
 
 
-        //Profiling
+
         try {
             offloadingManager = AdaptiveOffloadingManager.getInstance(getApplicationContext());
         } catch (InvalidRuleSetException e) {
@@ -259,6 +263,13 @@ public class MainActivity extends ActionBarActivity {
 
         if(isCharging)
             offloadingManager.forceMockUp();
+
+        BatteryManager mBatteryManager =
+                (BatteryManager)getSystemService(Context.BATTERY_SERVICE);
+        Long energy =
+                mBatteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_AVERAGE);
+        Log.i("POWER_PROFILES", "Remaining energy = " + energy + "nWh");
+
 
 
 
@@ -326,6 +337,7 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onPause() {
         super.onPause();
+
         if(isFinishing()){
             offloadingManager.onDestroy();
         }
@@ -432,7 +444,7 @@ public class MainActivity extends ActionBarActivity {
 
     private Drawable btnDefaultBG;
     private Button goodAsphaltBtn, goodCobblestoneBtn, goodGravelBtn,
-                    badAsphaltBtn, badCobblestoneBtn, badGravelBtn;
+            badAsphaltBtn, badCobblestoneBtn, badGravelBtn;
 
     private void setupLandscapeModeWidgets(){
 
@@ -531,22 +543,9 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
-                /*
-                boolean error = false;
-                String errorMessage = "";
-                try {
-                    offloadingManager.forceOffloading();
-                    error = false;
-                } catch (NothingToOffloadException | NoAdaptivePipelineValidatedException | OverearlyOffloadException e) {
-                    errorMessage = e.getMessage();
-                    error = true;
-                }
-
-                if (error)
-                    Toast.makeText(MainActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
-                */
-
-                offloadingManager.forceObserverReaction();
+                String tag = tagText.getText().toString();
+                StageProfiler profiler = StageProfiler.getInstance();
+                profiler.exportStageModel(tag);
             }
         });
 

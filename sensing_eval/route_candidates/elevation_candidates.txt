@@ -1,0 +1,64 @@
+Resumo: os melhores candidatos parecem ser:
+          - Declive acentuado: R. António Pereira Carrilho (subida e descida acentuadas)
+          - Declive suave    : R. Pascoal de Melo          (subida e descida suave)
+
+
+Nota: No caso da elevação (como esta não é subjectiva) talvez seja mais interessante
+      explorar as ruas com maior divergência. Por outro lado o CycleOurCity mapeia
+      dificuldade e não declive absoluto, o que por si é uma métrica relativa.
+
+Nota: Algumas das divergências podem ser causadas pela direcção da rota seguida,
+      embora 1 e 6 sejam opostos, correspondem respectivamente a subir ou descer
+      algo ingreme.
+
++----+--------------------------------------------------+-----------------+
+| Id | Name                                             | ElevationFactor |
++----+--------------------------------------------------+-----------------+
+|  1 | Subida impraticável para a maioria das pessoas   |               8 |
+|  2 | Subida com esforço                               |               5 |
+|  3 | Subida sem esforço                               |             1.5 |
+|  4 | Plano                                            |               1 |
+|  5 | Descida suave                                    |            0.75 |
+|  6 | Descida acentuada                                |             0.6 |
++----+--------------------------------------------------+-----------------+
+
+Divergências
++-------+------------------------------------------------------------------+-------+----------------------------+
+| Id    | Name                                                             | Users |      Precisão              |
++-------+------------------------------------------------------------------+-------+----------------------------+
+| 35115 | Avenida Duque de Loulé                                           |     3 | 25%-2, 25%-4, 25%-5, 25%-6 | -> Um user classifica como 4 e 5;
+| 35117 | Avenida Duque de Loulé                                           |     3 | 25%-2, 25%-3, 25%-4, 25%-5 | -> Um user classifica como 4 e 5;
+| 48443 | Avenida Duque de Loulé                                           |     2 | 50%-6, 50%-5               |
+| 63057 | Avenida Duque de Loulé                                           |     4 | 33%-2, 33%-5, 33%-6        |
+| 63065 | Avenida Duque de Loulé                                           |     3 | 33%-1, 33%-2, 33%-3        |
+| 36871 | Rua Alves Redol                                                  |     3 | 66%-3, 33%-4               |
+|  3060 | Rua Alexandre Herculano                                          |     4 | 60%-6, 20%-5, 20%-4        | -> Um user classifica como 4 e 5;
+| 57114 | Rua Alexandre Herculano                                          |     3 | 66%-6, 33%-2               |
+| 57116 | Rua Alexandre Herculano                                          |     4 | 66%-6, 33%-2               |
+| 60753 | Rua Joaquim Bonifácio                                            |     2 | 100%-4                     |
+| 60755 | Rua Joaquim Bonifácio                                            |     2 | 100%-4                     |
+| 66603 | Avenida Casal Ribeiro                                            |     3 | 100%-2                     |
+| 63097 | Rua Pascoal de Melo                                              |     4 | 100%-3                     |
+|  1637 | Rua Visconde de Santarém                                         |     4 | 75%-2, 25%-1               |
+|  1639 | Rua Visconde de Santarém                                         |     4 | 75%-2, 25%-1               |
+|  1643 | Rua Visconde de Santarém                                         |     4 | 50%-2, 25%-1, 25%-4        |
+|  3050 | Largo do Rato                                                    |     3 | 100% - 4                   |
+|  3052 | Largo do Rato                                                    |     3 | 100% - 4                   |
+|  3058 | Largo do Rato                                                    |     3 | 100% - 4                   |
+| 29396 | Largo do Rato                                                    |     3 | 100% - 4                   |
+| 29398 | Largo do Rato                                                    |     4 | 75% - 4, 25%-3             |
+| 25223 | (R. Sarmento de Beires 2 - Av. Afonso Costa 15 [55m])            |     2 | 33%-4, 33%-5, 33%-6        | -> Um user classifica como 5 e 6;
+| 16224 | Avenida Fontes Pereira de Melo                                   |     3 | 66%-3, 33%-4               |
+|  1609 | R. António Pereira Carrilho                                      |     4 | 75%-2, 25%-1               |
+|  1611 | R. António Pereira Carrilho                                      |     4 | 75%-2, 25%-1               |
+|  1613 | R. António Pereira Carrilho                                      |     4 | 75%-2, 25%-1               |
+| 47296 | (R. Pascoal de Melo 15A - Rua Passos Manuel 130 [32m])           |     4 | 100%-3                     |
+| 47298 | (R. Passos Manuel 130 - R. Pascoal de Melo 37 [59m])             |     4 | 100%-3                     |
+| 63095 | Rua Pascoal de Melo                                              |     4 | 100%-3                     |
+| 63183 | (R. Pascoal de Melo 37 -> R. Pascoal de Melo 47 [59m])           |     4 | 100%-3                     |
+| 63185 | (R. Pascoal de Melo 47 -> R. Pascoal de Melo 110 [76m])          |     4 | 100%-3                     |
+| 63187 | (R. Pascoal de Melo 110 -> R. Pascoal de Melo 111-115 [37m])     |     4 | 100%-3                     |
+| 63189 | (R. Pascoal de Melo 111-115 -> R. Pascoal de Melo 127-133 [47m]) |     4 | 100%-3                     |
+| 63191 | (R. Pascoal de Melo 127-133 -> Largo D. Estefania 17 [46m])      |     4 | 100%-3                     |
+| 60717 | Rua do Conde de Redondo                                          |     3 | 50%-6, 25%-5, 25%-4        | -> Um user classifica como 4 e 5;
++-------+------------------------------------------------------------------+-------+----------------------------+

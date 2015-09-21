@@ -1,0 +1,27 @@
+#Testes para baseline [versão 2.0]
+
+Uma primeira análise dos testes, realizados na semana de 03/08 a 09/08, revelou
+que os micro-benchmarks definidos não eram suficientemente computacionalmente
+intensivos, o que não permitiu demonstrar grandes benefícios ao nível do offloading.
+
+Nesta nova versão dos testes as configuração foram alteradas
+  Config A: {id, WAIT, in_data, out_data}
+    {
+      {p11, 1000,   800, 800},
+      {p12, 10000,  800, 600},
+      {p13, 100000, 600, 400},
+      {p14, 1000000,400, 200},
+      {p15, 2000000,200, 50}
+    }
+
+Para além disso a função de micro-benchmark passa a ser:
+  | for (int i=0; i < WAIT; i++){
+  |   String s1 = "this";
+  |   String s2 = "is";
+  |   String s3 = "a test.";
+  |   String s = s1 +s2 + s3;
+  | }
+
+Nota: os testes passam a ser também realizados com o dispositivo em "plane mode"
+      de forma a evitar potênciais influências externas.
+      --> OS TESTES NÃO PODEM SER REALIZADOS EM PLANE MODE POIS O SERVIÇO DUMPSYS DEIXA DE FUNCIONAR

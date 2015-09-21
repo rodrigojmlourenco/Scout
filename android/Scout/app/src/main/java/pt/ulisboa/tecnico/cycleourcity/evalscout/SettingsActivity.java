@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import pt.ulisboa.tecnico.cycleourcity.evalscout.offloading.AdaptiveOffloadingManager;
 import pt.ulisboa.tecnico.cycleourcity.evalscout.offloading.profiling.device.ScoutProfiling;
+import pt.ulisboa.tecnico.cycleourcity.evalscout.offloading.profiling.pipelines.StageProfiler;
 import pt.ulisboa.tecnico.cycleourcity.evalscout.offloading.ruleset.exceptions.InvalidRuleSetException;
 import pt.ulisboa.tecnico.cycleourcity.evalscout.calibration.SensorCalibrator;
 
@@ -51,6 +52,11 @@ public class SettingsActivity extends ActionBarActivity {
                         .commit();
 
                 getSharedPreferences(ScoutProfiling.PREFERENCES,Context.MODE_PRIVATE)
+                        .edit()
+                        .clear()
+                        .commit();
+
+                getSharedPreferences(StageProfiler.ModelStorageKeys.STORAGE, Context.MODE_PRIVATE)
                         .edit()
                         .clear()
                         .commit();

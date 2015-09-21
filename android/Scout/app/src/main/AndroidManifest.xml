@@ -87,7 +87,7 @@
         <!-- Sensing Service -->
         <service android:name="edu.mit.media.funf.FunfManager" >
             <meta-data
-                android:name="default"
+                android:name="evaluation"
                 android:value="@string/scout_pipeline" />
         </service>
 

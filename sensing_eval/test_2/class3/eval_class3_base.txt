@@ -1,0 +1,20 @@
+Parsing file 'class3\class3_base.txt'.
+Average Classification Time: 0.0910ms
+
+
+Class		| TP	| FN 
+AsphaltGood	| 0	| 0
+AsphaltBad	| 54	| 83
+CobblestoneGood	| 0	| 0
+CobblestoneBad	| 0	| 0
+
+
+Class		| TP	| FP
+AsphaltGood	| 0	| 0
+AsphaltBad	| 54	| 0
+CobblestoneGood	| 0	| 64
+CobblestoneBad	| 0	| 19
+
+
+Samples | Precision	| FP Rate	| FN Rate
+137 	| 0.394		| 0.606		| 0.606

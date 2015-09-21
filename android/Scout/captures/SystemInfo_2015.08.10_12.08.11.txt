@@ -1,0 +1,37 @@
+Applications Memory Usage (kB):
+Uptime: 15721679 Realtime: 38739622
+
+** MEMINFO in pid 7519 [pt.ulisboa.tecnico.cycleourcity.evalscout] **
+                   Pss  Private  Private  Swapped     Heap     Heap     Heap
+                 Total    Dirty    Clean    Dirty     Size    Alloc     Free
+                ------   ------   ------   ------   ------   ------   ------
+  Native Heap    12543    12504        0        0    32768    17834    14933
+  Dalvik Heap     4277     3904        0        0    30676    18533    12143
+ Dalvik Other      536      536        0        0                           
+        Stack      172      172        0        0                           
+      Gfx dev     2264     2264        0        0                           
+    Other dev        4        0        4        0                           
+     .so mmap     2163      332     1496        0                           
+    .apk mmap      140        0       20        0                           
+    .ttf mmap       98        0       68        0                           
+    .dex mmap     3904        0     3900        0                           
+    .oat mmap     2066        0     1116        0                           
+    .art mmap     2330      660     1168        0                           
+   Other mmap       18        4        0        0                           
+   EGL mtrack    39808    39808        0        0                           
+    GL mtrack     8204     8204        0        0                           
+      Unknown      160      160        0        0                           
+        TOTAL    78687    68548     7772        0    63444    36367    27076
+ 
+ Objects
+               Views:       42         ViewRootImpl:        1
+         AppContexts:        4           Activities:        1
+              Assets:        2        AssetManagers:        2
+       Local Binders:       14        Proxy Binders:       22
+       Parcel memory:        5         Parcel count:       20
+    Death Recipients:        0      OpenSSL Sockets:        0
+ 
+ SQL
+         MEMORY_USED:        0
+  PAGECACHE_OVERFLOW:        0          MALLOC_SIZE:        0
+ 

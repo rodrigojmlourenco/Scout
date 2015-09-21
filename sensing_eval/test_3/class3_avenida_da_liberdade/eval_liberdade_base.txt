@@ -1,0 +1,20 @@
+Parsing file 'liberdade_base.txt'.
+Average Classification Time: 0.1663ms
+
+
+Class		| TP	| FN 
+AsphaltGood	| 0	| 0
+AsphaltBad	| 63	| 143
+CobblestoneGood	| 0	| 0
+CobblestoneBad	| 0	| 0
+
+
+Class		| TP	| FP
+AsphaltGood	| 0	| 5
+AsphaltBad	| 63	| 0
+CobblestoneGood	| 0	| 116
+CobblestoneBad	| 0	| 22
+
+
+Samples | Precision	| FP Rate	| FN Rate
+206 	| 0.306		| 0.694		| 0.694

@@ -37,8 +37,14 @@
     <string name="scout_pipeline">
         {"@type":"pt.ulisboa.tecnico.cycleourcity.evalscout.pipeline.ScoutPipeline",
          "name":"evaluation",
-         "version":1,
-         "data": [ "edu.mit.media.funf.probe.builtin.WifiProbe" ]
+         "version":2,
+         "data": [
+            <!--
+            {
+                "@type":"edu.mit.media.funf.probe.builtin.PressureSensorProbe",
+                "@schedule": {"interval":1, "duration":0, "strict":true}
+            }-->
+        ]
         }
     </string>
 

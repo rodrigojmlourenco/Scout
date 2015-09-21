@@ -104,7 +104,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Offload"
+        android:text="Export"
         android:id="@+id/offloadBtn"
         android:layout_alignTop="@+id/netTestBtn"
         android:layout_alignEnd="@+id/pavementTypeGroup" />

@@ -1,0 +1,8 @@
+#Grupo de Testes 2
+
+Assumindo que os classificadores foram gerados com sucesso pela plataforma Weka,
+então este teste tem como objectivo determinar se a precisão teórica, calculada
+pelo Weka, corresponde aos valores reais (on-the-field).
+
+Para tal, os troços que foram usados para gerar o training-set serão percorridos
+uma vez mais de forma a calcular precisão, fp rate e fn rate.

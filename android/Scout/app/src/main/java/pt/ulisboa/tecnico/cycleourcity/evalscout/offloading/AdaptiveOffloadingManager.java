@@ -31,7 +31,7 @@ public class AdaptiveOffloadingManager implements Observer{
     private final RuleSetManager ruleSetFrameWork;
     private final StageProfiler         stageModel;
 
-    private boolean isProfilingEnabled = false;
+    private boolean isProfilingEnabled = true;
 
     private static AdaptiveOffloadingManager OFFLOADING_MANAGER = null;
 

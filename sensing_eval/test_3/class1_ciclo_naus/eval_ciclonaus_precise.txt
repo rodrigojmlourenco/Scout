@@ -1,0 +1,20 @@
+Parsing file 'ciclonaus_precise_faked.txt'.
+Average Classification Time: 0.1150ms
+
+
+Class		        | TP	| FN
+AsphaltGood	    | 0	  | 0
+AsphaltBad	    | 0	  | 0
+CobblestoneGood	| 159	| 44
+CobblestoneBad	| 0	  | 0
+
+
+Class		        | TP	| FP
+AsphaltGood	    | 0	  | 2
+AsphaltBad	    | 0	  | 37
+CobblestoneGood	| 159	| 0
+CobblestoneBad	| 0	  | 5
+
+
+Samples | Precision	| FP Rate	| FN Rate
+203 	  | 0.783		  | 0.217		| 0.217

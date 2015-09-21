@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.cycleourcity.evalscout.offloading.profiling.pipelines
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Vibrator;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -16,12 +17,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import pt.ulisboa.tecnico.cycleourcity.evalscout.ScoutApplication;
 import pt.ulisboa.tecnico.cycleourcity.evalscout.pipeline.ScoutPipeline;
 import pt.ulisboa.tecnico.cycleourcity.evalscout.offloading.stages.OffloadingWrapperStage;
+import pt.ulisboa.tecnico.cycleourcity.evalscout.storage.ConfigurationProfileStorage;
 
 /**
  * This is a singleton that is responsible for managing all information regarding
  * the characteristics of running stages, belonging to active pipelines.
  */
 public class StageProfiler {
+
+    private boolean IS_EVALUATING = true;
 
     //Logging
     public final static boolean VERBOSE = true;
@@ -95,8 +99,12 @@ public class StageProfiler {
 
         //When all registered stages are associated with a model, the overall configuration
         //module is saved persistently, using the SharedPreferences framework.
-        if(modelledStages.size() == stages.size())
+        if(modelledStages.size() == stages.size()) {
             storeModel();
+        }
+
+
+
     }
 
     /**
@@ -161,7 +169,7 @@ public class StageProfiler {
      * Model Storage                                        *
      ********************************************************
      */
-    interface ModelStorageKeys {
+    public interface ModelStorageKeys {
         String
                 STORAGE = "stagesModel",
                 VERSION = "@version",
@@ -221,6 +229,20 @@ public class StageProfiler {
 
         SharedPreferences prefs =
                 appContext.getSharedPreferences(ModelStorageKeys.STORAGE, Context.MODE_PRIVATE);
+
+        if(IS_EVALUATING) {
+
+            exportableStageModel = model;
+
+            Context ctx = ScoutApplication.getContext();
+            Vibrator v = (Vibrator) ctx.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
+            v.vibrate(1000);
+            v.vibrate(1000);
+
+
+            Log.e(LOG_TAG, "Evaluation mode, not storing the model.");
+            return;
+        }
 
         prefs.edit()
                 .putString(ModelStorageKeys.MODEL, gson.toJson(model))
@@ -283,5 +305,17 @@ public class StageProfiler {
 
             return state;
         }
+    }
+
+
+    //FOR EVALUATION PURPOSES ONLY //TODO: remove once testing has been completed
+    private JsonObject exportableStageModel = null;
+    public void exportStageModel(String tag){
+
+        if(exportableStageModel == null) throw new NullPointerException();
+
+        ConfigurationProfileStorage storage = ConfigurationProfileStorage.getInstance();
+        storage.storeConfigurationProfile(exportableStageModel, tag);
+
     }
 }

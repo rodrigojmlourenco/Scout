@@ -1,0 +1,412 @@
+*version
+3
+data-file-overflow=false
+clock=dual
+elapsed-time-usec=518053
+num-method-calls=3589
+clock-call-overhead-nsec=2968
+vm=art
+*threads
+7519	main
+7525	Heap thread pool worker thread 1
+7524	Heap thread pool worker thread 0
+7527	Heap thread pool worker thread 2
+7528	Signal Catcher
+7529	JDWP
+7530	ReferenceQueueDaemon
+7532	FinalizerWatchdogDaemon
+7531	FinalizerDaemon
+7533	HeapTrimmerDaemon
+7534	GCDaemon
+7535	Binder_1
+7536	Binder_2
+7544	RenderThread
+7545	AsyncTask #1
+7546	AsyncTask #2
+7561	Binder_3
+10204	AsyncTask #3
+10205	AsyncTask #4
+10242	AsyncTask #5
+17511	hwuiTask1
+17512	hwuiTask2
+19345	edu.mit.media.funf.storage.UploadService
+19346	pt.ulisboa.tecnico.cycleourcity.evalscout.pipeline.ScoutPipeline
+19347	Timer-2
+*methods
+0x6f255168	java.lang.Object	<init>	()V	Object.java
+0x6f255378	java.lang.Object	getClass	()Ljava/lang/Class;	Object.java
+0x6f2553a8	java.lang.Object	hashCode	()I	Object.java
+0x6f25c2a8	java.lang.ThreadLocal	get	()Ljava/lang/Object;	ThreadLocal.java
+0x6f25c398	java.lang.ThreadLocal	values	(Ljava/lang/Thread;)Ljava/lang/ThreadLocal$Values;	ThreadLocal.java
+0x6f25d4a8	dalvik.system.VMDebug	startMethodTracingDdms	(IIZI)V	VMDebug.java
+0x6f266958	java.lang.Number	<init>	()V	Number.java
+0x6f269dd8	java.lang.Integer	<init>	(I)V	Integer.java
+0x6f26a318	java.lang.Integer	valueOf	(I)Ljava/lang/Integer;	Integer.java
+0x6f26a468	java.lang.Integer	equals	(Ljava/lang/Object;)Z	Integer.java
+0x6f26a4c8	java.lang.Integer	hashCode	()I	Integer.java
+0x6f26b578	java.lang.Math	max	(II)I	Math.java
+0x6f26b638	java.lang.Math	min	(II)I	Math.java
+0x6f26b668	java.lang.Math	min	(JJ)J	Math.java
+0x6f271098	java.lang.ThreadLocal$Values	access$000	(Ljava/lang/ThreadLocal$Values;)[Ljava/lang/Object;	ThreadLocal.java
+0x6f2710c8	java.lang.ThreadLocal$Values	access$100	(Ljava/lang/ThreadLocal$Values;)I	ThreadLocal.java
+0x6f27a158	java.nio.Buffer	<init>	(IIJ)V	Buffer.java
+0x6f27a6c8	java.nio.ByteArrayBuffer	<init>	(I[BIZ)V	ByteArrayBuffer.java
+0x6f27a6f8	java.nio.ByteArrayBuffer	<init>	([B)V	ByteArrayBuffer.java
+0x6f27a788	java.nio.ByteBuffer	<init>	(IJ)V	ByteBuffer.java
+0x6f27a848	java.nio.ByteBuffer	wrap	([BII)Ljava/nio/ByteBuffer;	ByteBuffer.java
+0x6f27aed8	java.nio.ByteBuffer	order	(Ljava/nio/ByteOrder;)Ljava/nio/ByteBuffer;	ByteBuffer.java
+0x6f27b508	java.nio.ByteArrayBuffer	get	()B	ByteArrayBuffer.java
+0x6f28f638	java.util.ArrayList	clear	()V	ArrayList.java
+0x6f28f788	java.util.ArrayList	size	()I	ArrayList.java
+0x6f28f878	java.util.ArrayList	get	(I)Ljava/lang/Object;	ArrayList.java
+0x6f28ffc8	java.util.Arrays	checkOffsetAndCount	(III)V	Arrays.java
+0x6f296b38	java.util.Collections	secondaryHash	(I)I	Collections.java
+0x6f296b68	java.util.Collections	secondaryHash	(Ljava/lang/Object;)I	Collections.java
+0x6f29a8b8	java.util.HashMap	get	(Ljava/lang/Object;)Ljava/lang/Object;	HashMap.java
+0x6f2bdcb8	org.apache.harmony.dalvik.ddmc.Chunk	<init>	(I[BII)V	Chunk.java
+0x6f2bde38	org.apache.harmony.dalvik.ddmc.ChunkHandler	wrapChunk	(Lorg/apache/harmony/dalvik/ddmc/Chunk;)Ljava/nio/ByteBuffer;	ChunkHandler.java
+0x6f2bdf88	org.apache.harmony.dalvik.ddmc.DdmServer	dispatch	(I[BII)Lorg/apache/harmony/dalvik/ddmc/Chunk;	DdmServer.java
+0x6f2c8c98	java.lang.Class	getComponentType	()Ljava/lang/Class;	Class.java
+0x6f2c9748	java.lang.Class	isArray	()Z	Class.java
+0x6f2c9778	java.lang.Class	isAssignableFrom	(Ljava/lang/Class;)Z	Class.java
+0x6f2c9808	java.lang.Class	isInstance	(Ljava/lang/Object;)Z	Class.java
+0x6f2c9838	java.lang.Class	isInterface	()Z	Class.java
+0x6f30b1d8	android.view.View	drawBackground	(Landroid/graphics/Canvas;)V	View.java
+0x6f30b388	android.view.View	getDrawableRenderNode	(Landroid/graphics/drawable/Drawable;Landroid/view/RenderNode;)Landroid/view/RenderNode;	View.java
+0x6f30b3b8	android.view.View	getFinalAlpha	()F	View.java
+0x6f30b5c8	android.view.View	isLayoutModeOptical	(Ljava/lang/Object;)Z	View.java
+0x6f30b9e8	android.view.View	setBackgroundRenderNodeProperties	(Landroid/view/RenderNode;)V	View.java
+0x6f30bb38	android.view.View	skipInvalidate	()Z	View.java
+0x6f30bb98	android.view.View	updateDisplayListIfDirty	()V	View.java
+0x6f30c168	android.view.View	canHaveDisplayList	()Z	View.java
+0x6f30c978	android.view.View	dispatchDraw	(Landroid/graphics/Canvas;)V	View.java
+0x6f30cfd8	android.view.View	draw	(Landroid/graphics/Canvas;)V	View.java
+0x6f30d098	android.view.View	ensureTransformationInfo	()V	View.java
+0x6f30d608	android.view.View	getAnimation	()Landroid/view/animation/Animation;	View.java
+0x6f30d668	android.view.View	getBackground	()Landroid/graphics/drawable/Drawable;	View.java
+0x6f30d8d8	android.view.View	getContext	()Landroid/content/Context;	View.java
+0x6f30d968	android.view.View	getDisplayList	()Landroid/view/RenderNode;	View.java
+0x6f30d998	android.view.View	getDrawableState	()[I	View.java
+0x6f30dae8	android.view.View	getElevation	()F	View.java
+0x6f30dcc8	android.view.View	getHardwareLayer	()Landroid/view/HardwareLayer;	View.java
+0x6f30dfc8	android.view.View	getLayerType	()I	View.java
+0x6f30dff8	android.view.View	getLayoutDirection	()I	View.java
+0x6f30e148	android.view.View	getLocationInWindow	([I)V	View.java
+0x6f30e1d8	android.view.View	getMatrix	()Landroid/graphics/Matrix;	View.java
+0x6f30e208	android.view.View	getMeasuredHeight	()I	View.java
+0x6f30e7a8	android.view.View	getResources	()Landroid/content/res/Resources;	View.java
+0x6f30ee08	android.view.View	getTranslationZ	()F	View.java
+0x6f30ef58	android.view.View	getVisibility	()I	View.java
+0x6f30ef88	android.view.View	getWidth	()I	View.java
+0x6f30f168	android.view.View	getZ	()F	View.java
+0x6f30f288	android.view.View	hasIdentityMatrix	()Z	View.java
+0x6f30f3a8	android.view.View	hasStaticLayer	()Z	View.java
+0x6f30f588	android.view.View	invalidate	(IIII)V	View.java
+0x6f30f648	android.view.View	invalidateInternal	(IIIIZZ)V	View.java
+0x6f30f948	android.view.View	isEnabled	()Z	View.java
+0x6f30f9d8	android.view.View	isFocused	()Z	View.java
+0x6f30fa38	android.view.View	isHardwareAccelerated	()Z	View.java
+0x6f30fca8	android.view.View	isLayoutRtl	()Z	View.java
+0x6f30fd38	android.view.View	isOpaque	()Z	View.java
+0x6f310608	android.view.View	onDraw	(Landroid/graphics/Canvas;)V	View.java
+0x6f310668	android.view.View	onDrawScrollBars	(Landroid/graphics/Canvas;)V	View.java
+0x6f311d48	android.view.View	setDisplayListProperties	(Landroid/view/RenderNode;)V	View.java
+0x6f314448	android.view.ViewGroup	recreateChildDisplayList	(Landroid/view/View;)V	ViewGroup.java
+0x6f3147a8	android.view.ViewGroup	invalidateChild	(Landroid/view/View;Landroid/graphics/Rect;)V	ViewGroup.java
+0x6f3147d8	android.view.ViewGroup	invalidateChildInParent	([ILandroid/graphics/Rect;)Landroid/view/ViewParent;	ViewGroup.java
+0x6f315468	android.view.ViewGroup	dispatchGetDisplayList	()V	ViewGroup.java
+0x6f316158	android.view.ViewGroup	isLayoutModeOptical	()Z	ViewGroup.java
+0x6f3193c8	android.content.ContextWrapper	getApplicationInfo	()Landroid/content/pm/ApplicationInfo;	ContextWrapper.java
+0x6f333d38	android.content.res.Resources	getDisplayMetrics	()Landroid/util/DisplayMetrics;	Resources.java
+0x6f33db18	android.ddm.DdmHandleHeap	handleHPIF	(Lorg/apache/harmony/dalvik/ddmc/Chunk;)Lorg/apache/harmony/dalvik/ddmc/Chunk;	DdmHandleHeap.java
+0x6f33dc98	android.ddm.DdmHandleHeap	handleChunk	(Lorg/apache/harmony/dalvik/ddmc/Chunk;)Lorg/apache/harmony/dalvik/ddmc/Chunk;	DdmHandleHeap.java
+0x6f33e058	android.ddm.DdmHandleProfiling	handleMPRQ	(Lorg/apache/harmony/dalvik/ddmc/Chunk;)Lorg/apache/harmony/dalvik/ddmc/Chunk;	DdmHandleProfiling.java
+0x6f33e0b8	android.ddm.DdmHandleProfiling	handleMPSEOrSPSE	(Lorg/apache/harmony/dalvik/ddmc/Chunk;Ljava/lang/String;)Lorg/apache/harmony/dalvik/ddmc/Chunk;	DdmHandleProfiling.java
+0x6f33e0e8	android.ddm.DdmHandleProfiling	handleMPSS	(Lorg/apache/harmony/dalvik/ddmc/Chunk;)Lorg/apache/harmony/dalvik/ddmc/Chunk;	DdmHandleProfiling.java
+0x6f33e1d8	android.ddm.DdmHandleProfiling	handleChunk	(Lorg/apache/harmony/dalvik/ddmc/Chunk;)Lorg/apache/harmony/dalvik/ddmc/Chunk;	DdmHandleProfiling.java
+0x6f33f3a8	android.graphics.Bitmap	isPremultiplied	()Z	Bitmap.java
+0x6f33f3d8	android.graphics.Bitmap	isRecycled	()Z	Bitmap.java
+0x6f33fb28	android.graphics.Canvas	throwIfCannotDraw	(Landroid/graphics/Bitmap;)V	Canvas.java
+0x6f341868	android.graphics.Paint	setClassVariablesFrom	(Landroid/graphics/Paint;)V	Paint.java
+0x6f3419b8	android.graphics.Paint	getColorFilter	()Landroid/graphics/ColorFilter;	Paint.java
+0x6f342258	android.graphics.Paint	set	(Landroid/graphics/Paint;)V	Paint.java
+0x6f3422e8	android.graphics.Paint	setColorFilter	(Landroid/graphics/ColorFilter;)Landroid/graphics/ColorFilter;	Paint.java
+0x6f3424f8	android.graphics.Paint	setStyle	(Landroid/graphics/Paint$Style;)V	Paint.java
+0x6f343c68	android.graphics.Rect	height	()I	Rect.java
+0x6f343cc8	android.graphics.Rect	intersect	(IIII)Z	Rect.java
+0x6f343d58	android.graphics.Rect	isEmpty	()Z	Rect.java
+0x6f343d88	android.graphics.Rect	offset	(II)V	Rect.java
+0x6f343ea8	android.graphics.Rect	set	(IIII)V	Rect.java
+0x6f343f08	android.graphics.Rect	setEmpty	()V	Rect.java
+0x6f344058	android.graphics.Rect	union	(IIII)V	Rect.java
+0x6f3440b8	android.graphics.Rect	width	()I	Rect.java
+0x6f3457c8	android.graphics.drawable.Drawable	getBounds	()Landroid/graphics/Rect;	Drawable.java
+0x6f3458b8	android.graphics.drawable.Drawable	getCurrent	()Landroid/graphics/drawable/Drawable;	Drawable.java
+0x6f345c78	android.graphics.drawable.Drawable	isProjected	()Z	Drawable.java
+0x6f34abf8	android.os.Handler	enqueueMessage	(Landroid/os/MessageQueue;Landroid/os/Message;J)Z	Handler.java
+0x6f34ac28	android.os.Handler	getPostMessage	(Ljava/lang/Runnable;)Landroid/os/Message;	Handler.java
+0x6f34ac88	android.os.Handler	handleCallback	(Landroid/os/Message;)V	Handler.java
+0x6f34acb8	android.os.Handler	dispatchMessage	(Landroid/os/Message;)V	Handler.java
+0x6f34ad48	android.os.Handler	getLooper	()Landroid/os/Looper;	Handler.java
+0x6f34afb8	android.os.Handler	postAtTime	(Ljava/lang/Runnable;J)Z	Handler.java
+0x6f34b048	android.os.Handler	removeCallbacks	(Ljava/lang/Runnable;)V	Handler.java
+0x6f34b258	android.os.Handler	sendMessageAtTime	(Landroid/os/Message;J)Z	Handler.java
+0x6f362b38	android.os.Looper	myLooper	()Landroid/os/Looper;	Looper.java
+0x6f362d18	android.os.Looper	postSyncBarrier	()I	Looper.java
+0x6f362da8	android.os.Looper	removeSyncBarrier	(I)V	Looper.java
+0x6f3632e8	android.os.Message	obtain	()Landroid/os/Message;	Message.java
+0x6f363408	android.os.Message	obtain	(Landroid/os/Handler;Ljava/lang/Runnable;)Landroid/os/Message;	Message.java
+0x6f363618	android.os.Message	isAsynchronous	()Z	Message.java
+0x6f363648	android.os.Message	isInUse	()Z	Message.java
+0x6f363678	android.os.Message	markInUse	()V	Message.java
+0x6f363708	android.os.Message	recycleUnchecked	()V	Message.java
+0x6f363768	android.os.Message	setAsynchronous	(Z)V	Message.java
+0x6f3639d8	android.os.MessageQueue	enqueueMessage	(Landroid/os/Message;J)Z	MessageQueue.java
+0x6f363a08	android.os.MessageQueue	enqueueSyncBarrier	(J)I	MessageQueue.java
+0x6f363af8	android.os.MessageQueue	next	()Landroid/os/Message;	MessageQueue.java
+0x6f363be8	android.os.MessageQueue	removeMessages	(Landroid/os/Handler;Ljava/lang/Runnable;Ljava/lang/Object;)V	MessageQueue.java
+0x6f363c18	android.os.MessageQueue	removeSyncBarrier	(I)V	MessageQueue.java
+0x6f371bc8	android.text.Selection	getSelectionEnd	(Ljava/lang/CharSequence;)I	Selection.java
+0x6f371bf8	android.text.Selection	getSelectionStart	(Ljava/lang/CharSequence;)I	Selection.java
+0x6f372588	android.text.SpannableStringBuilder	checkRange	(Ljava/lang/String;II)V	SpannableStringBuilder.java
+0x6f3728b8	android.text.SpannableStringBuilder	length	()I	SpannableStringBuilder.java
+0x6f372a38	android.text.SpannableStringBuilder	getSpanStart	(Ljava/lang/Object;)I	SpannableStringBuilder.java
+0x6f372a68	android.text.SpannableStringBuilder	getSpans	(IILjava/lang/Class;)[Ljava/lang/Object;	SpannableStringBuilder.java
+0x6f372a98	android.text.SpannableStringBuilder	nextSpanTransition	(IILjava/lang/Class;)I	SpannableStringBuilder.java
+0x6f372ee8	android.text.SpannableStringBuilder	drawTextRun	(Landroid/graphics/Canvas;IIIIFFZLandroid/graphics/Paint;)V	SpannableStringBuilder.java
+0x6f3734b8	android.text.TextPaint	set	(Landroid/text/TextPaint;)V	TextPaint.java
+0x6f373e18	android.text.TextUtils	packRangeInLong	(II)J	TextUtils.java
+0x6f374028	android.text.TextUtils	unpackRangeEndFromLong	(J)I	TextUtils.java
+0x6f374058	android.text.TextUtils	unpackRangeStartFromLong	(J)I	TextUtils.java
+0x6f378468	android.util.Pools$SimplePool	isInPool	(Ljava/lang/Object;)Z	Pools.java
+0x6f378498	android.util.Pools$SimplePool	acquire	()Ljava/lang/Object;	Pools.java
+0x6f3784c8	android.util.Pools$SimplePool	release	(Ljava/lang/Object;)Z	Pools.java
+0x6f378528	android.util.Pools$SynchronizedPool	acquire	()Ljava/lang/Object;	Pools.java
+0x6f378558	android.util.Pools$SynchronizedPool	release	(Ljava/lang/Object;)Z	Pools.java
+0x6f37afe8	android.view.HardwareCanvas	drawRenderNode	(Landroid/view/RenderNode;)V	HardwareCanvas.java
+0x6f37b048	android.view.HardwareCanvas	isHardwareAccelerated	()Z	HardwareCanvas.java
+0x6f37dcb8	android.view.InputEventReceiver	consumeBatchedInputEvents	(J)Z	InputEventReceiver.java
+0x6f3803b8	android.view.Surface	isValid	()Z	Surface.java
+0x6f381558	android.view.ViewRootImpl	collectViewAttributes	()Z	ViewRootImpl.java
+0x6f3815e8	android.view.ViewRootImpl	draw	(Z)V	ViewRootImpl.java
+0x6f381918	android.view.ViewRootImpl	getRunQueue	()Landroid/view/ViewRootImpl$RunQueue;	ViewRootImpl.java
+0x6f3819d8	android.view.ViewRootImpl	isInLocalFocusMode	()Z	ViewRootImpl.java
+0x6f381b88	android.view.ViewRootImpl	performDraw	()V	ViewRootImpl.java
+0x6f381c18	android.view.ViewRootImpl	performTraversals	()V	ViewRootImpl.java
+0x6f3820c8	android.view.ViewRootImpl	invalidateChildInParent	([ILandroid/graphics/Rect;)Landroid/view/ViewParent;	ViewRootImpl.java
+0x6f382728	android.view.ViewRootImpl	checkThread	()V	ViewRootImpl.java
+0x6f382c38	android.view.ViewRootImpl	doConsumeBatchedInput	(J)V	ViewRootImpl.java
+0x6f382c98	android.view.ViewRootImpl	doProcessInputEvents	()V	ViewRootImpl.java
+0x6f382cc8	android.view.ViewRootImpl	doTraversal	()V	ViewRootImpl.java
+0x6f382e78	android.view.ViewRootImpl	getHostVisibility	()I	ViewRootImpl.java
+0x6f383118	android.view.ViewRootImpl	notifyRendererOfFramePending	()V	ViewRootImpl.java
+0x6f383268	android.view.ViewRootImpl	scheduleConsumeBatchedInput	()V	ViewRootImpl.java
+0x6f3832c8	android.view.ViewRootImpl	scheduleTraversals	()V	ViewRootImpl.java
+0x6f3832f8	android.view.ViewRootImpl	scrollToRectOrFocus	(Landroid/graphics/Rect;Z)Z	ViewRootImpl.java
+0x6f3839e8	android.view.ViewTreeObserver	dispatchOnDraw	()V	ViewTreeObserver.java
+0x6f383aa8	android.view.ViewTreeObserver	dispatchOnPreDraw	()Z	ViewTreeObserver.java
+0x6f383bc8	android.view.ViewTreeObserver	hasComputeInternalInsetsListeners	()Z	ViewTreeObserver.java
+0x6f385a58	android.view.WindowManager$LayoutParams	mayUseInputMethod	(I)Z	WindowManager.java
+0x6f38a738	android.view.inputmethod.InputMethodManager	checkFocusNoStartInput	(ZZ)Z	InputMethodManager.java
+0x6f38a828	android.view.inputmethod.InputMethodManager	peekInstance	()Landroid/view/inputmethod/InputMethodManager;	InputMethodManager.java
+0x6f38a8e8	android.view.inputmethod.InputMethodManager	checkFocus	()V	InputMethodManager.java
+0x6f38ae28	android.view.inputmethod.InputMethodManager	isActive	(Landroid/view/View;)Z	InputMethodManager.java
+0x6f38ae58	android.view.inputmethod.InputMethodManager	isCursorAnchorInfoEnabled	()Z	InputMethodManager.java
+0x6f396a08	com.android.internal.util.ArrayUtils	emptyArray	(Ljava/lang/Class;)[Ljava/lang/Object;	ArrayUtils.java
+0x6f3b1588	android.app.ContextImpl	getApplicationInfo	()Landroid/content/pm/ApplicationInfo;	ContextImpl.java
+0x6f3b7fd8	android.app.LoadedApk	getApplicationInfo	()Landroid/content/pm/ApplicationInfo;	LoadedApk.java
+0x6f3c6768	android.graphics.NinePatch	draw	(Landroid/graphics/Canvas;Landroid/graphics/Rect;Landroid/graphics/Paint;)V	NinePatch.java
+0x6f3c6858	android.graphics.NinePatch	getBitmap	()Landroid/graphics/Bitmap;	NinePatch.java
+0x6f3c8d48	android.graphics.drawable.DrawableContainer	draw	(Landroid/graphics/Canvas;)V	DrawableContainer.java
+0x6f3cb2f8	android.graphics.drawable.InsetDrawable	draw	(Landroid/graphics/Canvas;)V	InsetDrawable.java
+0x6f3cc978	android.graphics.drawable.NinePatchDrawable	needsMirroring	()Z	NinePatchDrawable.java
+0x6f3ccac8	android.graphics.drawable.NinePatchDrawable	draw	(Landroid/graphics/Canvas;)V	NinePatchDrawable.java
+0x6f3ccd08	android.graphics.drawable.NinePatchDrawable	getPaint	()Landroid/graphics/Paint;	NinePatchDrawable.java
+0x6f3ccd98	android.graphics.drawable.NinePatchDrawable	isAutoMirrored	()Z	NinePatchDrawable.java
+0x6f3e0e08	android.text.PackedIntVector	getValue	(II)I	PackedIntVector.java
+0x6f3e0e98	android.text.PackedIntVector	size	()I	PackedIntVector.java
+0x6f3e0fe8	android.text.PackedObjectVector	getValue	(II)Ljava/lang/Object;	PackedObjectVector.java
+0x6f3e11c8	android.text.SpanSet	getNextTransition	(II)I	SpanSet.java
+0x6f3e1228	android.text.SpanSet	init	(Landroid/text/Spanned;II)V	SpanSet.java
+0x6f3e1258	android.text.SpanSet	recycle	()V	SpanSet.java
+0x6f3e1888	android.text.TextLine	drawRun	(Landroid/graphics/Canvas;IIZFIIIZ)F	TextLine.java
+0x6f3e18b8	android.text.TextLine	drawTextRun	(Landroid/graphics/Canvas;Landroid/text/TextPaint;IIIIZFI)V	TextLine.java
+0x6f3e1978	android.text.TextLine	handleRun	(IIIZLandroid/graphics/Canvas;FIIILandroid/graphics/Paint$FontMetricsInt;Z)F	TextLine.java
+0x6f3e19a8	android.text.TextLine	handleText	(Landroid/text/TextPaint;IIIIZLandroid/graphics/Canvas;FIIILandroid/graphics/Paint$FontMetricsInt;Z)F	TextLine.java
+0x6f3e1a08	android.text.TextLine	obtain	()Landroid/text/TextLine;	TextLine.java
+0x6f3e1a38	android.text.TextLine	recycle	(Landroid/text/TextLine;)Landroid/text/TextLine;	TextLine.java
+0x6f3e1ac8	android.text.TextLine	draw	(Landroid/graphics/Canvas;FIII)V	TextLine.java
+0x6f3e1bb8	android.text.TextLine	set	(Landroid/text/TextPaint;Ljava/lang/CharSequence;IIILandroid/text/Layout$Directions;ZLandroid/text/Layout$TabStops;)V	TextLine.java
+0x6f3e8698	android.view.Choreographer$CallbackQueue	addCallbackLocked	(JLjava/lang/Object;Ljava/lang/Object;)V	Choreographer.java
+0x6f3e86c8	android.view.Choreographer$CallbackQueue	extractDueCallbacksLocked	(J)Landroid/view/Choreographer$CallbackRecord;	Choreographer.java
+0x6f3e87b8	android.view.Choreographer$CallbackRecord	run	(J)V	Choreographer.java
+0x6f3e8818	android.view.Choreographer$FrameDisplayEventReceiver	run	()V	Choreographer.java
+0x6f3e88a8	android.view.DisplayEventReceiver	dispatchVsync	(JII)V	DisplayEventReceiver.java
+0x6f3e89c8	android.view.DisplayEventReceiver	scheduleVsync	()V	DisplayEventReceiver.java
+0x6f3e89f8	android.view.Choreographer$FrameDisplayEventReceiver	onVsync	(JII)V	Choreographer.java
+0x6f3e9bf8	android.view.Gravity	getAbsoluteGravity	(II)I	Gravity.java
+0x6f3ea348	android.view.HardwareRenderer	isEnabled	()Z	HardwareRenderer.java
+0x6f3ee5a8	android.view.RenderNode	end	(Landroid/view/HardwareCanvas;)V	RenderNode.java
+0x6f3ee6f8	android.view.RenderNode	getElevation	()F	RenderNode.java
+0x6f3ee758	android.view.RenderNode	getMatrix	(Landroid/graphics/Matrix;)V	RenderNode.java
+0x6f3ee788	android.view.RenderNode	getNativeDisplayList	()J	RenderNode.java
+0x6f3ee968	android.view.RenderNode	getTranslationZ	()F	RenderNode.java
+0x6f3ee998	android.view.RenderNode	hasIdentityMatrix	()Z	RenderNode.java
+0x6f3eea58	android.view.RenderNode	isValid	()Z	RenderNode.java
+0x6f3eeb18	android.view.RenderNode	setAlpha	(F)Z	RenderNode.java
+0x6f3eec08	android.view.RenderNode	setClipToBounds	(Z)Z	RenderNode.java
+0x6f3eec98	android.view.RenderNode	setHasOverlappingRendering	(Z)Z	RenderNode.java
+0x6f3eed58	android.view.RenderNode	setLeftTopRightBottom	(IIII)Z	RenderNode.java
+0x6f3eee18	android.view.RenderNode	setProjectBackwards	(Z)Z	RenderNode.java
+0x6f3eee48	android.view.RenderNode	setProjectionReceiver	(Z)Z	RenderNode.java
+0x6f3ef028	android.view.RenderNode	setTranslationX	(F)Z	RenderNode.java
+0x6f3ef058	android.view.RenderNode	setTranslationY	(F)Z	RenderNode.java
+0x6f3ef0b8	android.view.RenderNode	start	(II)Landroid/view/HardwareCanvas;	RenderNode.java
+0x6f3f0828	android.view.ThreadedRenderer	updateRootDisplayList	(Landroid/view/View;Landroid/view/HardwareRenderer$HardwareDrawCallbacks;)V	ThreadedRenderer.java
+0x6f3f0858	android.view.ThreadedRenderer	updateViewTreeDisplayList	(Landroid/view/View;)V	ThreadedRenderer.java
+0x6f3f09a8	android.view.ThreadedRenderer	draw	(Landroid/view/View;Landroid/view/View$AttachInfo;Landroid/view/HardwareRenderer$HardwareDrawCallbacks;)V	ThreadedRenderer.java
+0x6f3f0b88	android.view.ThreadedRenderer	notifyFramePending	()V	ThreadedRenderer.java
+0x6f3f26b8	android.view.View$TransformationInfo	access$1600	(Landroid/view/View$TransformationInfo;)Landroid/graphics/Matrix;	View.java
+0x6f3f3498	android.view.ViewRootImpl$ConsumeBatchedInputRunnable	run	()V	ViewRootImpl.java
+0x6f3f3b28	android.view.ViewRootImpl$RunQueue	executeActions	(Landroid/os/Handler;)V	ViewRootImpl.java
+0x6f3f4398	android.view.ViewRootImpl$TraversalRunnable	run	()V	ViewRootImpl.java
+0x6f3f4d88	android.view.ViewTreeObserver$CopyOnWriteArray$Access	access$002	(Landroid/view/ViewTreeObserver$CopyOnWriteArray$Access;Ljava/util/ArrayList;)Ljava/util/ArrayList;	ViewTreeObserver.java
+0x6f3f4db8	android.view.ViewTreeObserver$CopyOnWriteArray$Access	access$102	(Landroid/view/ViewTreeObserver$CopyOnWriteArray$Access;I)I	ViewTreeObserver.java
+0x6f3f4de8	android.view.ViewTreeObserver$CopyOnWriteArray$Access	get	(I)Ljava/lang/Object;	ViewTreeObserver.java
+0x6f3f4e18	android.view.ViewTreeObserver$CopyOnWriteArray$Access	size	()I	ViewTreeObserver.java
+0x6f3f4e78	android.view.ViewTreeObserver$CopyOnWriteArray	getArray	()Ljava/util/ArrayList;	ViewTreeObserver.java
+0x6f3f4f38	android.view.ViewTreeObserver$CopyOnWriteArray	end	()V	ViewTreeObserver.java
+0x6f3f4f98	android.view.ViewTreeObserver$CopyOnWriteArray	size	()I	ViewTreeObserver.java
+0x6f3f4fc8	android.view.ViewTreeObserver$CopyOnWriteArray	start	()Landroid/view/ViewTreeObserver$CopyOnWriteArray$Access;	ViewTreeObserver.java
+0x6f3fbaa8	android.widget.Editor$CursorAnchorInfoNotifier	updatePosition	(IIZZ)V	Editor.java
+0x6f3fc3d8	android.widget.Editor$PositionListener	updatePosition	()V	Editor.java
+0x6f3fc408	android.widget.Editor$PositionListener	onPreDraw	()Z	Editor.java
+0x6f3fc6d8	android.widget.Editor$TextDisplayList	needsRecord	()Z	Editor.java
+0x6f3fca68	android.widget.Editor	access$600	(Landroid/widget/Editor;)Z	Editor.java
+0x6f3fca98	android.widget.Editor	access$700	(Landroid/widget/Editor;)Landroid/widget/TextView;	Editor.java
+0x6f3fcbb8	android.widget.Editor	drawCursor	(Landroid/graphics/Canvas;I)V	Editor.java
+0x6f3fcbe8	android.widget.Editor	drawHardwareAccelerated	(Landroid/graphics/Canvas;Landroid/text/Layout;Landroid/graphics/Path;Landroid/graphics/Paint;I)V	Editor.java
+0x6f3fd0c8	android.widget.Editor	shouldBlink	()Z	Editor.java
+0x6f3fd548	android.widget.Editor	isCursorVisible	()Z	Editor.java
+0x6f3fd638	android.widget.Editor	onDraw	(Landroid/graphics/Canvas;Landroid/text/Layout;Landroid/graphics/Path;Landroid/graphics/Paint;I)V	Editor.java
+0x6fa82c10	dalvik.system.VMDebug	startMethodTracingDdmsImpl	(IIZI)V	VMDebug.java
+0x6fa9f530	android.os.MessageQueue	nativePollOnce	(JI)V	MessageQueue.java
+0x6fac3260	android.content.res.CompatibilityInfo	supportsScreen	()Z	CompatibilityInfo.java
+0x6fac48b0	android.graphics.Matrix	isIdentity	()Z	Matrix.java
+0x6fac7f40	android.widget.TextView	getBoxHeight	(Landroid/text/Layout;)I	TextView.java
+0x6fac7fd0	android.widget.TextView	getFudgedPaddingRight	()I	TextView.java
+0x6fac8120	android.widget.TextView	getUpdatedHighlightPath	()Landroid/graphics/Path;	TextView.java
+0x6fac8390	android.widget.TextView	restartMarqueeIfNeeded	()V	TextView.java
+0x6fac8a80	android.widget.TextView	computeScroll	()V	TextView.java
+0x6fac8e70	android.widget.TextView	getCompoundPaddingBottom	()I	TextView.java
+0x6fac8ed0	android.widget.TextView	getCompoundPaddingLeft	()I	TextView.java
+0x6fac8f00	android.widget.TextView	getCompoundPaddingRight	()I	TextView.java
+0x6fac8f60	android.widget.TextView	getCompoundPaddingTop	()I	TextView.java
+0x6fac9110	android.widget.TextView	getExtendedPaddingBottom	()I	TextView.java
+0x6fac9140	android.widget.TextView	getExtendedPaddingTop	()I	TextView.java
+0x6fac9380	android.widget.TextView	getHorizontalOffsetForDrawables	()I	TextView.java
+0x6fac93b0	android.widget.TextView	getHorizontallyScrolling	()Z	TextView.java
+0x6fac9590	android.widget.TextView	getLayout	()Landroid/text/Layout;	TextView.java
+0x6fac9b00	android.widget.TextView	getSelectionEnd	()I	TextView.java
+0x6fac9b30	android.widget.TextView	getSelectionStart	()I	TextView.java
+0x6fac9c80	android.widget.TextView	getText	()Ljava/lang/CharSequence;	TextView.java
+0x6faca070	android.widget.TextView	getVerticalOffset	(Z)I	TextView.java
+0x6faca100	android.widget.TextView	hasOverlappingRendering	()Z	TextView.java
+0x6faca1c0	android.widget.TextView	invalidateCursorPath	()V	TextView.java
+0x6faca370	android.widget.TextView	isTextEditable	()Z	TextView.java
+0x6faca4f0	android.widget.TextView	onCheckIsTextEditor	()Z	TextView.java
+0x6faca640	android.widget.TextView	onDraw	(Landroid/graphics/Canvas;)V	TextView.java
+0x6facc200	android.widget.EditText	getText	()Landroid/text/Editable;	EditText.java
+0x6facc230	android.widget.EditText	getText	()Ljava/lang/CharSequence;	EditText.java
+0x6fad4420	android.os.Debug	getMethodTracingMode	()I	Debug.java
+0x6fad4b10	android.os.Debug	startMethodTracingDdms	(IIZI)V	Debug.java
+0x6fad4bd0	android.os.Debug	stopMethodTracing	()V	Debug.java
+0x6fad66a0	android.os.Trace	isTagEnabled	(J)Z	Trace.java
+0x6fad6730	android.os.Trace	traceBegin	(JLjava/lang/String;)V	Trace.java
+0x6fad6790	android.os.Trace	traceEnd	(J)V	Trace.java
+0x6fadaff0	android.text.Layout	getLineVisibleEnd	(III)I	Layout.java
+0x6fadb0b0	android.text.Layout	getParagraphSpans	(Landroid/text/Spanned;IILjava/lang/Class;)[Ljava/lang/Object;	Layout.java
+0x6fadb1d0	android.text.Layout	drawBackground	(Landroid/graphics/Canvas;Landroid/graphics/Path;Landroid/graphics/Paint;III)V	Layout.java
+0x6fadb200	android.text.Layout	drawText	(Landroid/graphics/Canvas;II)V	Layout.java
+0x6fadb350	android.text.Layout	getHeight	()I	Layout.java
+0x6fadb3e0	android.text.Layout	getLineBottom	(I)I	Layout.java
+0x6fadb560	android.text.Layout	getLineForVertical	(I)I	Layout.java
+0x6fadb5f0	android.text.Layout	getLineRangeForDraw	(Landroid/graphics/Canvas;)J	Layout.java
+0x6fadc8b0	android.view.DisplayAdjustments	getCompatibilityInfo	()Landroid/content/res/CompatibilityInfo;	DisplayAdjustments.java
+0x6faec870	android.text.DynamicLayout	getBlockEndLines	()[I	DynamicLayout.java
+0x6faec8a0	android.text.DynamicLayout	getBlockIndices	()[I	DynamicLayout.java
+0x6faec990	android.text.DynamicLayout	getIndexFirstChangedBlock	()I	DynamicLayout.java
+0x6faec9c0	android.text.DynamicLayout	getLineContainsTab	(I)Z	DynamicLayout.java
+0x6faec9f0	android.text.DynamicLayout	getLineCount	()I	DynamicLayout.java
+0x6faeca20	android.text.DynamicLayout	getLineDescent	(I)I	DynamicLayout.java
+0x6faeca50	android.text.DynamicLayout	getLineDirections	(I)Landroid/text/Layout$Directions;	DynamicLayout.java
+0x6faeca80	android.text.DynamicLayout	getLineStart	(I)I	DynamicLayout.java
+0x6faecab0	android.text.DynamicLayout	getLineTop	(I)I	DynamicLayout.java
+0x6faecae0	android.text.DynamicLayout	getNumberOfBlocks	()I	DynamicLayout.java
+0x6faecb10	android.text.DynamicLayout	getParagraphDirection	(I)I	DynamicLayout.java
+0x6faecba0	android.text.DynamicLayout	setIndexFirstChangedBlock	(I)V	DynamicLayout.java
+0x6faed3e0	android.view.Choreographer	access$300	(Landroid/view/Choreographer;)Landroid/view/Choreographer$FrameHandler;	Choreographer.java
+0x6faed410	android.view.Choreographer	access$400	()Ljava/lang/Object;	Choreographer.java
+0x6faed440	android.view.Choreographer	access$500	(Landroid/view/Choreographer;JLjava/lang/Object;Ljava/lang/Object;)Landroid/view/Choreographer$CallbackRecord;	Choreographer.java
+0x6faed530	android.view.Choreographer	isRunningOnLooperThreadLocked	()Z	Choreographer.java
+0x6faed560	android.view.Choreographer	obtainCallbackLocked	(JLjava/lang/Object;Ljava/lang/Object;)Landroid/view/Choreographer$CallbackRecord;	Choreographer.java
+0x6faed590	android.view.Choreographer	postCallbackDelayedInternal	(ILjava/lang/Object;Ljava/lang/Object;J)V	Choreographer.java
+0x6faed5c0	android.view.Choreographer	recycleCallbackLocked	(Landroid/view/Choreographer$CallbackRecord;)V	Choreographer.java
+0x6faed620	android.view.Choreographer	scheduleFrameLocked	(J)V	Choreographer.java
+0x6faed650	android.view.Choreographer	scheduleVsyncLocked	()V	Choreographer.java
+0x6faed6e0	android.view.Choreographer	doCallbacks	(IJ)V	Choreographer.java
+0x6faed710	android.view.Choreographer	doFrame	(JI)V	Choreographer.java
+0x6faed830	android.view.Choreographer	getFrameTimeNanos	()J	Choreographer.java
+0x6faed860	android.view.Choreographer	postCallback	(ILjava/lang/Runnable;Ljava/lang/Object;)V	Choreographer.java
+0x6faed890	android.view.Choreographer	postCallbackDelayed	(ILjava/lang/Runnable;Ljava/lang/Object;J)V	Choreographer.java
+0x6faedbf0	android.view.GLES20Canvas	clipRect	(FFFF)Z	GLES20Canvas.java
+0x6faee160	android.view.GLES20Canvas	drawPatch	(Landroid/graphics/NinePatch;Landroid/graphics/Rect;Landroid/graphics/Paint;)V	GLES20Canvas.java
+0x6faee370	android.view.GLES20Canvas	drawRenderNode	(Landroid/view/RenderNode;Landroid/graphics/Rect;I)I	GLES20Canvas.java
+0x6faee520	android.view.GLES20Canvas	drawTextRun	(Ljava/lang/CharSequence;IIIIFFZLandroid/graphics/Paint;)V	GLES20Canvas.java
+0x6faee550	android.view.GLES20Canvas	drawTextRun	([CIIIIFFZLandroid/graphics/Paint;)V	GLES20Canvas.java
+0x6faee5b0	android.view.GLES20Canvas	getClipBounds	(Landroid/graphics/Rect;)Z	GLES20Canvas.java
+0x6faee7f0	android.view.GLES20Canvas	onPostDraw	()V	GLES20Canvas.java
+0x6faee820	android.view.GLES20Canvas	onPreDraw	(Landroid/graphics/Rect;)I	GLES20Canvas.java
+0x6faee8e0	android.view.GLES20Canvas	restore	()V	GLES20Canvas.java
+0x6faee970	android.view.GLES20Canvas	save	()I	GLES20Canvas.java
+0x6faeeaf0	android.view.GLES20Canvas	setHighContrastText	(Z)V	GLES20Canvas.java
+0x6faeeb50	android.view.GLES20Canvas	setViewport	(II)V	GLES20Canvas.java
+0x6faeebb0	android.view.GLES20Canvas	translate	(FF)V	GLES20Canvas.java
+0x6faeec40	android.view.GLES20RecordingCanvas	obtain	(Landroid/view/RenderNode;)Landroid/view/GLES20RecordingCanvas;	GLES20RecordingCanvas.java
+0x6faeec70	android.view.GLES20RecordingCanvas	finishRecording	()J	GLES20RecordingCanvas.java
+0x6faeecd0	android.view.GLES20RecordingCanvas	recycle	()V	GLES20RecordingCanvas.java
+0x73ca6a48	android.widget.Editor$Blink	run	()V	Editor.java
+*end
+SLOW   …
+Ò                  _¨ˆ>o× qÑ _ø‰>oà wÑ _àÓ®oğ ‡Ñ _áÓ®oô ‹Ñ _46où Ñ _è26oş •Ñ _é26o  Ñ _	46o £Ñ _h76o §Ñ _i76o ¬Ñ _àÓ®o °Ñ _áÓ®o ³Ñ _X²4o# ºÑ _ø«4o( ¿Ñ _Ø96o- ÄÑ _H66o2 ÉÑ _I66o6 ÍÑ _x66o; ÒÑ _y66o> ÕÑ _66oD ÛÑ _66oG ŞÑ _Ù96o` øÑ _ù«4od ûÑ _Y²4og şÑ _ù‰>oj  Ò _©ˆ>ol Ò _1õ©o„ Ò _66o’” )Ö _66o–” -Ö _ù:6oœ” 3Ö _¸¬4o¤” ;Ö _ˆ¬4o¨” ?Ö _ˆ>o­” DÖ _×®o³” JÖ _àÖ®oÀ” XÖ _È†>oÊ” aÖ _É†>oÏ” fÖ _¸‡>oÔ” kÖ _Ô®oØ” oÖ _Ô®oÛ” rÖ _˜4?oá” xÖ _0Ø®oæ” }Ö _1Ø®oë” ‚Ö _8,8oğ” ‡Ö _¸Ü7oö” Ö _¹Ü7o• £Ö _˜,8o• ¨Ö _™,8o• ­Ö _9,8o• °Ö _™4?o• ²Ö _¹‡>o• µÖ _ÀÕ®o#• ºÖ _ÁÕ®o'• ¾Ö _áÖ®o+• ÂÖ _àÖ®o.• ÅÖ _È†>o6• ÍÖ _É†>o9• ĞÖ _áÖ®o=• ÓÖ _àÖ®o@• ×Ö _È†>oF• İÖ _É†>oJ• áÖ _¸‡>oO• æÖ _Ô®oR• éÖ _Ô®oU• ìÖ _˜C?oZ• òÖ _È,8o_• öÖ _H­4oe• üÖ _I­4oh• ÿÖ _¨-6om• × _<6oq• × _76ow• × _	76o• × _<6o• %× _©-6o‘• (× _0g­o˜• /× _ f­oœ• 3× _¡f­o¡• 8× _1g­o¤• ;× _8o¨• ?× _x.8o®• E× _Xï0o³• J× _Yï0o·• N× _y.8oº• P× _°È­oÀ• W× _±È­oÄ• [× _`2¬oÉ• `× _a2¬oÍ• d× _¸@4oÔ• k× _¹@4oÙ• p× _h<4oİ• t× _i<4oà• w× _8oå• }× _¨Â%oë• ‚× _˜Ã%oø• × _™Ã%oü• “× _˜'o – —× _™'o– ›× _È'o– Ÿ× _É'o– ¢× _©Â%o– §× _8o– ª× _(;?o– °× _ˆ÷(o– ¶× _‰÷(o#– ¹× _8ö(o'– ¾× _9ö(o*– Á× _);?o-– Ä× _X8o2– É× _Y8o6– Í× _È;8o=– Ô× _É;8oA– Ø× _Ø8oK– â× _Ù8oP– ç× _XZ8oT– ë× _YZ8oX– ï× _¨:8o]– ô× _˜O?ob– ù× _xN?of– ı× _yN?oj– Ø _ˆ÷(on– Ø _‰÷(oq– Ø _™O?ot– 
+Ø _ÈO?ow– Ø _ˆM?o|– Ø _‰M?o€– Ø _ˆ÷(oƒ– Ø _‰÷(o†– Ø _¸M?o‰–  Ø _¹M?oŒ– #Ø _ÉO?o– &Ø _N?o“– )Ø _N?o•– ,Ø _èM?o™– 0Ø _xø(o– 3Ø _yø(o – 7Ø _éM?o¢– 9Ø _Ä?o¨– ?Ø _ØÃ?o¬– CØ _˜Ê?o±– HØ _™Ê?oµ– hØ _Há0o×– nØ _ˆò0oŞ– uØ _˜é>oã– zØ _™é>oë– ‚Ø _‰ò0oî– …Ø _ˆò0o÷– Ø _˜é>oû– ’Ø _™é>o — —Ø _‰ò0o— ™Ø _ˆò0o	—  Ø _˜é>o— ¤Ø _™é>o— ¨Ø _‰ò0o— «Ø _ˆò0o— ²Ø _˜é>o— ¶Ø _™é>o#— ºØ _‰ò0o&— ½Ø _ˆò0o,— ÃØ _˜é>o0— ÇØ _™é>o4— ËØ _‰ò0o7— ÎØ _ˆò0o=— ÔØ _˜é>oA— ØØ _™é>oF— İØ _‰ò0oH— ßØ _ˆò0oN— åØ _˜é>oR— éØ _™é>oW— îØ _‰ò0oZ— ğØ _Iá0o`— ÷Ø _ÙÃ?of— ıØ _¨º?om— Ù _(¨8ot— Ù _)¨8ox— Ù _˜Ê?o|— Ù _™Ê?o— Ù _(®8oƒ— Ù _è¨8o‡— Ù _8§8o‹— "Ù _9§8o— &Ù _é¨8o’— )Ù _)®8o—— .Ù _X®8oš— 1Ù _Y®8oŸ— 6Ù _©º?o¢— 9Ù _	Ä?o©— @Ù _8O?o®— EÙ _9O?o²— IÙ _©:8oµ— LÙ _ˆ8oº— QÙ _0g­oÀ— WÙ _ f­oÃ— ZÙ _¡f­oÇ— ^Ù _1g­oÊ— aÙ _è8oÎ— eÙ _¸8oÒ— iÙ _¹8oß— wÙ _ø28oæ— }Ù _ù28oì— ƒÙ _è98oô— ‹Ù _é98o÷— Ù _ˆ=4oı— ”Ù _‰=4o˜ ˜Ù _X=4o˜ Ù _Y=4o	˜  Ù _H£>o˜ ¥Ù _I£>o˜ ©Ù _?4o˜ ¯Ù _	?4o˜ ±Ù _¨	?o ˜ ·Ù _0Ø®o$˜ »Ù _1Ø®o)˜ ÀÙ _(?o/˜ ÆÙ _0g­o4˜ ËÙ _ f­o7˜ ÎÙ _¡f­o;˜ ÒÙ _1g­o>˜ ÕÙ _X?oB˜ ÙÙ _hÙ0oG˜ ŞÙ _˜»0oK˜ âÙ _hÁ0oP˜ çÙ _iÁ0oS˜ êÙ _Xê>oW˜ îÙ _Yê>oZ˜ ñÙ _hT1o`˜ ÷Ù _¨ó0of˜ ıÙ _©ó0oh˜ ÿÙ _HD1ol˜ Ú _hÙ0oq˜ Ú _˜»0ot˜ Ú _hÁ0ox˜ Ú _iÁ0o{˜ Ú _Xê>o~˜ Ú _Yê>o˜ Ú _hT1o†˜ Ú _Ö0o‹˜ "Ú _	Ö0o˜ %Ú _¨ó0o“˜ *Ú _©ó0o•˜ ,Ú _HD1o™˜ 0Ú _hÙ0o˜ 4Ú _˜»0o ˜ 7Ú _hÁ0o¤˜ ;Ú _iÁ0o§˜ >Ú _Xê>o«˜ BÚ _Yê>o®˜ EÚ _hT1o²˜ IÚ _¨ó0o¶˜ MÚ _©ó0o¹˜ PÚ _HD1o¼˜ SÚ _hÙ0oÁ˜ XÚ _˜»0oÄ˜ [Ú _hÁ0oÈ˜ _Ú _iÁ0oË˜ bÚ _Xê>oÏ˜ fÚ _Yê>oÒ˜ iÚ _hT1o×˜ nÚ _¨ó0oÛ˜ sÚ _©ó0oŞ˜ uÚ _HD1oâ˜ yÚ _hÙ0oæ˜ }Ú _˜»0oê˜ Ú _hÁ0oî˜ …Ú _iÁ0oñ˜ ˆÚ _Xê>oõ˜ ŒÚ _Yê>oø˜ Ú _hT1oü˜ “Ú _¨ó0o™ ˜Ú _©ó0o™ ›Ú _HD1o™ Ú _hÙ0o™ £Ú _˜»0o™ §Ú _hÁ0o™ ªÚ _iÁ0o™ ®Ú _Xê>o™ ±Ú _Yê>o™ ´Ú _hT1o"™ ¹Ú _¨ó0o&™ ½Ú _©ó0o)™ ÀÚ _HD1o,™ ÃÚ _hÙ0o1™ ÈÚ _˜»0o4™ ËÚ _hÁ0o8™ ÎÚ _iÁ0o;™ ÒÚ _Xê>o@™ ×Ú _Yê>oC™ ÚÚ _™»0oG™ ŞÚ _iÙ0oJ™ áÚ _ID1oM™ äÚ _¨ó0oQ™ èÚ _©ó0oS™ êÚ _HD1oW™ îÚ _hÙ0o[™ òÚ _˜»0o^™ õÚ _hÁ0ob™ ùÚ _iÁ0oe™ üÚ _Xê>oi™  Û _Yê>ol™ Û _Èß0oq™ Û _Éß0ou™ Û _¸ğ>oy™ Û _@ì®o|™ Û _(…7o‚™ Û _˜„7oˆ™ Û _™„7o™ $Û _)…7o™ 'Û _Aì®o•™ +Û _Pë®o™™ 0Û _Që®oª™ AÛ _ è®o¯™ FÛ _!è®o½™ UÛ _¹ğ>oÁ™ XÛ _ğê®oÇ™ ]Û _ñê®oÌ™ cÛ _ÈÜ0oĞ™ gÛ _ÉÜ0oÓ™ jÛ _€Š¬oØ™ oÛ _Š¬oÛ™ rÛ _°ë®oß™ vÛ _±ë®oã™ zÛ _ØÏ0oé™ €Û _Ø±0oï™ †Û _H°7oô™ ‹Û _I°7o÷™ Û _ˆ³0oü™ “Û _ÈW4oš ˜Û _ÉW4oš œÛ _¸@4o	š  Û _¹@4oš £Û _h<4oš ¦Û _i<4oš ©Û _¸ğ>oš ­Û _@ì®oš °Û _(…7oš ´Û _˜„7o!š ¸Û _™„7o&š ½Û _)…7o)š ÀÛ _Aì®o-š ÄÛ _Pë®o0š ÇÛ _Që®o:š ÒÛ _ è®o?š ÖÛ _!è®oIš áÛ _¹ğ>oMš äÛ _°ë®oRš éÛ _±ë®oUš ìÛ _ø²<oYš ğÛ _H<o^š õÛ _ÈÊ<ocš úÛ _ÈW4ogš şÛ _ÉW4okš Ü _Í<opš Ü _	Í<osš 
+Ü _¸4owš Ü _¹4o{š Ü _è"4o€š Ü _é"4o‰š  Ü _xÉ<oš $Ü _˜Í<o‘š (Ü _™Í<o•š ,Ü _yÉ<o˜š /Ü _hg<oš 5Ü _`á®o£š 9Ü _Xh<o¦š =Ü _Yh<oªš AÜ _(û3o®š EÜ _Øó3o³š JÜ _Ùó3o·š NÜ _¨ó3o»š RÜ _©ó3oÁš XÜ _)û3oÄš [Ü _aá®oõš Ü _ig<oùš Ü _è"4oıš ”Ü _é"4o› šÜ _ÉÊ<o› Ü _I<o	›  Ü _ù²<o› £Ü _¨å>o› §Ü _ğç®o› «Ü _ñç®o› ²Ü _pì®o› µÜ _qì®o%› ¼Ü _Ğì®o,› ÃÜ _X…7o1› ÈÜ _È„7o5› ÌÜ _h„7o8› ÏÜ _i„7o>› ÕÜ _É„7oC› ÚÜ _Y…7oF› İÜ _Ñì®oI› àÜ _©å>oM› äÜ _Xí>oQ› èÜ _Yí>oX› ïÜ _x\4o\› óÜ _y\4o_› õÜ _î>ob› ùÜ _î>og› şÜ _Hî>ok› İ _Iî>on› İ _ì>or› 	İ _	ì>ov› İ _‰³0oy› İ _Xê>o~› İ _Yê>o› İ _è¹0o…› İ _(ğ>o‰›  İ _)ğ>o› %İ _Xğ>o‘› (İ _Yğ>o•› ,İ _é¹0o—› .İ _è¯7o›› 2İ _pã®oŸ› 6İ _ˆç>o£› :İ _‰ç>o¦› =İ _qã®o¾› Vİ _é¯7oÂ› Yİ _Ù±0oÅ› \İ _@¦¬oÌ› cİ _ƒ¬oĞ› gİ _‘ƒ¬oÔ› jİ _1oØ› oİ _	1oÚ› qİ _Ğ¬oŞ› uİ _Ñ¬oâ› yİ _`¬oæ› }İ _a¬oé› €İ _ ¬oí› „İ _¬oğ› ‡İ _p¬oó› Šİ _q¬oö› İ _¨ü0oü› ’İ _øß0oÿ› –İ _ØØ0oœ ™İ _ÙØ0oœ œİ _È“1oœ ¡İ _ˆ;oœ §İ _Ø;oœ ¬İ _Ù;oœ °İ _‰;oœ ³İ _É“1oœ ¶İ _ùß0o$œ ¼İ _©ü0o(œ ¿İ _€“¬o,œ Ãİ _“¬o.œ Åİ _˜Ù0oFœ Şİ _™Ù0oKœ âİ _pé®oPœ çİ _qé®o\œ óİ _@‘¬oaœ øİ _ğÉ®ohœ ÿİ _˜>olœ Ş _™>opœ Ş _ñÉ®osœ 
+Ş _`¬owœ Ş _a¬ozœ Ş _A‘¬o}œ Ş _‘¬o€œ Ş _ğÉ®o„œ Ş _˜>o‡œ Ş _™>oŠœ !Ş _ñÉ®oœ $Ş _p¬oœ 'Ş _q¬o”œ *Ş _‘¬o–œ -Ş _P³­o›œ 2Ş _ğÉ®oŸœ 6Ş _˜>o¢œ 9Ş _™>o¥œ <Ş _ñÉ®o§œ >Ş _°Ê®o«œ BŞ _>o¯œ FŞ _˜>o³œ JŞ _™>o¶œ MŞ _	>o»œ RŞ _±Ê®o¾œ UŞ _Q³­oÀœ WŞ _Ğ¬oÅœ \Ş _ ¬oÉœ `Ş _¬oÌœ cŞ _xµ&oĞœ gŞ _yµ&oÓœ jŞ _Ñ¬oÖœ mŞ _ğÛ®oÜœ sŞ _ñÛ®oèœ Ş _p ¬oïœ †Ş _¸(7oõœ ŒŞ _¹(7oùœ Ş _@¬oıœ ”Ş _Èµ0o ˜Ş _Xa1o Ş _Ya1o ¢Ş _Éµ0o ¥Ş _@‘¬o ©Ş _ğÉ®o ­Ş _˜>o ±Ş _™>o ´Ş _ñÉ®o  ·Ş _`¬o$ »Ş _a¬o' ¾Ş _A‘¬o* ÁŞ _‘¬o- ÄŞ _ğÉ®o1 ÈŞ _˜>o4 ËŞ _™>o7 ÎŞ _ñÉ®o: ÑŞ _p¬o= ÔŞ _q¬o@ ×Ş _‘¬oC ÚŞ _â0oG İŞ _	â0oJ áŞ _A¬oN åŞ _P³­oQ èŞ _ğÉ®oT ëŞ _˜>oW îŞ _™>oZ ñŞ _ñÉ®o] ôŞ _°Ê®o` ÷Ş _>oc úŞ _˜>of ıŞ _™>oi  ß _	>on ß _±Ê®oq ß _Q³­os 
+ß _q ¬ov ß _p ¬oy ß _@¬o~ ß _Èµ0o ß _Xa1o… ß _Ya1oˆ ß _Éµ0o‹ "ß _@‘¬o &ß _ğÉ®o’ )ß _˜>o– ,ß _™>o™ /ß _ñÉ®o› 2ß _`¬oŸ 6ß _a¬o¢ 9ß _A‘¬o¥ <ß _‘¬o¨ ?ß _ğÉ®o« Bß _˜>o® Eß _™>o± Hß _ñÉ®o´ Kß _p¬o¸ Oß _q¬o» Rß _‘¬o¾ Tß _â0oÁ Xß _	â0oÄ [ß _A¬oÇ ^ß _P³­oÊ aß _ğÉ®oÍ dß _˜>oĞ gß _™>oÓ jß _ñÉ®oÖ mß _°Ê®oÙ pß _>oÜ sß _˜>oß vß _™>oâ yß _	>oç ~ß _±Ê®oé €ß _Q³­oì ƒß _q ¬oï †ß _°ë®oó Šß _±ë®où ß _øß0oı ”ß _ØØ0o  —ß _ÙØ0o šß _È“1o ß _ˆ;o ¢ß _Ø;o ¦ß _Ù;o ¨ß _‰;o «ß _É“1o ®ß _ùß0o ²ß _ø›>o  ·ß _ù›>o% ¼ß _ ¬o+ Âß _0›¬o/ Æß _0Â¬o3 Êß _ Â¬o7 Íß _€œ¬o: Ñß _œ¬o= Ôß _Â¬oA Øß _1Â¬oD Ûß _ø7oH ßß _8*7oO æß _9*7oT ëß _ù7oW îß _1›¬oZ ğß _ ›¬o] ôß _0Â¬o` ÷ß _ Â¬oc úß _€œ¬of ıß _œ¬oi  à _Â¬ol à _1Â¬oo à _È7or 	à _8*7ov à _9*7oz à _É7o} à _›¬o€ à _Øù0o„ à _Ùù0o‡ à _HÕ?o $à _p£¬o’ (à _ğ¤¬o– -à _ñ¤¬oš 0à _Hù0o 4à _Iù0o  7à _q£¬o£ :à _IÕ?o¦ <à _!¬o¯ Fà _8Ö?o´ Kà _0›¬o· Nà _0Â¬oº Qà _ Â¬o½ Tà _€œ¬oÀ Wà _œ¬oÃ Zà _Â¬oÆ ]à _1Â¬oÉ `à _ø7oÍ dà _8*7oÑ hà _9*7oÖ mà _ù7oØ oà _1›¬oÛ rà _ ›¬oß và _0Â¬oâ yà _ Â¬oå {à _€œ¬oç ~à _œ¬oê à _Â¬oí „à _1Â¬oğ ‡à _È7oó Šà _8*7o÷ à _9*7oû ’à _É7oş •à _›¬oŸ ˜à _(¨8oŸ œà _)¨8oŸ Ÿà _(®8oŸ £à _è¨8oŸ ¦à _8§8oŸ ©à _9§8oŸ ¬à _é¨8oŸ ¯à _)®8oŸ ³à _hÁ0o"Ÿ ¹à _iÁ0o%Ÿ ¼à _H°7o)Ÿ Àà _I°7o+Ÿ Âà _èË?o0Ÿ Çà _ğµ­o4Ÿ Ëà _°å®o9Ÿ Ğà _¨>4oIŸ àà _©>4oMŸ äà _±å®oQŸ èà _xµ&oWŸ îà _yµ&oZŸ ñà _ğÉ®o^Ÿ õà _˜>oaŸ øà _™>odŸ ûà _ñÉ®ogŸ şà _°Ê®ojŸ á _>onŸ á _˜>oqŸ á _™>otŸ á _	>oxŸ á _±Ê®o{Ÿ á _8¶&oŸ á _9¶&oŸ á _`µ­o…Ÿ á _ğÉ®oˆŸ á _˜>o‹Ÿ "á _™>oŸ %á _ñÉ®o‘Ÿ (á _°Ê®o•Ÿ ,á _>o™Ÿ 0á _˜>oœŸ 3á _™>oŸŸ 6á _	>o£Ÿ :á _±Ê®o¦Ÿ =á _aµ­o©Ÿ @á _`µ­o­Ÿ Dá _ğÉ®o°Ÿ Gá _˜>o³Ÿ Já _™>o¶Ÿ Má _ñÉ®o¹Ÿ Oá _°Ê®o¼Ÿ Sá _>oÀŸ Wá _˜>oÃŸ Zá _™>oÆŸ ]á _	>oÊŸ aá _±Ê®oÍŸ dá _aµ­oĞŸ gá _>7oÕŸ lá _>7oØŸ oá _ñµ­oÛŸ rá _X@7oßŸ vá _Y@7oãŸ zá _(@7oæŸ }á _)@7oéŸ €á _Ğ±­oíŸ „á _¸(7oôŸ ‹á _¹(7o÷Ÿ á _(>oüŸ “á _h*7o   —á _˜,o  á _xS%o  £á _yS%o  §á _x—,o  «á _H—,o  ¯á _˜Œ,o  ³á _™Œ,o  ¶á _I—,o#  ¹á _8˜,o&  ½á _9˜,o*  Áá _y—,o0  Çá _	˜,o3  Êá _˜,o7  Îá _xS%o;  Òá _yS%o>  Õá _x—,oA  Øá _H—,oE  Üá _˜Œ,oH  Şá _™Œ,oJ  áá _I—,oM  äá _8˜,oP  çá _9˜,oS  êá _y—,oX  ïá _	˜,o[  òá _˜,o_  öá _xS%oc  úá _yS%of  ıá _x—,oi   â _H—,ol  â _˜Œ,oo  â _™Œ,or  	â _I—,ou  â _8˜,ox  â _9˜,o{  â _y—,o  â _	˜,o‚  â _˜,o†  â _xS%oŠ  !â _yS%o  $â _x—,o  'â _H—,o“  *â _˜Œ,o–  -â _™Œ,o™  0â _I—,oœ  3â _8˜,oŸ  6â _9˜,o¢  9â _y—,o¦  =â _	˜,o©  ?â _˜,o­  Dâ _xS%o°  Gâ _yS%o³  Jâ _x—,o¶  Mâ _H—,oº  Qâ _˜Œ,o¼  Sâ _™Œ,o¿  Vâ _I—,oÂ  Yâ _8˜,oÅ  \â _9˜,oÈ  _â _y—,oÌ  câ _	˜,oÏ  fâ _˜,oÓ  jâ _xS%o×  nâ _yS%oÚ  pâ _x—,oİ  tâ _H—,oà  wâ _˜Œ,oã  zâ _™Œ,oæ  }â _I—,oé  €â _8˜,oì  ƒâ _9˜,oï  †â _y—,oó  Šâ _	˜,oö  â _j9oû  ’â _¨S%oÿ  –â _©S%o¡ šâ _xS%o	¡  â _yS%o¡ ¢â _˜Œ,o¡ ¦â _™Œ,o¡ ©â _	j9o¡ ­â _i*7o¡ °â _)>o¡ ´â _X>o"¡ ¹â _Y>o%¡ ¼â _Ñ±­o(¡ ¿â _pÈ®o-¡ Äâ _qÈ®o1¡ Çâ _ È®o4¡ Ëâ _¡È®o7¡ Íâ _àÊ®o:¡ Ñâ _áÊ®o=¡ Ôâ _É®oA¡ Øâ _‘É®oC¡ Úâ _ØÆ?oI¡ àâ _ÙÆ?oM¡ äâ _°Ê®oQ¡ èâ _>oU¡ ìâ _˜>oX¡ ïâ _™>o[¡ òâ _	>o_¡ öâ _±Ê®ob¡ ùâ _à³­of¡ ıâ _°Ê®oi¡  ã _>ol¡ ã _˜>op¡ ã _™>os¡ 
+ã _	>ow¡ ã _±Ê®oy¡ ã _á³­o|¡ ã _ˆï0o€¡ ã _‰ï0oƒ¡ ã _°“¬o‡¡ ã _±“¬oŠ¡ !ã _¸ğ>o¡ %ã _@ì®o‘¡ (ã _(…7o–¡ -ã _˜„7oš¡ 1ã _™„7o¡ 5ã _)…7o¢¡ 9ã _Aì®o¦¡ <ã _Pë®o©¡ @ã _Që®o³¡ Kã _ è®o¸¡ Oã _!è®oÁ¡ Xã _¹ğ>oÄ¡ [ã _°ë®oÈ¡ _ã _±ë®oË¡ bã _ ²­oÏ¡ fã _°Ê®oÒ¡ iã _>oÖ¡ lã _˜>oÙ¡ pã _™>oÜ¡ sã _	>oà¡ wã _±Ê®oã¡ zã _€Ê®oç¡ ~ã _>oê¡ ã _˜>oí¡ „ã _™>oğ¡ ‡ã _	>oô¡ ‹ã _Ê®o÷¡ ã _>oü¡ “ã _	>o¢ šã _€Ê®o¢ ã _>o¢ ¢ã _˜>o¢ ¥ã _™>o¢ ¨ã _	>o¢ ­ã _Ê®o¢ ¯ã _ğ¯­o¢ ´ã _ğÉ®o!¢ ¸ã _˜>o$¢ »ã _™>o'¢ ¾ã _ñÉ®o)¢ Àã _ñ¯­o,¢ Ãã _°Ê®o0¢ Çã _>o3¢ Êã _˜>o6¢ Íã _™>o9¢ Ğã _	>o=¢ Ôã _±Ê®o@¢ ×ã _ Ê®oD¢ Ûã _>oG¢ Şã _˜>oJ¢ áã _™>oN¢ äã _	>oQ¢ èã _!Ê®oT¢ ëã _Ë®oX¢ ïã _>o[¢ òã _˜>o^¢ õã _™>ob¢ øã _	>oe¢ üã _Ë®oh¢ ÿã _¸(7on¢ ä _¹(7oq¢ ä _˜*7ov¢ ä _™*7o|¢ ä _°°­o€¢ ä _h*7o„¢ ä _˜,oŠ¢ !ä _xS%o¢ $ä _yS%o‘¢ 'ä _x—,o”¢ +ä _H—,o—¢ .ä _˜Œ,oš¢ 1ä _™Œ,o¢ 4ä _I—,o ¢ 7ä _8˜,o£¢ :ä _9˜,o¦¢ =ä _y—,oª¢ Aä _	˜,o­¢ Dä _˜,o²¢ Iä _xS%oµ¢ Lä _yS%o¸¢ Oä _x—,o»¢ Rä _H—,o¾¢ Uä _˜Œ,oÁ¢ Xä _™Œ,oÄ¢ [ä _I—,oÇ¢ ^ä _8˜,oÊ¢ aä _9˜,oÍ¢ dä _y—,oÑ¢ hä _	˜,oÔ¢ kä _˜,oØ¢ oä _xS%oÜ¢ rä _yS%oŞ¢ uä _x—,oâ¢ xä _H—,oå¢ |ä _˜Œ,oè¢ ä _™Œ,oê¢ ä _I—,oí¢ „ä _8˜,oğ¢ ‡ä _9˜,oó¢ Šä _y—,o÷¢ ä _	˜,oú¢ ‘ä _˜,oş¢ •ä _xS%o£ ˜ä _yS%o£ ›ä _x—,o£ ä _H—,o£ ¢ä _˜Œ,o£ ¤ä _™Œ,o£ §ä _I—,o£ ªä _8˜,o£ ­ä _9˜,o£ °ä _y—,o£ ´ä _	˜,o £ ¶ä _˜,o$£ »ä _xS%o'£ ¾ä _yS%o*£ Áä _x—,o-£ Ää _H—,o0£ Çä _˜Œ,o3£ Êä _™Œ,o6£ Ìä _I—,o8£ Ïä _8˜,o;£ Òä _9˜,o>£ Õä _y—,oB£ Ùä _	˜,oE£ Üä _˜,oI£ àä _xS%oM£ ää _yS%oO£ æä _x—,oS£ êä _H—,oV£ íä _˜Œ,oY£ ğä _™Œ,o[£ òä _I—,o^£ õä _8˜,oa£ øä _9˜,od£ ûä _y—,oh£ ÿä _	˜,ok£ å _j9oo£ å _¨S%os£ 
+å _©S%ov£ å _xS%o{£ å _yS%o£ å _˜Œ,o‚£ å _™Œ,o…£ å _	j9oˆ£ å _i*7o‹£ "å _±°­o£ %å _ÀÉ®o”£ +å _>o˜£ /å _˜>o›£ 2å _™>o£ 5å _	>o¢£ 9å _ÁÉ®o¦£ <å _PÊ®o¬£ Cå _è>o°£ Gå _é>o³£ Jå _QÊ®o·£ Nå _¸>o½£ Tå _(>oÅ£ \å _h*7oÉ£ `å _˜,oÏ£ få _xS%oÓ£ jå _yS%oÖ£ må _x—,oÚ£ qå _H—,oİ£ tå _˜Œ,oà£ wå _™Œ,oã£ zå _I—,oæ£ }å _8˜,oé£ €å _9˜,oí£ „å _8˜,oğ£ ‡å _9˜,oó£ Šå _y—,o÷£ å _	˜,oú£ å _˜,oş£ •å _xS%o¤ ˜å _yS%o¤ ›å _x—,o¤ å _H—,o
+¤ ¡å _˜Œ,o¤ ¤å _™Œ,o¤ §å _I—,o¤ ªå _8˜,o¤ ­å _9˜,o¤ °å _8˜,o¤ ´å _9˜,o ¤ ¶å _y—,o#¤ ºå _	˜,o&¤ ½å _˜,o*¤ Áå _xS%o.¤ Åå _yS%o1¤ Çå _x—,o4¤ Ëå _H—,o7¤ Îå _˜Œ,o:¤ Ñå _™Œ,o=¤ Ôå _I—,o@¤ Öå _8˜,oC¤ Úå _9˜,oF¤ İå _8˜,oI¤ àå _9˜,oL¤ ãå _y—,oO¤ æå _	˜,oR¤ éå _˜,oV¤ íå _xS%oY¤ ğå _yS%o\¤ óå _x—,o_¤ öå _H—,ob¤ ùå _˜Œ,oe¤ üå _™Œ,oh¤ ÿå _I—,ok¤ æ _8˜,on¤ æ _9˜,oq¤ æ _8˜,ot¤ æ _9˜,ow¤ æ _y—,oz¤ æ _	˜,o}¤ æ _˜,o¤ æ _xS%o„¤ æ _yS%o‡¤ æ _x—,oŠ¤ !æ _H—,o¤ $æ _˜Œ,o¤ 'æ _™Œ,o“¤ *æ _I—,o–¤ -æ _8˜,o™¤ 0æ _9˜,oœ¤ 3æ _8˜,oŸ¤ 6æ _9˜,o¢¤ 9æ _y—,o¥¤ <æ _	˜,o¨¤ ?æ _˜,o¬¤ Dæ _xS%o°¤ Gæ _yS%o²¤ Iæ _x—,o¶¤ Læ _H—,o¹¤ Pæ _˜Œ,o¼¤ Sæ _™Œ,o¾¤ Uæ _I—,oÁ¤ Xæ _8˜,oÄ¤ [æ _9˜,oÇ¤ ^æ _8˜,oË¤ bæ _9˜,oÎ¤ dæ _y—,oÑ¤ hæ _	˜,oÔ¤ kæ _j9o×¤ næ _¨S%oÛ¤ ræ _©S%oŞ¤ uæ _xS%oä¤ {æ _yS%oç¤ }æ _˜Œ,oê¤ æ _™Œ,oì¤ ƒæ _	j9oğ¤ ‡æ _i*7oó¤ Šæ _)>o÷¤ æ _¹>oü¤ “æ _È>o¥ ˜æ _ˆ>o¥ æ _x>o¥ ¢æ _(>o¥ §æ _h*7o¥ «æ _˜,o¥ ±æ _xS%o¥ ´æ _yS%o!¥ ¸æ _x—,o$¥ »æ _H—,o'¥ ¾æ _˜Œ,o+¥ Âæ _™Œ,o.¥ Äæ _I—,o1¥ Çæ _8˜,o4¥ Ëæ _9˜,o7¥ Îæ _8˜,o:¥ Ñæ _9˜,o=¥ Ôæ _y—,o@¥ ×æ _	˜,oC¥ Úæ _˜,oH¥ ßæ _xS%oK¥ âæ _yS%oN¥ åæ _x—,oQ¥ èæ _H—,oT¥ ëæ _˜Œ,oW¥ îæ _™Œ,oZ¥ ñæ _I—,o]¥ óæ _8˜,o`¥ ÷æ _9˜,oc¥ úæ _8˜,of¥ ıæ _9˜,oi¥  ç _y—,ol¥ ç _	˜,oo¥ ç _˜,ot¥ ç _xS%ow¥ ç _yS%oz¥ ç _x—,o}¥ ç _H—,o€¥ ç _˜Œ,oƒ¥ ç _™Œ,o†¥ ç _I—,o‰¥  ç _8˜,oŒ¥ #ç _9˜,o¥ &ç _8˜,o’¥ )ç _9˜,o•¥ ,ç _y—,o˜¥ /ç _	˜,o›¥ 2ç _˜,oŸ¥ 6ç _xS%o¢¥ 9ç _yS%o¥¥ <ç _x—,o¨¥ ?ç _H—,o«¥ Bç _˜Œ,o®¥ Eç _™Œ,o±¥ Hç _I—,o´¥ Kç _8˜,o·¥ Nç _9˜,oº¥ Qç _8˜,o½¥ Tç _9˜,oÀ¥ Wç _y—,oÃ¥ Zç _	˜,oÆ¥ ]ç _˜,oÊ¥ aç _xS%oÍ¥ dç _yS%oĞ¥ gç _x—,oÓ¥ jç _H—,oÖ¥ mç _˜Œ,oÙ¥ pç _™Œ,oÜ¥ sç _I—,oß¥ uç _8˜,oâ¥ yç _9˜,oå¥ {ç _8˜,oè¥ ç _9˜,oë¥ ç _y—,oî¥ …ç _	˜,oñ¥ ˆç _˜,oõ¥ Œç _xS%oø¥ ç _yS%oû¥ ’ç _x—,oş¥ •ç _H—,o¦ ˜ç _˜Œ,o¦ ›ç _™Œ,o¦ ç _I—,o
+¦ ¡ç _8˜,o¦ ¤ç _9˜,o¦ §ç _8˜,o¦ ªç _9˜,o¦ ­ç _y—,o¦ °ç _	˜,o¦ ³ç _j9o ¦ ·ç _¨S%o#¦ ºç _©S%o'¦ ¾ç _xS%o+¦ Âç _yS%o.¦ Åç _˜Œ,o1¦ Èç _™Œ,o4¦ Ëç _	j9o8¦ Ïç _i*7o;¦ Òç _)>o>¦ Õç _(>oC¦ Úç _h*7oG¦ Şç _˜,oM¦ äç _xS%oQ¦ çç _yS%oT¦ ëç _x—,oW¦ îç _H—,oZ¦ ñç _˜Œ,o]¦ ôç _™Œ,o`¦ ÷ç _I—,oc¦ úç _8˜,of¦ ıç _9˜,oi¦  è _8˜,om¦ è _9˜,oo¦ è _y—,os¦ 
+è _	˜,ov¦ è _˜,oz¦ è _xS%o}¦ è _yS%o€¦ è _x—,oƒ¦ è _H—,o‡¦ è _˜Œ,o‰¦  è _™Œ,oŒ¦ #è _I—,o¦ &è _8˜,o’¦ )è _9˜,o•¦ ,è _8˜,o˜¦ /è _9˜,o›¦ 2è _y—,oŸ¦ 6è _	˜,o¢¦ 8è _˜,o¦¦ =è _xS%o©¦ @è _yS%o¬¦ Cè _x—,o¯¦ Fè _H—,o³¦ Jè _˜Œ,oµ¦ Lè _™Œ,o¸¦ Oè _I—,o»¦ Rè _8˜,o¾¦ Uè _9˜,oÁ¦ Xè _8˜,oÄ¦ [è _9˜,oÇ¦ ^è _y—,oË¦ bè _	˜,oÍ¦ dè _˜,oÑ¦ hè _xS%oÕ¦ lè _yS%o×¦ nè _x—,oÚ¦ qè _H—,oŞ¦ uè _˜Œ,oá¦ xè _™Œ,oã¦ zè _I—,oæ¦ }è _8˜,oé¦ €è _9˜,oì¦ ƒè _8˜,oğ¦ †è _9˜,oò¦ ‰è _y—,oö¦ è _	˜,où¦ è _˜,oı¦ ”è _xS%o § —è _yS%o§ ™è _x—,o§ œè _H—,o	§  è _˜Œ,o§ £è _™Œ,o§ ¥è _I—,o§ ¨è _8˜,o§ «è _9˜,o§ ®è _8˜,o§ ²è _9˜,o§ ´è _y—,o!§ ¸è _	˜,o$§ »è _˜,o(§ ¿è _xS%o+§ Âè _yS%o.§ Åè _x—,o1§ Èè _H—,o5§ Ëè _˜Œ,o7§ Îè _™Œ,o:§ Ñè _I—,o=§ Ôè _8˜,o@§ ×è _9˜,oC§ Úè _8˜,oF§ İè _9˜,oI§ àè _y—,oM§ äè _	˜,oO§ æè _j9oS§ êè _¨S%oV§ íè _©S%oZ§ ñè _xS%o_§ öè _yS%ob§ ùè _˜Œ,oe§ üè _™Œ,oh§ şè _	j9ok§ é _i*7on§ é _)>or§ 	é _¸47ow§ é _X"4o{§ é _h4o†§ é _i4o§ %é _Y"4o‘§ (é _¹47o•§ ,é _È>o›§ 2é _É>o§ 5é _8¶&o¢§ 9é _9¶&o¥§ <é _È>oª§ Aé _É>o­§ Dé _¸47o±§ Hé _X"4o´§ Ké _h4o»§ Ré _i4oÂ§ Zé _Y"4oÅ§ \é _¹47oÊ§ aé _¨>oÏ§ gé _¸>oÕ§ lé _ å®oÚ§ qé _¸(7oŞ§ ué _¹(7oâ§ yé _è.7oé§ €é _ˆ%7oî§ …é _¸(7oò§ ˆé _¹(7oõ§ Œé _‰%7où§ é _På®oı§ ”é _Qå®oD¨ Ûé _é.7oG¨ Şé _!å®oK¨ áé _¹>oM¨ äé _©>oP¨ çé _y>oT¨ ëé _‰>oW¨ îé _É>oZ¨ ñé _8>o^¨ õé _X>oc¨ úé _Y>of¨ ıé _X>oi¨  ê _Y>ol¨ ê _X>oo¨ ê _Y>or¨ 	ê _9>ox¨ ê _²­o{¨ ê _¨å>o¨ ê _ğç®o‚¨ ê _ñç®o‰¨  ê _pì®oŒ¨ #ê _qì®o‘¨ )ê _Ğì®o˜¨ /ê _X…7oœ¨ 3ê _È„7o ¨ 7ê _h„7o£¨ :ê _i„7o©¨ @ê _É„7o®¨ Eê _Y…7o±¨ Hê _Ñì®o´¨ Kê _©å>o¸¨ Oê _ì>o»¨ Rê _	ì>oÀ¨ Wê _Xí>oÄ¨ Zê _Yí>oÈ¨ _ê _pã®oÍ¨ dê _ˆç>oĞ¨ gê _‰ç>oÓ¨ jê _qã®oã¨ {ê _ Ë®oé¨ €ê _¡Ë®oì¨ ƒê _éË?oï¨ †ê _9Ö?oò¨ ‰ê _àè®o÷¨ ê _áè®oÿ¨ –ê _A¦¬o© ™ê _xÉ0o© ê _yÉ0o	©  ê _h1o© £ê _i1o© ¦ê _ÙÏ0o© ©ê _¨å>o© ®ê _ğç®o© ²ê _ñç®o"© ¹ê _pì®o&© ½ê _qì®o+© Âê _Ğì®o1© Èê _X…7o5© Ìê _È„7o9© Ğê _h„7o<© Óê _i„7oB© Ùê _É„7oG© Şê _Y…7oJ© áê _Ñì®oM© äê _©å>oP© çê _H1oT© ëê _ ¡¬oY© ğê _hÖ0o]© ôê _iÖ0o`© ÷ê _hÖ0od© úê _iÖ0of© ıê _¸X4ok© ë _¹X4om© ë _¡¬op© ë _˜ì>os© 
+ë _™ì>ox© ë _ì>o~© ë _	ì>o‚© ë _¸³0o‡© ë _¹³0oŒ© "ë _ë>o© &ë _ë>o“© *ë _I1o–© -ë _™»0o™© 0ë _iÙ0oœ© 3ë _ID1oŸ© 6ë _¨ó0o¤© ;ë _©ó0o§© =ë _HD1oª© Aë _hÙ0o¯© Fë _˜»0o²© Ië _hÁ0o·© Në _iÁ0oº© Që _Xê>o¿© Vë _Yê>oÂ© Yë _™»0oÆ© ]ë _iÙ0oÉ© `ë _ID1oÌ© cë _¨ó0oÑ© hë _©ó0oÔ© kë _HD1o×© në _hÙ0oÜ© së _˜»0oß© vë _hÁ0oã© zë _iÁ0oç© }ë _Xê>oë© ‚ë _Yê>oî© …ë _™»0oò© ‰ë _iÙ0oõ© Œë _ID1oø© ë _¨ó0oü© “ë _©ó0oÿ© •ë _HD1oª ™ë _hÙ0oª ë _˜»0o	ª  ë _hÁ0oª ¤ë _iÁ0oª §ë _Xê>oª «ë _Yê>oª ®ë _™»0oª ²ë _iÙ0oª µë _ID1o!ª ¸ë _¨ó0o%ª ¼ë _©ó0o(ª ¿ë _HD1o+ª Âë _hÙ0o/ª Æë _˜»0o2ª Éë _hÁ0o6ª Íë _iÁ0o9ª Ğë _Xê>o=ª Ôë _Yê>o@ª ×ë _™»0oDª Ûë _iÙ0oGª Şë _ID1oJª áë _¨ó0oNª åë _©ó0oQª èë _HD1oTª ëë _hÙ0oXª ïë _˜»0o[ª òë _hÁ0o_ª öë _iÁ0obª ùë _Xê>ogª ıë _Yê>oiª  ì _™»0omª ì _iÙ0opª ì _ID1osª 
+ì _¨ó0owª ì _©ó0ozª ì _HD1o}ª ì _hÙ0oª ì _˜»0o„ª ì _hÁ0oˆª ì _iÁ0o‹ª "ì _Xê>oª &ì _Yê>o’ª )ì _™»0o–ª -ì _iÙ0o™ª 0ì _ID1oœª 3ì _iT1o ª 7ì _™»0o¢ª 9ì _iÙ0o¥ª <ì _ID1o¨ª ?ì _iT1o«ª Bì _™»0o®ª Eì _iÙ0o±ª Hì _ID1o´ª Kì _¨ó0o¹ª Pì _©ó0o¼ª Sì _HD1o¿ª Vì _hÙ0oÄª [ì _˜»0oÇª ^ì _hÁ0oËª bì _iÁ0oÎª eì _Xê>oÒª iì _Yê>oÕª lì _™»0oÙª pì _iÙ0oÜª sì _ID1oßª uì _iT1oâª yì _™»0oåª {ì _iÙ0oçª ~ì _ID1oêª ì _iT1oíª „ì _™»0oğª ‡ì _iÙ0oóª Šì _ID1oöª ì _iT1oùª ì _™»0oüª ’ì _iÙ0oşª •ì _ID1o« ˜ì _¨ó0o« ì _©ó0o	« Ÿì _HD1o« £ì _hÙ0o« §ì _˜»0o« ªì _hÁ0o« ®ì _iÁ0o« ±ì _Xê>o« µì _Yê>o!« ¸ì _™»0o%« ¼ì _iÙ0o(« ¿ì _ID1o+« Âì _¨ó0o/« Æì _©ó0o2« Éì _HD1o5« Ìì _hÙ0o:« Ñì _˜»0o=« Ôì _hÁ0o@« ×ì _iÁ0oD« Úì _Xê>oH« ßì _Yê>oK« áì _™»0oN« åì _iÙ0oQ« èì _ID1oT« ëì _iT1oW« îì _™»0oZ« ñì _iÙ0o]« ôì _Y?o`« ÷ì _Xê>oe« üì _Yê>oh« şì _g­ok« í _ f­on« í _¡f­or« 	í _‘g­ou« í _)?ox« í _¨ç0o~« í _©ç0o« í _8=3o†« í _9=3o‰«  í i,¨o`2 ^í i©Ô%oU4 Sï iK­oZ4 Wï iéà3o^4 [ï iÙá3ob4 _ï i‰ß+of4 cï iˆß+o¬4 8ğ i£&o´4 ?ğ iØ&o¿4 Kğ iXi&oÄ4 Oğ ihQ%oÈ4 Sğ iiQ%oË4 Vğ iYi&oÎ4 Yğ iÙ&oÑ4 \ğ i£&oÔ4 _ğ i¸¨)oÙ4 eğ ihk)oŞ4 iğ iÈ¤&oâ4 mğ iÉ¤&oå4 pğ i8k)oè4 tğ i9k)oì4 xğ iik)oï4 zğ ih¤&o÷4 ‚ğ ii¤&oû4 †ğ i¹¨)oş4 ‰ğ i¸Ü+o
+5 •ğ ihQ%o5 ™ğ iiQ%o5 œğ i¹Ü+o5  ğ iØá3o5 ¤ğ iXà3o5 ©ğ i D­o"5 ­ğ i!D­o)5 ´ğ i¸Ü+o85 Ãğ ihQ%o;5 Çğ iiQ%o>5 Éğ i¹Ü+oB5 Íğ iYà3oD5 Ïğ iÙá3oG5 Òğ i‰ß+oJ5 Õğ _©	?o¹« ú _é8oÀ« "ú _g­oÈ« +ú _ f­oÌ« .ú _¡f­oÒ« 4ú _‘g­oÕ« 7ú _‰8oÛ« =ú _8oß« Aú _g­oã« Eú _ f­oæ« Hú _¡f­oé« Lú _‘g­oì« Oú _É,8oğ« Rú _™C?oò« Uú _¹‡>oö« Yú _ÀÕ®oş« `ú _ÁÕ®o¬ fú _áÖ®o¬ jú _×®o
+¬ lú _ˆ>o¬ pú _‰¬4o¬ sú _¹¬4o¬ wú _76o!¬ „ú _	76o+¬ ú _ø:6o0¬ ’ú _h¶&oT¬ ·ú _i¶&oW¬ ¹ú _ˆ÷(o]¬ Àú _‰÷(oa¬ Ãú iˆß+o¾5 ÑÀ i£&oÌ5 İÀ iØ&oÚ5 ëÀ iXi&oŞ5 ïÀ ihQ%oã5 ôÀ iiQ%oç5 øÀ iYi&oê5 ûÀ iÙ&oï5  Á i£&oò5 Á i¸¨)oø5 	Á ihk)oş5 Á iÈ¤&o6 Á iÉ¤&o6 Á i8k)o6 Á i9k)o6 'Á iik)o6 *Á ih¤&o"6 4Á ii¤&o'6 8Á i¹¨)o,6 =Á i¸Ü+o:6 LÁ ihQ%o>6 OÁ iiQ%oA6 RÁ i¹Ü+oG6 XÁ i˜Ü3oM6 ^Á iÛ3oS6 dÁ i8Ş+oW6 hÁ iH¨'o\6 mÁ iÈÿ(oa6 rÁ iÉÿ(of6 wÁ iø¦'oq6 ‚Á iÈ¦'ov6 ‡Á iˆ§'oz6 ‹Á iX¡'o6 Á ihQ%o‚6 “Á iiQ%o…6 –Á iY¡'oŠ6 ›Á i‰§'o6  Á iÉ¦'o•6 ¦Á iù¦'o˜6 ¨Á iI¨'o›6 ¬Á iØ®'o 6 ±Á iÙ®'o£6 ´Á i9Ş+o¦6 ·Á iµ'o«6 ¼Á i	µ'o°6 ÁÁ iÛ3o±8 ÃÃ i™Ü3o¶8 ÇÃ i‰ß+o¹8 ÊÃ _ù:6o§¬ ! _¸¬4o²¬ + _ˆ¬4o·¬ 0 _HjÊs½¬ 6 _H°4oÃ¬ ; _è;6oÈ¬ A _é;6oÌ¬ E _I°4oÏ¬ G _hÊ?oÔ¬ M _ÈĞ?oØ¬ Q _HÕ?oİ¬ U _p£¬oä¬ \ _ğ¤¬oê¬ b _ñ¤¬oî¬ g _Hù0oô¬ m _Iù0oø¬ q _q£¬oû¬ t _IÕ?oş¬ v _Øù0o­ { _Ùù0o­ ~ _0›¬o
+­ ƒ _0Â¬o­ ‡ _ Â¬o­ ‹ _€œ¬o­  _œ¬o­ ’ _Â¬o­ • _1Â¬o­ ˜ _ø7o$­  _8*7o+­ ¤ _9*7o2­ « _ù7o5­ ® _1›¬o8­ ° _ ›¬o;­ ´ _0Â¬o>­ · _ Â¬oA­ º _€œ¬oD­ ½ _œ¬oG­ À _Â¬oJ­ Ã _1Â¬oM­ Æ _È7oQ­ Ê _8*7oU­ Î _9*7oY­ Ò _É7o\­ Õ _›¬o_­ × _ÉĞ?ob­ Ú _iÊ?oe­ İ _˜Ê?oh­ á _™Ê?ok­ ä _•¬oo­ è _‘•¬or­ ë _˜Ê?ou­ î _™Ê?ox­ ñ _À¡¬o|­ ô _Ğ¬o€­ ù _Ñ¬o„­ ı _@‘¬oˆ­  _ğÉ®o­  _˜>o”­  _™>o˜­  _ñÉ®o›­  _`¬oŸ­  _a¬o£­  _A‘¬o¦­  _p ¬oª­ " _@¬o®­ ' _Èµ0o²­ + _Xa1o¸­ 0 _Ya1o¼­ 5 _Éµ0o¿­ 8 _@‘¬oÅ­ > _ğÉ®oÉ­ A _˜>oÌ­ E _™>oÏ­ H _ñÉ®oÒ­ K _`¬oÕ­ N _a¬oÙ­ Q _A‘¬oÛ­ T _‘¬oß­ X _ğÉ®oã­ [ _˜>oæ­ ^ _™>oé­ a _ñÉ®oë­ d _p¬oğ­ h _q¬oó­ k _‘¬oõ­ n _â0oú­ s _	â0oş­ w _A¬o® { _P³­o®  _ğÉ®o	® ‚ _˜>o® … _™>o® ˆ _ñÉ®o® ‹ _°Ê®o®  _>o® “ _˜>o® — _™>o"® š _	>o'® Ÿ _±Ê®o)® ¢ _Q³­o,® ¥ _q ¬o/® § _ÈW4o6® ® _ÉW4o:® ³ _ˆõ0o@® ¸ _Hö0oE® ¾ _8»0oJ® Ã _9»0oN® Ç _¨>4oW® Ğ _©>4o[® Ó _¨G1o`® Ø _Øá0of® ß _˜Ğ0oj® ã _™Ğ0on® æ _¸&?os® ë _¹&?ov® ï _Xç>o{® ô _Yç>o„® ı _Ùá0o‡®   _8ı0oŒ®  _9ı0o®  _°H¬o—®  _±H¬o®  _ØG1o¦®   _ˆ=4o­® & _‰=4o±® * _È<4o¶® / _É<4o»® 3 _ÙG1o¿® 8 _Øá0oÃ® < _˜Ğ0oÇ® ? _™Ğ0oÊ® B _¸&?oÍ® F _¹&?oĞ® I _Xç>oÔ® M _Yç>oÙ® R _Ùá0oÜ® U _°H¬oà® Y _±H¬oå® ] _ØG1oí® f _ˆ=4oó® l _‰=4o÷® o _È<4oü® t _É<4o ¯ x _ÙG1o¯ | _Øá0o¯ € _˜Ğ0o¯ „ _™Ğ0o¯ ‡ _¸&?o¯ Š _¹&?o¯  _Xç>o¯ ‘ _Yç>o¯ – _Ùá0o!¯ ™ _°H¬o$¯  _±H¬o)¯ ¡ _ØG1o1¯ ª _ˆ=4o6¯ ¯ _‰=4o:¯ ³ _È<4o?¯ ¸ _É<4oC¯ » _ÙG1oG¯ À _Øá0oK¯ Ä _˜Ğ0oN¯ Ç _™Ğ0oQ¯ Ê _¸&?oU¯ Í _¹&?oX¯ Ñ _Xç>o\¯ Ô _Yç>oa¯ Ú _Ùá0od¯ Ü _°H¬og¯ à _±H¬ol¯ å _ØG1ot¯ í _ˆ=4oy¯ ò _‰=4o}¯ ö _È<4o‚¯ û _É<4o†¯ ş _ÙG1oŠ¯  _Øá0o¯  _˜Ğ0o‘¯ 
+ _™Ğ0o”¯  _¸&?o—¯  _¹&?oš¯  _Xç>o¯  _Yç>o£¯  _Ùá0o¦¯  _°H¬oª¯ # _±H¬o®¯ ' _ØG1o¶¯ / _ˆ=4o¼¯ 4 _‰=4o¿¯ 8 _È<4oÄ¯ = _É<4oÈ¯ A _ÙG1oÌ¯ E _Øá0oĞ¯ I _˜Ğ0oÓ¯ L _™Ğ0oÖ¯ O _¸&?oÚ¯ R _¹&?oİ¯ U _Xç>oà¯ Y _Yç>oæ¯ _ _Ùá0oé¯ a _°H¬oì¯ e _±H¬oñ¯ i _ØG1oø¯ q _ˆ=4oı¯ v _‰=4o° z _È<4o°  _É<4o
+° ‚ _ÙG1o° ‡ _Øá0o° ‹ _˜Ğ0o°  _™Ğ0o° ‘ _¸&?o° ” _¹&?o° ˜ _Xç>o#° › _Yç>o)° ¢ _Ùá0o,° ¥ _°H¬o0° ¨ _±H¬o4° ­ _È 8o;° ³ _('8o?° ¸ _)'8oQ° Ê _X=4oV° Ï _Y=4oZ° Ò _X=4o`° Ø _Y=4oc° Û _X@4og° à _Y@4ok° ä _È<4or° ë _É<4ov° î _È28o{° ó _H­4o€° ù _I­4oƒ° ü _-6oˆ°  _:6o‘° 
+ _è26o–°  _é26oŸ°  _x66o£°  _y66o¦°  _	:6o¬° % _-6o¯° ( _`Ø®oµ° - _Ø®o¹° 1 _Õ®o½° 6 _˜†>oÇ° @ _@Ô®oË° D _`Õ®oÏ° G _aÕ®oÔ° L _AÔ®o×° O _™†>oÚ° S _ Ö®oŞ° W _0Õ®oä° ] _8+6oè° ` _¨Â%oí° e _˜Ã%oø° q _™Ã%oı° v _˜'o± { _™'o±  _È'o
+± ‚ _É'o± … _©Â%o± ‰ _9+6o±  _1Õ®o± ‘ _PÖ®o± ” _È‰>o ± ™ _É‰>od± Ş _QÖ®oh± á _!Ö®ok± ä _‘Õ®on± ç _‘Ø®oq± é _aØ®ot± ì _h28oy± ñ _`Ø®o}± ö _Ø®o± ù _Õ®o„± ı _˜†>oŒ±  _@Ô®o±  _`Õ®o’±  _aÕ®o—±  _AÔ®oš±  _™†>o±  _ Ö®o ±  _!Ö®o¤±  _‘Õ®o¦±  _‘Ø®o©± " _aØ®o¬± $ _i28o®± ' _18o²± + _ˆ?o¸± 0 _‰?oÛ± } _18oà± € _É28oâ± ‚ _É 8oå± … _©G1oè± ‰ _x\4oî±  _y\4oñ± ’ _8ú0oõ± • _9ú0où± ™ _hñ0oı±  _èÚ0o² ¡ _øæ>o² ¥ _ùæ>o² « _éÚ0o² ® _î0o² ² _hé>o² ¶ _ié>o² º _	î0o² ½ _iñ0o ² À _Iö0o#² Ã _‰õ0o&² Æ _Á¡¬o)² Ê _¸¯4o2² Ó _(¬4o6² Ö _è26o9² Ù _é26o?² à _)¬4oC² ã _X²4oG² ç _ø«4oK² ë _Ø96oO² ï _H66oS² ô _I66oW² ÷ _x66o\² ü _y66o_² ÿ _Ù96od²  _ù«4og²  _Y²4oj² 
+ _¹¯4ol²  _IjÊso²  _‰¬4or²  _¹¬4ou²  _76o~²  _	76o†² ' _ø:6oŠ² * _66o² = _66o¡² A _¨ˆ>oÖ² Î _ø‰>oÛ² Ò _àÓ®oæ² İ _áÓ®oé² à _46oí² ä _è26oğ² ç _é26oö² î _	46oú² ñ _h76oş² õ _i76o³ ù _àÓ®o³ ü _áÓ®o³ ÿ _X²4o³  _ø«4o³  _Ø96o³  _H66o³  _I66o³  _x66o³  _y66o"³  _66o'³  _66o*³ ! _Ù96o9³ 1 _ù«4o=³ 4 _Y²4o@³ 7 _ù‰>oB³ : _©ˆ>oE³ < _66oU³ L _66oY³ P _ù:6o^³ U _¸¬4oc³ Z _ˆ¬4of³ ^ _ˆ>ok³ b _×®oq³ h _àÖ®oz³ q _È†>o‚³ y _É†>o‡³ ~ _¸‡>oŒ³ ƒ _Ô®o³ ‡ _Ô®o“³ Š _˜4?o˜³  _0Ø®o³ ” _1Ø®o¡³ ˜ _8,8o¥³  _¸Ü7o«³ £ _¹Ü7o½³ µ _˜,8oÂ³ ¹ _™,8oÇ³ ¾ _9,8oÊ³ Á _™4?oÌ³ Ä _¹‡>oÏ³ Æ _ÀÕ®oÔ³ Ë _ÁÕ®oØ³ Ï _áÖ®oÛ³ Ò _àÖ®oŞ³ Ö _È†>oæ³ İ _É†>oé³ à _áÖ®oì³ ä _àÖ®oğ³ ç _È†>oö³ í _É†>oú³ ñ _¸‡>oş³ õ _Ô®o´ ù _Ô®o´ û _˜C?o
+´  _È,8o´  _H­4o´ 
+ _I­4o´  _¨-6o´  _<6o´  _76o#´  _	76o*´ " _<6o7´ / _©-6o;´ 2 _0g­oB´ 9 _ f­oF´ = _¡f­oK´ C _1g­oN´ E _8oR´ I _x.8oX´ O _Xï0o]´ T _Yï0o`´ W _y.8oc´ Z _°È­oi´ a _±È­om´ d _`2¬or´ i _a2¬ov´ m _¸@4o|´ s _¹@4o´ w _h<4o„´ { _i<4o‡´ ~ _8oŒ´ ƒ _¨Â%o‘´ ˆ _˜Ã%o›´ ’ _™Ã%o´ • _˜'o¢´ ™ _™'o¥´  _È'o©´   _É'o¬´ £ _©Â%o°´ § _8o´´ « _(;?o¹´ ° _ˆ÷(o¿´ ¶ _‰÷(oÂ´ ¹ _8ö(oÆ´ ¾ _9ö(oÊ´ Á _);?oÍ´ Ä _X8oÒ´ É _Y8oÖ´ Í _È;8oİ´ Ô _É;8oá´ Ø _Ø8oê´ â _Ù8oï´ æ _XZ8oô´ ë _YZ8oø´ ï _¨:8oı´ õ _˜O?oµ ù _xN?oµ ı _yN?o
+µ  _ˆ÷(oµ  _‰÷(oµ  _™O?oµ  _ÈO?oµ  _ˆM?oµ  _‰M?o µ  _ˆ÷(o#µ  _‰÷(o&µ  _¸M?o)µ ! _¹M?o,µ $ _ÉO?o/µ & _N?o3µ * _N?o6µ - _èM?o9µ 0 _xø(o=µ 4 _yø(o@µ 7 _éM?oCµ : _Ä?oHµ ? _ØÃ?oLµ C _˜Ê?oPµ G _™Ê?oSµ J _Há0oWµ N _ˆò0o\µ S _˜é>o_µ V _™é>oeµ \ _‰ò0ohµ _ _ˆò0ooµ f _˜é>orµ i _™é>ovµ n _‰ò0oyµ p _ˆò0oµ w _˜é>oƒµ z _™é>o‡µ ~ _‰ò0oŠµ  _ˆò0oµ ‡ _˜é>o“µ Š _™é>o—µ  _‰ò0o™µ  _ˆò0oŸµ – _˜é>o¢µ ™ _™é>o¦µ  _‰ò0o©µ   _ˆò0o®µ ¦ _˜é>o²µ © _™é>o¶µ ­ _‰ò0o¸µ ¯ _ˆò0o¾µ µ _˜é>oÁµ ¸ _™é>oÅµ ¼ _‰ò0oÈµ ¿ _Iá0oÍµ Å _ÙÃ?oÓµ Ê _¨º?oÚµ Ò _(¨8oáµ Ø _)¨8oåµ Ü _˜Ê?oèµ à _™Ê?oëµ ã _(®8oğµ ç _è¨8oôµ ë _8§8oøµ ï _9§8oüµ ó _é¨8oşµ õ _)®8o¶ û _X®8o¶ ÿ _Y®8o¶  _©º?o¶  _	Ä?o¶  _8O?o¶  _9O?o¶  _©:8o!¶  _ˆ8o&¶  _0g­o,¶ # _ f­o/¶ & _¡f­o3¶ * _1g­o6¶ - _è8o9¶ 0 _¸8o>¶ 5 _¹8oK¶ B _ø28oQ¶ H _ù28oW¶ N _è98o_¶ W _é98ob¶ Y _ˆ=4oh¶ _ _‰=4ok¶ c _X=4op¶ g _Y=4os¶ j _H£>ox¶ o _I£>o|¶ s _?4o¶ x _	?4o„¶ { _¨	?o‰¶  _0Ø®o¶ … _1Ø®o’¶ ‰ _(?o—¶  _0g­oœ¶ “ _ f­o ¶ — _¡f­o¤¶ › _1g­o§¶  _X?o«¶ ¢ _hÙ0o±¶ ¨ _˜»0oµ¶ ¬ _hÁ0oº¶ ± _iÁ0o½¶ ´ _Xê>oÂ¶ ¹ _Yê>oÅ¶ ¼ _hT1oÊ¶ Á _¨ó0oĞ¶ Ç _©ó0oÒ¶ É _HD1oÖ¶ Í _hÙ0oÛ¶ Ò _˜»0oŞ¶ Õ _hÁ0oâ¶ Ù _iÁ0oå¶ Ü _Xê>oé¶ à _Yê>oì¶ ã _hT1oğ¶ ç _Ö0oö¶ í _	Ö0où¶ ğ _¨ó0oı¶ ô _©ó0o · ÷ _HD1o· ú _hÙ0o· ÿ _˜»0o·  _hÁ0o·  _iÁ0o· 	 _Xê>o·  _Yê>o·  _hT1o·  _¨ó0o ·  _©ó0o#·  _HD1o&·  _hÙ0o+· " _˜»0o.· & _hÁ0o2· * _iÁ0o6· - _Xê>o9· 1 _Yê>o<· 3 _hT1oA· 8 _¨ó0oF· = _©ó0oI· @ _HD1oL· C _hÙ0oP· H _˜»0oT· K _hÁ0oX· O _iÁ0o[· R _Xê>o_· V _Yê>ob· Y _hT1of· ^ _¨ó0ok· b _©ó0on· e _HD1oq· h _hÙ0ou· m _˜»0oy· p _hÁ0o}· t _iÁ0o€· w _Xê>o„· { _Yê>o‡· ~ _hT1o‹· ‚ _¨ó0o· ‡ _©ó0o“· Š _HD1o–·  _hÙ0oš· ‘ _˜»0o· ” _hÁ0o¡· ˜ _iÁ0o¤· › _Xê>o©·   _Yê>o¬· £ _™»0o°· § _iÙ0o³· ª _ID1o¶· ­ _¨ó0oº· ± _©ó0o½· ´ _HD1oÀ· ¸ _hÙ0oÄ· ¼ _˜»0oÈ· ¿ _hÁ0oË· Ã _iÁ0oÏ· Æ _Xê>oÒ· Ê _Yê>oÕ· Ì _Èß0oÛ· Ò _Éß0oŞ· Õ _¸ğ>oá· Ø _@ì®oæ· İ _(…7oì· ã _˜„7oñ· è _™„7oö· î _)…7oú· ñ _Aì®oş· õ _Pë®o¸ ú _Që®o¸  _ è®o¸  _!è®o$¸  _¹ğ>o(¸  _ğê®o-¸ $ _ñê®o2¸ * _ÈÜ0o7¸ . _ÉÜ0o9¸ 0 _€Š¬o>¸ 5 _Š¬oB¸ 9 _°ë®oG¸ > _±ë®oJ¸ A _ØÏ0oP¸ G _Ø±0oV¸ M _H°7o[¸ R _I°7o^¸ U _ˆ³0ob¸ Z _ÈW4of¸ ^ _ÉW4oj¸ a _¸@4om¸ d _¹@4op¸ g _h<4os¸ k _i<4ov¸ n _¸ğ>oz¸ q _@ì®o}¸ t _(…7o¸ x _˜„7o…¸ | _™„7o‰¸ € _)…7oŒ¸ ƒ _Aì®o¸ ‡ _Pë®o”¸ ‹ _Që®o¸ • _ è®o¢¸ ™ _!è®o«¸ £ _¹ğ>o®¸ ¦ _°ë®o³¸ ª _±ë®o¶¸ ­ _ø²<oº¸ ² _H<oÀ¸ · _ÈÊ<oÄ¸ » _ÈW4oÈ¸ ¿ _ÉW4oË¸ Â _Í<oĞ¸ Ç _	Í<oÓ¸ Ê _¸4oØ¸ Ï _¹4oÛ¸ Ó _è"4oà¸ × _é"4oé¸ á _xÉ<oî¸ æ _˜Í<oó¸ ê _™Í<o÷¸ î _yÉ<oú¸ ñ _hg<o ¹ ÷ _`á®o¹ ü _Xh<o¹ ÿ _Yh<o¹   _(û3o¹   _Øó3o¹   _Ùó3o¹   _¨ó3o¹   _©ó3o!¹   _)û3o$¹   _aá®oQ¹ J  _ig<oU¹ L  _è"4oZ¹ Q  _é"4o`¹ W  _ÉÊ<oc¹ Z  _I<of¹ ]  _ù²<oi¹ `  _¨å>om¹ d  _ğç®oq¹ i  _ñç®ox¹ o  _pì®o|¹ s  _qì®o‚¹ y  _Ğì®o‰¹   _X…7o¹ …  _È„7o’¹ ‰  _h„7o•¹   _i„7o›¹ “  _É„7o¡¹ ˜  _Y…7o¥¹ œ  _Ñì®o¨¹ Ÿ  _©å>o«¹ ¢  _Xí>o°¹ §  _Yí>o·¹ ®  _x\4oº¹ ±  _y\4o½¹ ´  _î>oÀ¹ ¸  _î>oÆ¹ ½  _Hî>oÉ¹ Á  _Iî>oÍ¹ Å  _ì>oÑ¹ È  _	ì>oÕ¹ Ì  _‰³0oØ¹ Ï  _Xê>oÜ¹ Ó  _Yê>oß¹ Ö  _è¹0oã¹ Ú  _(ğ>oç¹ Ş  _)ğ>oì¹ ã  _Xğ>oï¹ ç  _Yğ>oó¹ ë  _é¹0oö¹ í  _è¯7oú¹ ñ  _pã®oş¹ õ  _ˆç>oº ù  _‰ç>oº ı  _qã®oº ! _é¯7o"º ! _Ù±0o%º ! _@¦¬o+º #! _ƒ¬o0º '! _‘ƒ¬o3º *! _1o7º .! _	1o9º 0! _Ğ¬o<º 4! _Ñ¬o@º 7! _`¬oCº :! _a¬oFº =! _ ¬oIº @! _¬oLº C! _p¬oOº F! _q¬oRº I! _¨ü0oXº O! _øß0o[º S! _ØØ0o_º V! _ÙØ0obº Y! _È“1ogº ^! _ˆ;omº d! _Ø;orº i! _Ù;ovº m! _‰;oxº p! _É“1o|º s! _ùß0oº y! _©ü0o…º |! _€“¬oˆº €! _“¬o‹º ‚! _˜Ù0o£º ›! _™Ù0o¨º Ÿ! _pé®o­º ¥! _qé®o¹º ±! _@‘¬o¾º ¶! _ğÉ®oÃº º! _˜>oÆº ½! _™>oÉº Á! _ñÉ®oÌº Ä! _`¬oĞº Ç! _a¬oÓº Ê! _A‘¬oÖº Í! _‘¬oÙº Ğ! _ğÉ®oİº Ô! _˜>oàº ×! _™>oãº Ú! _ñÉ®oæº İ! _p¬oéº à! _q¬oìº ä! _‘¬oïº æ! _P³­oôº ë! _ğÉ®o÷º î! _˜>oúº ñ! _™>oıº ô! _ñÉ®o » ÷! _°Ê®o» ú! _>o» ı! _˜>o	» " _™>o» " _	>o» " _±Ê®o» 
+" _Q³­o» " _Ğ¬o» " _ ¬o» " _¬o"» " _xµ&o'» " _yµ&o)» !" _Ñ¬o,» $" _ğÛ®o2» *" _ñÛ®o>» 6" _p ¬oD» <" _¸(7oJ» A" _¹(7oN» E" _@¬oQ» I" _Èµ0oU» L" _Xa1oY» Q" _Ya1o]» T" _Éµ0o`» W" _@‘¬od» [" _ğÉ®oh» _" _˜>ok» b" _™>on» e" _ñÉ®oq» h" _`¬ou» l" _a¬ox» o" _A‘¬o{» r" _‘¬o~» u" _ğÉ®o‚» y" _˜>o…» |" _™>oˆ» " _ñÉ®oŠ» " _p¬o» …" _q¬o‘» ˆ" _‘¬o”» ‹" _â0o—» " _	â0oš» ‘" _A¬o» ”" _P³­o¡» ˜" _ğÉ®o£» ›" _˜>o¦» " _™>o©» ¡" _ñÉ®o¬» £" _°Ê®o¯» ¦" _>o²» ª" _˜>o¶» ­" _™>o¹» °" _	>o½» ´" _±Ê®oÀ» ·" _Q³­oÂ» º" _q ¬oÅ» ¼" _p ¬oÉ» À" _@¬oÍ» Ä" _Èµ0oĞ» Ç" _Xa1oÔ» Ë" _Ya1o×» Î" _Éµ0oÚ» Ñ" _@‘¬oŞ» Õ" _ğÉ®oâ» Ù" _˜>oå» Ü" _™>oè» ß" _ñÉ®oê» â" _`¬oî» å" _a¬oñ» è" _A‘¬oô» ë" _‘¬o÷» î" _ğÉ®oú» ò" _˜>oı» õ" _™>o ¼ ÷" _ñÉ®o¼ ú" _p¬o¼ ş" _q¬o	¼ # _‘¬o¼ # _â0o¼ # _	â0o¼ 
+# _A¬o¼ # _P³­o¼ # _ğÉ®o¼ # _˜>o¼ # _™>o"¼ # _ñÉ®o$¼ # _°Ê®o'¼ # _>o+¼ "# _˜>o.¼ %# _™>o1¼ (# _	>o5¼ ,# _±Ê®o8¼ /# _Q³­o;¼ 2# _q ¬o=¼ 4# _°ë®oB¼ 9# _±ë®oH¼ @# _øß0oL¼ C# _ØØ0oO¼ F# _ÙØ0oR¼ I# _È“1oU¼ M# _ˆ;oY¼ Q# _Ø;o]¼ T# _Ù;o`¼ W# _‰;oc¼ Z# _É“1oe¼ \# _ùß0oi¼ a# _ø›>oo¼ f# _ù›>os¼ k# _ ¬oy¼ p# _0›¬o}¼ t# _0Â¬o€¼ w# _ Â¬oƒ¼ z# _€œ¬o†¼ }# _œ¬o‰¼ €# _Â¬oŒ¼ ƒ# _1Â¬o¼ †# _ø7o’¼ ‰# _8*7o–¼ # _9*7oš¼ ’# _ù7o¼ ”# _1›¬o ¼ —# _ ›¬o£¼ š# _0Â¬o¦¼ # _ Â¬o©¼  # _€œ¬o¬¼ £# _œ¬o¯¼ ¦# _Â¬o²¼ ©# _1Â¬o´¼ «# _È7o·¼ ¯# _8*7o»¼ ³# _9*7o¿¼ ¶# _É7oÂ¼ ¹# _›¬oÅ¼ ¼# _Øù0oÈ¼ À# _Ùù0oÌ¼ Ã# _HÕ?oĞ¼ È# _p£¬oÔ¼ Ë# _ğ¤¬oØ¼ Ï# _ñ¤¬oÛ¼ Ó# _Hù0oß¼ Ö# _Iù0oâ¼ Ù# _q£¬oä¼ Ü# _IÕ?oç¼ Ş# _ø$4oú¼ ñ# _ù$4o½ ø# _!¬o½ û# _8Ö?o½  $ _0›¬o½ $ _0Â¬o½ $ _ Â¬o½ 	$ _€œ¬o½ $ _œ¬o½ $ _Â¬o½ $ _1Â¬o½ $ _ø7o!½ $ _8*7o%½ $ _9*7o)½  $ _ù7o,½ #$ _1›¬o/½ &$ _ ›¬o2½ )$ _0Â¬o5½ ,$ _ Â¬o8½ /$ _€œ¬o;½ 2$ _œ¬o=½ 4$ _Â¬o@½ 8$ _1Â¬oC½ :$ _È7oF½ =$ _8*7oJ½ A$ _9*7oN½ E$ _É7oQ½ H$ _›¬oT½ K$ _(¨8oX½ O$ _)¨8o[½ R$ _(®8o_½ V$ _è¨8ob½ Y$ _8§8oe½ \$ _9§8oh½ `$ _é¨8ok½ b$ _)®8oo½ g$ _¸Ë?ou½ m$ _ÈÊ<oz½ q$ _ÈW4o}½ t$ _ÉW4o€½ x$ _Í<o„½ {$ _	Í<o‡½ ~$ _¸4oŠ½ $ _¹4o½ „$ _è"4o½ ‡$ _é"4o—½ $ _xÉ<oš½ ‘$ _˜Í<o½ •$ _™Í<o¡½ ˜$ _yÉ<o¤½ ›$ _hg<o©½  $ _`á®o­½ ¤$ _Xh<o°½ §$ _Yh<o³½ ª$ _(û3o¶½ ®$ _Øó3oº½ ±$ _Ùó3o½½ ´$ _¨ó3oÀ½ ·$ _©ó3oÅ½ ¼$ _)û3oÈ½ ¿$ _aá®oŞ½ Ö$ _ig<oâ½ Ù$ _è"4oæ½ İ$ _é"4oë½ â$ _ÉÊ<oî½ å$ _¹Ë?oò½ é$ _hÁ0oö½ í$ _iÁ0où½ ñ$ _H°7oı½ ô$ _I°7o ¾ ÷$ _èË?o¾ ú$ _ğµ­o¾ ÿ$ _°å®o¾ % _¨>4o¾ % _©>4o!¾ % _±å®o%¾ % _xµ&o+¾ "% _yµ&o.¾ %% _ğÉ®o1¾ (% _˜>o5¾ ,% _™>o8¾ /% _ñÉ®o;¾ 2% _°Ê®o>¾ 5% _>oA¾ 8% _˜>oE¾ <% _™>oH¾ ?% _	>oL¾ C% _±Ê®oO¾ F% _8¶&oS¾ J% _9¶&oU¾ L% _`µ­oY¾ P% _ğÉ®o\¾ S% _˜>o_¾ W% _™>ob¾ Y% _ñÉ®oe¾ \% _°Ê®oi¾ a% _>om¾ d% _˜>op¾ h% _™>os¾ j% _	>ow¾ o% _±Ê®oz¾ q% _aµ­o~¾ u% _`µ­o¾ x% _ğÉ®o„¾ {% _˜>o‡¾ ~% _™>oŠ¾ % _ñÉ®o¾ „% _°Ê®o‘¾ ˆ% _>o”¾ ‹% _˜>o—¾ % _™>o›¾ ’% _	>o¾ –% _±Ê®o¡¾ ˜% _aµ­o¤¾ œ% _>7o©¾  % _>7o¬¾ ¤% _ñµ­o¯¾ §% _X@7o´¾ «% _Y@7o·¾ ®% _(@7oº¾ ±% _)@7o½¾ ´% _Ğ±­oÁ¾ ¸% _¸(7oÈ¾ ¿% _¹(7oË¾ Â% _(>oĞ¾ Ç% _h*7oÔ¾ Ì% _˜,oÜ¾ Ó% _xS%oá¾ Ø% _yS%oå¾ Ü% _x—,oé¾ à% _H—,oí¾ ä% _˜Œ,oğ¾ è% _™Œ,oô¾ ë% _I—,o÷¾ î% _8˜,oû¾ ò% _9˜,oş¾ õ% _y—,o¿ û% _	˜,o¿ ş% _˜,o¿ & _xS%o¿ & _yS%o¿ 	& _x—,o¿ & _H—,o¿ & _˜Œ,o¿ & _™Œ,o¿ & _I—,o!¿ & _8˜,o$¿ & _9˜,o'¿ & _y—,o,¿ #& _	˜,o/¿ && _˜,o3¿ +& _xS%o7¿ .& _yS%o:¿ 1& _x—,o=¿ 4& _H—,o@¿ 7& _˜Œ,oC¿ :& _™Œ,oF¿ =& _I—,oI¿ @& _8˜,oL¿ C& _9˜,oO¿ F& _y—,oS¿ J& _	˜,oV¿ M& _˜,oZ¿ Q& _xS%o^¿ U& _yS%oa¿ X& _x—,od¿ [& _H—,og¿ ^& _˜Œ,oj¿ a& _™Œ,om¿ d& _I—,op¿ g& _8˜,os¿ j& _9˜,ov¿ m& _y—,oz¿ q& _	˜,o}¿ t& _˜,o¿ x& _xS%o„¿ |& _yS%o‡¿ ~& _x—,oŠ¿ ‚& _H—,o¿ …& _˜Œ,o‘¿ ˆ& _™Œ,o“¿ Š& _I—,o–¿ & _8˜,o™¿ ‘& _9˜,oœ¿ “& _y—,o ¿ —& _	˜,o£¿ š& _˜,o§¿ Ÿ& _xS%o«¿ ¢& _yS%o®¿ ¥& _x—,o±¿ ¨& _H—,o´¿ ¬& _˜Œ,o·¿ ®& _™Œ,oº¿ ±& _I—,o½¿ ´& _8˜,oÀ¿ ·& _9˜,oÃ¿ º& _y—,oÇ¿ ¿& _	˜,oÊ¿ Á& _j9oĞ¿ Ç& _¨S%oÓ¿ Ë& _©S%o×¿ Ï& _xS%oŞ¿ Õ& _yS%oá¿ Ø& _˜Œ,oä¿ Û& _™Œ,oç¿ Ş& _	j9oë¿ ã& _i*7oî¿ æ& _)>oó¿ ê& _X>oø¿ ï& _Y>oû¿ ò& _Ñ±­oı¿ õ& _pÈ®oÀ ú& _qÈ®oÀ ı& _ È®o	À  ' _¡È®oÀ ' _àÊ®oÀ ' _áÊ®oÀ 	' _É®oÀ ' _‘É®oÀ ' _ØÆ?oÀ ' _ÙÆ?o"À ' _°Ê®o&À ' _>o*À !' _˜>o-À %' _™>o0À '' _	>o4À +' _±Ê®o7À .' _à³­o;À 2' _°Ê®o>À 5' _>oAÀ 9' _˜>oEÀ <' _™>oHÀ ?' _	>oLÀ C' _±Ê®oNÀ F' _á³­oQÀ H' _ˆï0oUÀ L' _‰ï0oXÀ O' _°“¬o\À S' _±“¬o_À V' _¸ğ>obÀ Z' _@ì®ofÀ ]' _(…7ojÀ a' _˜„7onÀ f' _™„7osÀ j' _)…7ovÀ m' _Aì®oyÀ q' _Pë®o}À t' _Që®o‡À ' _ è®oŒÀ ƒ' _!è®o—À ' _¹ğ>ošÀ ‘' _°ë®oÀ •' _±ë®o¡À ˜' _ ²­o¥À œ' _°Ê®o¨À Ÿ' _>o¬À £' _˜>o°À ¨' _™>o³À «' _	>o¸À ¯' _±Ê®o»À ²' _€Ê®o¾À µ' _>oÂÀ ¹' _˜>oÅÀ ¼' _™>oÈÀ ¿' _	>oÌÀ Ã' _Ê®oÏÀ Æ' _>oÔÀ Ì' _	>oÚÀ Ò' _€Ê®oŞÀ Ö' _>oâÀ Ù' _˜>oåÀ Ü' _™>oèÀ à' _	>oíÀ ä' _Ê®oïÀ ç' _ğ¯­oôÀ ë' _ğÉ®o÷À î' _˜>oúÀ ñ' _™>oıÀ ô' _ñÉ®o Á ÷' _ñ¯­oÁ ú' _°Ê®oÁ ş' _>o
+Á ( _˜>oÁ ( _™>oÁ ( _	>oÁ ( _±Ê®oÁ ( _ Ê®oÁ ( _>oÁ ( _˜>o!Á ( _™>o$Á ( _	>o(Á ( _!Ê®o+Á "( _Ë®o.Á &( _>o2Á )( _˜>o5Á ,( _™>o8Á /( _	>o<Á 3( _Ë®o?Á 6( _¸(7oDÁ ;( _¹(7oGÁ >( _˜*7oLÁ D( _™*7oRÁ J( _°°­oWÁ N( _h*7oZÁ Q( _˜,oaÁ X( _xS%odÁ [( _yS%ogÁ ^( _x—,ojÁ b( _H—,onÁ e( _˜Œ,oqÁ h( _™Œ,otÁ k( _I—,owÁ n( _8˜,ozÁ q( _9˜,o}Á t( _y—,oÁ x( _	˜,o„Á {( _˜,o‰Á €( _xS%oŒÁ ƒ( _yS%oÁ †( _x—,o’Á Š( _H—,o–Á ( _˜Œ,o™Á ( _™Œ,oœÁ “( _I—,oÁ –( _8˜,o¢Á ™( _9˜,o¥Á œ( _y—,o©Á  ( _	˜,o¬Á £( _˜,o°Á ¨( _xS%o´Á «( _yS%o·Á ®( _x—,oºÁ ±( _H—,o½Á ´( _˜Œ,oÀÁ ·( _™Œ,oÂÁ º( _I—,oÅÁ ½( _8˜,oÉÁ À( _9˜,oÌÁ Ã( _y—,oÏÁ Ç( _	˜,oÒÁ Ê( _˜,o×Á Î( _xS%oÚÁ Ñ( _yS%oİÁ Ô( _x—,oàÁ ×( _H—,oãÁ Ú( _˜Œ,oæÁ İ( _™Œ,oéÁ à( _I—,oëÁ â( _8˜,oîÁ æ( _9˜,oñÁ é( _y—,oõÁ ì( _	˜,oøÁ ï( _˜,oüÁ ô( _xS%oÿÁ ÷( _yS%oÂ ù( _x—,oÂ ı( _H—,o	Â  ) _˜Œ,oÂ ) _™Œ,oÂ ) _I—,oÂ ) _8˜,oÂ ) _9˜,oÂ ) _y—,oÂ ) _	˜,oÂ ) _˜,o"Â ) _xS%o%Â ) _yS%o(Â ) _x—,o+Â #) _H—,o/Â &) _˜Œ,o1Â )) _™Œ,o4Â +) _I—,o7Â .) _8˜,o:Â 2) _9˜,o=Â 4) _y—,oAÂ 9) _	˜,oDÂ <) _j9oHÂ @) _¨S%oLÂ C) _©S%oOÂ F) _xS%oTÂ L) _yS%oWÂ N) _˜Œ,oZÂ Q) _™Œ,o]Â T) _	j9oaÂ X) _i*7odÂ [) _±°­ogÂ ^) _ÀÉ®omÂ d) _>opÂ g) _˜>osÂ k) _™>owÂ n) _	>o{Â r) _ÁÉ®o~Â u) _PÊ®o„Â {) _è>oˆÂ ) _é>oŒÂ ƒ) _QÊ®oÂ ‡) _¸>o•Â ) _(>oÂ •) _h*7o¢Â ™) _˜,o©Â  ) _xS%o¬Â £) _yS%o¯Â ¦) _x—,o²Â ª) _H—,o¶Â ­) _˜Œ,o¹Â °) _™Œ,o¼Â ³) _I—,o¿Â ¶) _8˜,oÂÂ ¹) _9˜,oÅÂ ½) _8˜,oÉÂ À) _9˜,oÌÂ Ã) _y—,oÏÂ Ç) _	˜,oÒÂ É) _˜,o×Â Î) _xS%oÚÂ Ñ) _yS%oİÂ Ô) _x—,oàÂ ×) _H—,oãÂ Ú) _˜Œ,oæÂ İ) _™Œ,oéÂ à) _I—,oìÂ ã) _8˜,oïÂ æ) _9˜,oòÂ é) _8˜,oõÂ í) _9˜,oøÂ ğ) _y—,oüÂ ô) _	˜,oÿÂ ö) _˜,oÃ û) _xS%oÃ ş) _yS%o
+Ã * _x—,oÃ * _H—,oÃ * _˜Œ,oÃ 
+* _™Œ,oÃ * _I—,oÃ * _8˜,oÃ * _9˜,oÃ * _8˜,o"Ã * _9˜,o%Ã * _y—,o(Ã  * _	˜,o+Ã "* _˜,o/Ã '* _xS%o2Ã ** _yS%o5Ã ,* _x—,o8Ã 0* _H—,o<Ã 3* _˜Œ,o>Ã 6* _™Œ,oAÃ 8* _I—,oDÃ ;* _8˜,oGÃ >* _9˜,oJÃ A* _8˜,oMÃ E* _9˜,oPÃ G* _y—,oTÃ K* _	˜,oVÃ N* _˜,oZÃ R* _xS%o^Ã U* _yS%o`Ã X* _x—,ocÃ [* _H—,ogÃ ^* _˜Œ,ojÃ a* _™Œ,olÃ d* _I—,ooÃ f* _8˜,orÃ j* _9˜,ouÃ m* _8˜,oyÃ p* _9˜,o{Ã s* _y—,oÃ , _	˜,o£Ã ‰, _˜,oªÃ ‘, _xS%o®Ã ”, _yS%o±Ã ˜, _x—,oµÃ ›, _H—,o¸Ã Ÿ, _˜Œ,o»Ã ¢, _™Œ,o¾Ã ¥, _I—,oÁÃ ¨, _8˜,oÅÃ «, _9˜,oÈÃ ®, _8˜,oËÃ ², _9˜,oÎÃ µ, _y—,oÒÃ ¸, _	˜,oÔÃ », _j9oØÃ ¿, _¨S%oÜÃ Ã, _©S%oàÃ Æ, _xS%oæÃ Ì, _yS%oéÃ Ï, _˜Œ,oìÃ Ò, _™Œ,oïÃ Õ, _	j9oòÃ Ø, _i*7oõÃ Û, _)>oúÃ à, _¹>o Ä ç, _È>oÄ ì, _ˆ>oÄ ò, _x>oÄ ÷, _(>oÄ ü, _h*7oÄ  - _˜,oÄ - _xS%o#Ä 
+- _yS%o&Ä - _x—,o)Ä - _H—,o-Ä - _˜Œ,o0Ä - _™Œ,o3Ä - _I—,o6Ä - _8˜,o9Ä  - _9˜,o<Ä #- _8˜,o@Ä &- _9˜,oCÄ )- _y—,oFÄ ,- _	˜,oIÄ /- _˜,oMÄ 4- _xS%oQÄ 7- _yS%oTÄ :- _x—,oWÄ =- _H—,oZÄ @- _˜Œ,o]Ä C- _™Œ,o_Ä F- _I—,obÄ I- _8˜,oeÄ L- _9˜,oiÄ O- _8˜,olÄ R- _9˜,ooÄ U- _y—,orÄ Y- _	˜,ouÄ [- _˜,oyÄ `- _xS%o}Ä c- _yS%o€Ä f- _x—,oƒÄ i- _H—,o†Ä l- _˜Œ,o‰Ä o- _™Œ,oŒÄ r- _I—,oÄ u- _8˜,o’Ä x- _9˜,o•Ä {- _8˜,o˜Ä ~- _9˜,o›Ä - _y—,oÄ …- _	˜,o¡Ä ‡- _˜,o¥Ä Œ- _xS%o¨Ä - _yS%o«Ä ’- _x—,o®Ä •- _H—,o²Ä ˜- _˜Œ,oµÄ ›- _™Œ,o·Ä - _I—,oºÄ ¡- _8˜,o½Ä ¤- _9˜,oÀÄ §- _8˜,oÄÄ ª- _9˜,oÇÄ ­- _y—,oÊÄ °- _	˜,oÍÄ ³- _˜,oÑÄ ·- _xS%oÔÄ º- _yS%o×Ä ½- _x—,oÚÄ À- _H—,oİÄ Ä- _˜Œ,oàÄ Æ- _™Œ,oãÄ É- _I—,oæÄ Ì- _8˜,oéÄ Ï- _9˜,oìÄ Ò- _8˜,oïÄ Ö- _9˜,oòÄ Ø- _y—,oõÄ Ü- _	˜,oøÄ Ş- _˜,oıÄ ã- _xS%o Å æ- _yS%oÅ é- _x—,oÅ ì- _H—,o	Å ï- _˜Œ,oÅ ò- _™Œ,oÅ õ- _I—,oÅ ø- _8˜,oÅ û- _9˜,oÅ ş- _8˜,oÅ . _9˜,oÅ . _y—,o!Å . _	˜,o$Å 
+. _j9o(Å . _¨S%o+Å . _©S%o/Å . _xS%o4Å . _yS%o7Å . _˜Œ,o:Å !. _™Œ,o=Å #. _	j9oAÅ '. _i*7oDÅ *. _)>oHÅ .. _(>oLÅ 3. _h*7oPÅ 6. _˜,oVÅ =. _xS%oZÅ @. _yS%o]Å C. _x—,o`Å G. _H—,ocÅ J. _˜Œ,ogÅ M. _™Œ,oiÅ P. _I—,olÅ S. _8˜,ooÅ V. _9˜,osÅ Y. _8˜,ovÅ \. _9˜,oyÅ _. _y—,o|Å c. _	˜,oÅ e. _˜,o„Å j. _xS%o‡Å m. _yS%oŠÅ p. _x—,oÅ s. _H—,oÅ v. _˜Œ,o“Å y. _™Œ,o–Å |. _I—,o™Å . _8˜,oœÅ ‚. _9˜,oŸÅ …. _8˜,o¢Å ˆ. _9˜,o¥Å ‹. _y—,o©Å . _	˜,o«Å ’. _˜,o°Å –. _xS%o³Å š. _yS%o¶Å œ. _x—,o¹Å Ÿ. _H—,o¼Å £. _˜Œ,o¿Å ¦. _™Œ,oÂÅ ¨. _I—,oÅÅ «. _8˜,oÈÅ ¯. _9˜,oËÅ ±. _8˜,oÎÅ µ. _9˜,oÑÅ ¸. _y—,oÕÅ ». _	˜,oØÅ ¾. _˜,oÜÅ Â. _xS%oßÅ Å. _yS%oâÅ È. _x—,oåÅ Ë. _H—,oèÅ Î. _˜Œ,oëÅ Ñ. _™Œ,oîÅ Ô. _I—,oñÅ ×. _8˜,oôÅ Ú. _9˜,o÷Å İ. _8˜,oúÅ à. _9˜,oıÅ ã. _y—,o Æ ç. _	˜,oÆ é. _˜,oÆ î. _xS%o
+Æ ñ. _yS%oÆ ó. _x—,oÆ ÷. _H—,oÆ ú. _˜Œ,oÆ ı. _™Œ,oÆ  / _I—,oÆ / _8˜,oÆ / _9˜,o"Æ 	/ _8˜,o&Æ / _9˜,o)Æ / _y—,o,Æ / _	˜,o/Æ / _˜,o3Æ / _xS%o6Æ / _yS%o9Æ  / _x—,o<Æ #/ _H—,o@Æ &/ _˜Œ,oCÆ )/ _™Œ,oEÆ ,/ _I—,oHÆ // _8˜,oKÆ 2/ _9˜,oNÆ 5/ _8˜,oRÆ 8/ _9˜,oUÆ ;/ _y—,oXÆ >/ _	˜,o[Æ A/ _j9o^Æ E/ _¨S%obÆ H/ _©S%oeÆ K/ _xS%ojÆ Q/ _yS%omÆ T/ _˜Œ,oqÆ W/ _™Œ,osÆ Z/ _	j9owÆ ^/ _i*7ozÆ `/ _)>o~Æ d/ _¸47oƒÆ j/ _X"4oˆÆ n/ _h4o’Æ y/ _i4o´Æ ›/ _Y"4o¸Æ / _¹47o½Æ £/ _È>oÂÆ ©/ _É>oÅÆ ¬/ _8¶&oÉÆ °/ _9¶&oÌÆ ³/ _È>oÑÆ ¸/ _É>oÔÆ »/ _¸47oØÆ ¿/ _X"4oÛÆ Â/ _h4oãÆ Ê/ _i4oëÆ Ñ/ _Y"4oîÆ Ô/ _¹47oòÆ Ø/ _¨>o÷Æ Ş/ _¸>oıÆ ä/ _ å®oÇ ê/ _¸(7oÇ î/ _¹(7oÇ ñ/ _è.7oÇ ù/ _ˆ%7oÇ ş/ _¸(7oÇ 0 _¹(7oÇ 0 _‰%7o"Ç 0 _På®o&Ç 0 _Qå®ohÇ O0 _é.7okÇ R0 _!å®ooÇ U0 _¹>oqÇ W0 _©>otÇ Z0 _y>oxÇ ^0 _‰>o{Ç a0 _É>o~Ç d0 _8>o‚Ç h0 _X>o‡Ç m0 _Y>oŠÇ p0 _X>oÇ t0 _Y>oÇ v0 _X>o“Ç z0 _Y>o–Ç |0 _9>oÇ ƒ0 _²­o Ç †0 _¨å>o£Ç Š0 _ğç®o§Ç 0 _ñç®o­Ç ”0 _pì®o±Ç —0 _qì®o¶Ç 0 _Ğì®o¾Ç ¤0 _X…7oÂÇ ©0 _È„7oÇÇ ­0 _h„7oÊÇ °0 _i„7oĞÇ ·0 _É„7oÖÇ ¼0 _Y…7oÙÇ ¿0 _Ñì®oÜÇ Â0 _©å>oßÇ Æ0 _ì>oãÇ É0 _	ì>oçÇ Î0 _Xí>oëÇ Ò0 _Yí>oñÇ ×0 _pã®oõÇ Ü0 _ˆç>oùÇ ß0 _‰ç>oüÇ â0 _qã®oÈ ï0 _ Ë®oÈ ô0 _¡Ë®oÈ ø0 _éË?oÈ ú0 _9Ö?oÈ ı0 _àè®oÈ 1 _áè®o&È 1 _A¦¬o*È 1 _xÉ0o.È 1 _yÉ0o1È 1 _h1o4È 1 _i1o8È 1 _ÙÏ0o;È !1 _¨å>o?È %1 _ğç®oBÈ )1 _ñç®oJÈ 11 _pì®oNÈ 41 _qì®oSÈ 91 _Ğì®oXÈ ?1 _X…7o]È D1 _È„7oaÈ H1 _h„7odÈ K1 _i„7ojÈ Q1 _É„7ooÈ V1 _Y…7osÈ Y1 _Ñì®ouÈ \1 _©å>oxÈ _1 _H1o}È d1 _ ¡¬o‚È i1 _hÖ0o†È l1 _iÖ0o‰È p1 _hÖ0oŒÈ s1 _iÖ0oÈ u1 _¸X4o“È z1 _¹X4o–È |1 _¡¬o™È 1 _˜ì>oÈ ƒ1 _™ì>o¡È ˆ1 _ì>o§È 1 _	ì>o«È ’1 _¸³0o°È —1 _¹³0oµÈ ›1 _ë>o¹È Ÿ1 _ë>o¾È ¤1 _I1oÀÈ §1 _™»0oÃÈ ª1 _iÙ0oÆÈ ­1 _ID1oÉÈ °1 _¨ó0oÏÈ µ1 _©ó0oÑÈ ¸1 _HD1oÕÈ »1 _hÙ0oÚÈ À1 _˜»0oİÈ Ã1 _hÁ0oáÈ È1 _iÁ0oåÈ Ë1 _Xê>oéÈ Ğ1 _Yê>oìÈ Ó1 _™»0oğÈ Ö1 _iÙ0oóÈ Ù1 _ID1oöÈ Ü1 _¨ó0oûÈ â1 _©ó0oşÈ ä1 _HD1oÉ ç1 _hÙ0oÉ ì1 _˜»0o	É ï1 _hÁ0oÉ ô1 _iÁ0oÉ ÷1 _Xê>oÉ û1 _Yê>oÉ ş1 _™»0oÉ 2 _iÙ0oÉ 2 _ID1o!É 2 _¨ó0o&É 2 _©ó0o(É 2 _HD1o+É 2 _hÙ0o0É 2 _˜»0o3É 2 _hÁ0o7É 2 _iÁ0o:É  2 _Xê>o>É $2 _Yê>oAÉ '2 _™»0oDÉ +2 _iÙ0oGÉ .2 _ID1oJÉ 12 _¨ó0oNÉ 52 _©ó0oQÉ 72 _HD1oTÉ :2 _hÙ0oXÉ ?2 _˜»0o[É B2 _hÁ0o_É E2 _iÁ0obÉ I2 _Xê>ogÉ M2 _Yê>oiÉ P2 _™»0omÉ T2 _iÙ0opÉ V2 _ID1osÉ Y2 _¨ó0owÉ ^2 _©ó0ozÉ `2 _HD1o}É c2 _hÙ0oÉ h2 _˜»0o„É k2 _hÁ0oˆÉ o2 _iÁ0o‹É r2 _Xê>oÉ v2 _Yê>o“É y2 _™»0o–É }2 _iÙ0o™É €2 _ID1oœÉ ‚2 _¨ó0o É ‡2 _©ó0o£É ‰2 _HD1o¦É 2 _hÙ0oªÉ ‘2 _˜»0o®É ”2 _hÁ0o±É ˜2 _iÁ0oµÉ ›2 _Xê>o¹É Ÿ2 _Yê>o¼É ¢2 _™»0o¿É ¦2 _iÙ0oÂÉ ©2 _ID1oÅÉ ¬2 _iT1oÉÉ ¯2 _™»0oÌÉ ²2 _iÙ0oÏÉ µ2 _ID1oÒÉ ¸2 _iT1oÕÉ »2 _™»0oØÉ ¾2 _iÙ0oÛÉ Á2 _ID1oŞÉ Ä2 _¨ó0oãÉ É2 _©ó0oæÉ Ì2 _HD1oéÉ Ï2 _hÙ0oîÉ Ô2 _˜»0oñÉ ×2 _hÁ0oõÉ Û2 _iÁ0oøÉ Ş2 _Xê>oüÉ ã2 _Yê>oÿÉ å2 _™»0oÊ é2 _iÙ0oÊ ì2 _ID1o	Ê ï2 _iT1oÊ ó2 _™»0oÊ ö2 _iÙ0oÊ ø2 _ID1oÊ û2 _iT1oÊ ÿ2 _™»0oÊ 3 _iÙ0oÊ 3 _ID1o!Ê 3 _iT1o$Ê 
+3 _™»0o'Ê 3 _iÙ0o)Ê 3 _ID1o-Ê 3 _¨ó0o1Ê 3 _©ó0o4Ê 3 _HD1o7Ê 3 _hÙ0o;Ê "3 _˜»0o?Ê %3 _hÁ0oBÊ )3 _iÁ0oFÊ ,3 _Xê>oJÊ 03 _Yê>oMÊ 33 _™»0oPÊ 73 _iÙ0oSÊ :3 _ID1oVÊ <3 _¨ó0oZÊ A3 _©ó0o]Ê C3 _HD1o`Ê G3 _hÙ0oeÊ K3 _˜»0ohÊ N3 _hÁ0olÊ R3 _iÁ0ooÊ U3 _Xê>osÊ Y3 _Yê>ovÊ \3 _™»0oyÊ `3 _iÙ0o|Ê c3 _ID1oÊ e3 _iT1o‚Ê i3 _™»0o…Ê l3 _iÙ0oˆÊ n3 _Y?o‹Ê q3 _Xê>oÊ v3 _Yê>o’Ê y3 _g­o—Ê }3 _ f­ošÊ €3 _¡f­oÊ „3 _‘g­o¡Ê ‡3 _)?o£Ê Š3 _¨ç0oªÊ 3 _©ç0o­Ê “3 _8=3o±Ê —3 _9=3oµÊ ›3 _©	?oáÊ H9 _é8oèÊ M9 _g­oîÊ T9 _ f­oòÊ W9 _¡f­o÷Ê ]9 _‘g­oúÊ _9 _‰8o Ë e9 _8oË i9 _g­oË m9 _ f­oË p9 _¡f­oË t9 _‘g­oË w9 _É,8oË z9 _™C?oË }9 _¹‡>oË 9 _ÀÕ®o"Ë ˆ9 _ÁÕ®o'Ë Œ9 _áÖ®o*Ë 9 _×®o-Ë ’9 _ˆ>o0Ë •9 _‰¬4o3Ë ˜9 _¹¬4o7Ë œ9 _76oBË ¨9 _	76oKË ±9 _ø:6oPË µ9 _h¶&ooË Õ9 _i¶&osË Ø9 _ˆ÷(oyË Ş9 _‰÷(o}Ë â9 iˆß+o 9 ç i£&o-9 ç iØ&o;9 "ç iXi&o?9 &ç ihQ%oD9 +ç iiQ%oG9 .ç iYi&oJ9 0ç iÙ&oN9 5ç i£&oQ9 7ç i¸¨)oV9 =ç ihk)o\9 Cç iÈ¤&o`9 Gç iÉ¤&od9 Kç i8k)oh9 Oç i9k)om9 Tç iik)op9 Wç ih¤&ox9 _ç ii¤&o}9 cç i¹¨)o9 hç i¸Ü+o9 uç ihQ%o’9 yç iiQ%o•9 {ç i¹Ü+oš9 ç iØá3oŸ9 †ç i¸à3o§9 ç iĞK­o¬9 “ç 

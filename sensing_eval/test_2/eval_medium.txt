@@ -1,0 +1,21 @@
+Parsing file 'mediumtree_j48.txt'.
+Average Classification Time: 0.1032ms
+
+
+Class		| TP	| FN
+CobblestoneGood	| 216	| 19
+CobblestoneBad	| 144	| 31
+AsphaltBad	| 89	| 48
+AsphaltGood	| 362	| 11
+
+
+Class		| TP	| FP
+CobblestoneGood	| 216	| 30
+CobblestoneBad	| 144	| 30
+AsphaltBad	| 89	| 42
+AsphaltGood	| 362	| 7
+
+
+
+Samples | Precision	| FP Rate	| FN Rate
+920 	| 0.882		| 0.118		| 0.118
