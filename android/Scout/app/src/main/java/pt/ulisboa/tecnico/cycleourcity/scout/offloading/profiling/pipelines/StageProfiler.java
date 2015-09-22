@@ -227,7 +227,11 @@ public class StageProfiler {
                 .apply();
 
         hasModel = true;
-        if(VERBOSE) Log.d(LOG_TAG, "The complete model has been created and stored. Model: "+model);
+        if(VERBOSE){
+            Log.d(LOG_TAG, "The complete model has been created and stored. Model: "+model);
+            Log.d(LOG_TAG, "MODEL: "+gson.toJson(model));
+        }
+
     }
 
     /**

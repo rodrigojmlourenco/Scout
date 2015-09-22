@@ -18,6 +18,8 @@ import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.PipelineConf
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.SensorPipelineContext;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.SensorProcessingPipeline;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.stages.CommonStages;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.ConfigurationTaggingStage;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.OffloadingWrapperStage;
 import pt.ulisboa.tecnico.cycleourcity.scout.pipeline.stages.UploadResultStage;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.EvaluationSupportStorage;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.RouteStorage;
@@ -97,18 +99,44 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
      * may then be used to generate graphs as to better understand the impact of these stages.
      * @return RoadSlopeMonitoringPipeline's configuration
      */
-    public static PipelineConfiguration generateRoadSlopeMonitoringPipelineConfiguration(boolean storeInfo) {
+    public static PipelineConfiguration generateRoadSlopeMonitoringPipelineConfiguration(boolean offloadingEnabled, boolean discardStationary) {
+        if(offloadingEnabled)
+            return generateOffloadingEnabledConfiguration(discardStationary);
+        else
+            return generateConfiguration(discardStationary);
+    }
 
+    private static PipelineConfiguration generateConfiguration(boolean discardStationary){
         ScoutStorageManager storage = ScoutStorageManager.getInstance();
 
         PipelineConfiguration configuration = new PipelineConfiguration();
 
-        configuration.addStage(new RoadSlopeMonitoringStages.ValidationStage(false));
+        configuration.addStage(new RoadSlopeMonitoringStages.ValidationStage(discardStationary));
         configuration.addStage(new RoadSlopeMonitoringStages.MergeSamplesStage());
         configuration.addStage(new RoadSlopeMonitoringStages.DeriveAltitudeStage());
         configuration.addStage(new RoadSlopeMonitoringStages.DeriveSlopeStage());
         configuration.addStage(new RoadSlopeMonitoringStages.QualificationStage());
 
+        configuration.addFinalStage(new RoadSlopeMonitoringStages.UpdateInnerStateStage());
+        configuration.addFinalStage(new UploadResultStage());
+        configuration.addFinalStage(new CommonStages.FeatureStorageStage(storage));
+
+        return configuration;
+    }
+
+    private static PipelineConfiguration generateOffloadingEnabledConfiguration(boolean discardStationary){
+        String id = "rsmp";
+        ScoutStorageManager storage = ScoutStorageManager.getInstance();
+
+        PipelineConfiguration configuration = new PipelineConfiguration();
+
+        configuration.addStage(new OffloadingWrapperStage(id+0,new RoadSlopeMonitoringStages.ValidationStage(discardStationary)));
+        configuration.addStage(new OffloadingWrapperStage(id+1,new RoadSlopeMonitoringStages.MergeSamplesStage()));
+        configuration.addStage(new OffloadingWrapperStage(id+2,new RoadSlopeMonitoringStages.DeriveAltitudeStage()));
+        configuration.addStage(new OffloadingWrapperStage(id+3,new RoadSlopeMonitoringStages.DeriveSlopeStage()));
+        configuration.addStage(new OffloadingWrapperStage(id+4,new RoadSlopeMonitoringStages.QualificationStage()));
+
+        configuration.addFinalStage(new ConfigurationTaggingStage());
         configuration.addFinalStage(new RoadSlopeMonitoringStages.UpdateInnerStateStage());
         configuration.addFinalStage(new UploadResultStage());
         configuration.addFinalStage(new CommonStages.FeatureStorageStage(storage));

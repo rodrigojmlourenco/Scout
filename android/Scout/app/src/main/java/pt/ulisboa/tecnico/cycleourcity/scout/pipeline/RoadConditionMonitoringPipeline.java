@@ -6,15 +6,19 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
+import com.ideaimpl.patterns.pipeline.Pipeline;
 import com.ideaimpl.patterns.pipeline.PipelineContext;
 import com.ideaimpl.patterns.pipeline.Stage;
 
+import java.nio.channels.Pipe;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import pt.ulisboa.tecnico.cycleourcity.scout.calibration.ScoutCalibrationManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.calibration.exceptions.UninitializedException;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.ConfigurationTaggingStage;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.OffloadingWrapperStage;
 import pt.ulisboa.tecnico.cycleourcity.scout.pipeline.stages.classification.BaseRoadClassificationStage;
 import pt.ulisboa.tecnico.cycleourcity.scout.pipeline.stages.classification.PavementType;
 import pt.ulisboa.tecnico.cycleourcity.scout.pipeline.stages.classification.PreciseRoadClassificationStage;
@@ -107,13 +111,21 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
      * may then be used to generate graphs as to better understand the impact of these stages.
      * @return RoadConditionMonitoringPipeline's configuration
      */
-    public static PipelineConfiguration generateRoadConditionMonitoringPipelineConfiguration(boolean offloadingEnabled){
+    public static PipelineConfiguration generateRoadConditionMonitoringPipelineConfiguration(boolean offloadingEnabled, boolean discardStationary){
+        if(offloadingEnabled)
+            return generateOffloadingEnabledConfiguration(discardStationary);
+        else
+            return generateConfiguration(discardStationary);
+    }
+
+    private static PipelineConfiguration generateConfiguration(boolean discardStationary){
+
         ScoutStorageManager storage = ScoutStorageManager.getInstance();
 
         PipelineConfiguration configuration = new PipelineConfiguration();
 
         //Adaptive Stages
-        configuration.addStage(new RoadConditionMonitoringStages.ValidationStage(false));
+        configuration.addStage(new RoadConditionMonitoringStages.ValidationStage(discardStationary));
         configuration.addStage(new RoadConditionMonitoringStages.NormalizationStage());
         configuration.addStage(new RoadConditionMonitoringStages.ProjectionStage());
         configuration.addStage(new RoadConditionMonitoringStages.FeatureExtractionStage());
@@ -124,6 +136,27 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
         configuration.addFinalStage(new CommonStages.FeatureStorageStage(storage));
         configuration.addFinalStage(new RoadConditionMonitoringStages.FinalizeStage());
 
+
+        return configuration;
+    }
+
+    private static PipelineConfiguration generateOffloadingEnabledConfiguration(boolean discardStationary){
+
+        String id = "rcmp";
+
+        PipelineConfiguration configuration = new PipelineConfiguration();
+
+        //Adaptive Stages
+        configuration.addStage(new OffloadingWrapperStage(id+0,new RoadConditionMonitoringStages.ValidationStage(discardStationary)));
+        configuration.addStage(new OffloadingWrapperStage(id+1,new RoadConditionMonitoringStages.NormalizationStage()));
+        configuration.addStage(new OffloadingWrapperStage(id+2,new RoadConditionMonitoringStages.ProjectionStage()));
+        configuration.addStage(new OffloadingWrapperStage(id+3,new RoadConditionMonitoringStages.FeatureExtractionStage()));
+        configuration.addStage(new OffloadingWrapperStage(id+4,new PreciseRoadClassificationStage()));
+
+        //Final Stages
+        configuration.addFinalStage(new ConfigurationTaggingStage());
+        configuration.addFinalStage(new UploadResultStage());
+        configuration.addFinalStage(new RoadConditionMonitoringStages.FinalizeStage());
 
         return configuration;
     }
