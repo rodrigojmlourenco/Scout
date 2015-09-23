@@ -87,6 +87,9 @@ public class OffloadingWrapperStage implements Stage {
 
             //Data Profiling
             JsonObject[] output = ((SensorPipelineContext)pipelineContext).getInput();
+
+            if(output == null) return;
+
             totalData = 0;
             for(JsonObject sample : output)
                 totalData += sampleMemSize(gson.toJson(sample));
@@ -117,8 +120,8 @@ public class OffloadingWrapperStage implements Stage {
     }
 
     protected boolean isInitialMonitoringComplete(){
-        return (StageProfiler.NUM_PROFILING_SAMPLES -executionTimes.size() == 0)
-                && (StageProfiler.NUM_PROFILING_SAMPLES -dataSizes.size() == 0);
+        return (StageProfiler.NUM_PROFILING_SAMPLES -executionTimes.size() <= 0)
+                && (StageProfiler.NUM_PROFILING_SAMPLES -dataSizes.size() <= 0);
     }
 
     @Deprecated

@@ -13,6 +13,7 @@ import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.InvalidOffloa
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.NothingToRetrieveException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.TaggingStageMissingException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.exceptions.NothingToOffloadException;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.pipelines.StageProfiler;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.Rule;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.exceptions.UnableToEnforceRuleException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.ConfigurationTaggingStage;
@@ -71,13 +72,17 @@ public class PartitionEngine {
         if(taggingStage==null)
             throw new TaggingStageMissingException();
 
-        AdaptivePipelineTracker tracker = new AdaptivePipelineTracker(pipeline);
-        this.validatedPipelines.add(tracker);
+        StageProfiler profiler = StageProfiler.getInstance();
 
-        if(enforcedRule!=null)tracker.updateWeights(
-                enforcedRule.getTimeWeight(),
-                enforcedRule.getMobileCostWeight(),
-                enforcedRule.getTransmissionWeight());
+        if(profiler.hasModel()) {
+            AdaptivePipelineTracker tracker = new AdaptivePipelineTracker(pipeline);
+            this.validatedPipelines.add(tracker);
+
+            if (enforcedRule != null) tracker.updateWeights(
+                    enforcedRule.getTimeWeight(),
+                    enforcedRule.getMobileCostWeight(),
+                    enforcedRule.getTransmissionWeight());
+        }
     }
 
     /**
