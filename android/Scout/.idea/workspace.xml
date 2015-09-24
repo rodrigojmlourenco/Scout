@@ -11,9 +11,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1105ad85-9db5-4210-929d-2034672d0a16" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/storage/EvaluationSupportStorage.java" afterPath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/storage/EvaluationSupportStorage.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/RoadSlopeMonitoringPipeline.java" afterPath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/RoadSlopeMonitoringPipeline.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/storage/RouteStorage.java" afterPath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/storage/RouteStorage.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/offloading/AdaptiveOffloadingManager.java" afterPath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/offloading/AdaptiveOffloadingManager.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/offloading/ruleset/Rule.java" afterPath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/offloading/ruleset/Rule.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/offloading/ruleset/RulesetManager.java" afterPath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/offloading/ruleset/RulesetManager.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="Scout.iws" />
@@ -46,7 +46,7 @@
         <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/ActiveGeoTagger.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="554" column="40" selection-start-line="554" selection-start-column="40" selection-end-line="554" selection-end-column="40" />
+              <caret line="506" column="0" selection-start-line="506" selection-start-column="0" selection-end-line="506" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -56,17 +56,17 @@
         <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/RoadSlopeMonitoringPipeline.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="117" column="59" selection-start-line="117" selection-start-column="59" selection-end-line="117" selection-end-column="59" />
+              <caret line="117" column="56" selection-start-line="117" selection-start-column="56" selection-end-line="117" selection-end-column="56" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="RouteStorage.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/storage/RouteStorage.java">
+      <file leaf-file-name="RulesetManager.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/offloading/ruleset/RulesetManager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.55191255">
-              <caret line="90" column="58" selection-start-line="90" selection-start-column="58" selection-end-line="90" selection-end-column="58" />
+            <state vertical-scroll-proportion="0.18579236">
+              <caret line="23" column="18" selection-start-line="23" selection-start-column="18" selection-end-line="23" selection-end-column="18" />
               <folding />
             </state>
           </provider>
@@ -75,9 +75,12 @@
       <file leaf-file-name="EvaluationSupportStorage.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/storage/EvaluationSupportStorage.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-12.5172415">
-              <caret line="152" column="98" selection-start-line="152" selection-start-column="98" selection-end-line="152" selection-end-column="98" />
-              <folding />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="158" column="77" selection-start-line="158" selection-start-column="77" selection-end-line="158" selection-end-column="77" />
+              <folding>
+                <element signature="imports" expanded="false" />
+                <marker date="1443101801930" expanded="true" signature="6059:6072" placeholder="{...}" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -1218,7 +1221,7 @@
     </option>
     <option name="modificationStamps">
       <map>
-        <entry key="C:\Users\rodrigo.jm.lourenco\development\Scout\android\Scout" value="4319736938583" />
+        <entry key="C:\Users\rodrigo.jm.lourenco\development\Scout\android\Scout" value="4328843411888" />
       </map>
     </option>
     <option name="projectBuildClasspath">
@@ -1540,7 +1543,6 @@
         <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/storage/RougeStorage.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/SettingsActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_settings.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/offloading/ruleset/RulesetManager.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/offloading/ruleset/RuleSetManager.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/values/colors.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/offloading/AdaptiveOffloadingManager.java" />
@@ -1569,6 +1571,7 @@
         <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/RoadSlopeMonitoringPipeline.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/storage/EvaluationSupportStorage.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/storage/RouteStorage.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/offloading/ruleset/RulesetManager.java" />
       </list>
     </option>
   </component>
@@ -1578,7 +1581,7 @@
   <component name="ProjectFrameBounds">
     <option name="x" value="-8" />
     <option name="y" value="-8" />
-    <option name="width" value="1370" />
+    <option name="width" value="1378" />
     <option name="height" value="744" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
@@ -1604,6 +1607,8 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane" />
       <pane id="AndroidView">
         <subPane>
@@ -1613,75 +1618,9 @@
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Scout" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Scout" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Scout" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="scout" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Scout" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="scout" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="pipeline" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
       </pane>
       <pane id="Scratches" />
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -1905,8 +1844,8 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1370" height="744" extended-state="0" />
-    <editor active="false" />
+    <frame x="-8" y="-8" width="1378" height="744" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32879046" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -1915,13 +1854,13 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39863715" sideWeight="0.5030257" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32879046" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32879046" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32879046" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32879046" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.5025554" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26259542" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2663126" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -1953,7 +1892,7 @@
       <breakpoints>
         <line-breakpoint type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/MainActivity.java</url>
-          <line>454</line>
+          <line>453</line>
           <properties />
         </line-breakpoint>
         <line-breakpoint type="java-line">
@@ -1965,13 +1904,13 @@
         <line-breakpoint type="java-line">
           <condition expression="routeID.equals(&quot;barometric&quot;)" language="JAVA" custom="" />
           <url>file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/storage/RouteStorage.java</url>
-          <line>166</line>
+          <line>170</line>
           <properties />
           <option name="timeStamp" value="17" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/RoadConditionMonitoringPipeline.java</url>
-          <line>166</line>
+          <line>108</line>
           <properties />
           <option name="timeStamp" value="31" />
         </line-breakpoint>
@@ -1984,6 +1923,41 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/ActiveGeoTagger.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="554" column="40" selection-start-line="554" selection-start-column="40" selection-end-line="554" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/RoadSlopeMonitoringPipeline.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="117" column="59" selection-start-line="117" selection-start-column="59" selection-end-line="117" selection-end-column="59" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/storage/RouteStorage.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/storage/EvaluationSupportStorage.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="152" column="77" selection-start-line="152" selection-start-column="77" selection-end-line="152" selection-end-column="77" />
+          <folding>
+            <element signature="imports" expanded="false" />
+            <marker date="1443101801930" expanded="true" signature="6059:6072" placeholder="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/ScoutPipeline.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -2092,10 +2066,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="480" column="55" selection-start-line="480" selection-start-column="55" selection-end-line="480" selection-end-column="55" />
-          <folding>
-            <element signature="e#19789#19790#0" expanded="true" />
-            <element signature="e#19856#19857#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -2124,10 +2095,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="480" column="55" selection-start-line="480" selection-start-column="55" selection-end-line="480" selection-end-column="55" />
-          <folding>
-            <element signature="e#19789#19790#0" expanded="true" />
-            <element signature="e#19856#19857#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -2159,13 +2127,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-14.172414">
           <caret line="98" column="0" selection-start-line="98" selection-start-column="0" selection-end-line="98" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/offloading/ruleset/RuleSetManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.18579236">
-          <caret line="23" column="14" selection-start-line="23" selection-start-column="14" selection-end-line="23" selection-end-column="14" />
         </state>
       </provider>
     </entry>
@@ -2244,13 +2205,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/classification/PavementType.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="26" column="30" selection-start-line="26" selection-start-column="30" selection-end-line="26" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/build/generated/source/r/debug/pt/ulisboa/tecnico/cycleourcity/scout/R.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-6.888889">
@@ -2262,10 +2216,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="503" column="36" selection-start-line="503" selection-start-column="36" selection-end-line="503" selection-end-column="36" />
-          <folding>
-            <element signature="e#19789#19790#0" expanded="true" />
-            <element signature="e#19856#19857#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -2279,34 +2230,6 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/classification/exceptions/InvalidFeatureVectorException.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.4257603">
-          <caret line="14" column="8" selection-start-line="14" selection-start-column="8" selection-end-line="14" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/classification/BaseRoadClassificationStage.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="35" column="0" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/classification/PreciseRoadClassificationStage.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.33273703">
-          <caret line="54" column="66" selection-start-line="54" selection-start-column="66" selection-end-line="54" selection-end-column="66" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/classification/RoadClassificationStage.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="62" column="51" selection-start-line="62" selection-start-column="51" selection-end-line="62" selection-end-column="51" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/storage/ClassificationEvaluationStorage.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -2318,7 +2241,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="154" column="9" selection-start-line="154" selection-start-column="9" selection-end-line="154" selection-end-column="9" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2347,15 +2269,26 @@
     <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/ActiveGeoTagger.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="554" column="40" selection-start-line="554" selection-start-column="40" selection-end-line="554" selection-end-column="40" />
+          <caret line="506" column="0" selection-start-line="506" selection-start-column="0" selection-end-line="506" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/storage/EvaluationSupportStorage.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-12.5172415">
-          <caret line="152" column="98" selection-start-line="152" selection-start-column="98" selection-end-line="152" selection-end-column="98" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="158" column="77" selection-start-line="158" selection-start-column="77" selection-end-line="158" selection-end-column="77" />
+          <folding>
+            <element signature="imports" expanded="false" />
+            <marker date="1443101801930" expanded="true" signature="6059:6072" placeholder="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/storage/RouteStorage.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.8142077">
+          <caret line="104" column="21" selection-start-line="104" selection-start-column="21" selection-end-line="104" selection-end-column="21" />
           <folding />
         </state>
       </provider>
@@ -2363,15 +2296,15 @@
     <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/RoadSlopeMonitoringPipeline.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="117" column="59" selection-start-line="117" selection-start-column="59" selection-end-line="117" selection-end-column="59" />
+          <caret line="117" column="56" selection-start-line="117" selection-start-column="56" selection-end-line="117" selection-end-column="56" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/storage/RouteStorage.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/offloading/ruleset/RulesetManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.55191255">
-          <caret line="90" column="58" selection-start-line="90" selection-start-column="58" selection-end-line="90" selection-end-column="58" />
+        <state vertical-scroll-proportion="0.18579236">
+          <caret line="23" column="18" selection-start-line="23" selection-start-column="18" selection-end-line="23" selection-end-column="18" />
           <folding />
         </state>
       </provider>

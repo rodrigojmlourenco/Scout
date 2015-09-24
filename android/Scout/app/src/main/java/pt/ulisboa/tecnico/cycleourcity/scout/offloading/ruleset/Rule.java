@@ -136,7 +136,7 @@ public class Rule {
             batteryRule = rules.get(RuleSetKeys.BATTERY_RULE).getAsInt();
             hasBatteryRule = true;
         }catch (Exception e){
-            Log.v(RuleSetManager.LOG_TAG, "Unable to set battery rule because "+e.getMessage());
+            Log.v(RulesetManager.LOG_TAG, "Unable to set battery rule because "+e.getMessage());
         }
     }
 
@@ -146,7 +146,7 @@ public class Rule {
             networkTypeRule = parseNetworkType(networkTypeAsString);
             hasNetworkTypeRule = true;
         }catch (Exception e ){
-            Log.v(RuleSetManager.LOG_TAG, "Unable to set network type rule rule because "+e.getMessage());
+            Log.v(RulesetManager.LOG_TAG, "Unable to set network type rule rule because "+e.getMessage());
         }
     }
 
@@ -155,7 +155,7 @@ public class Rule {
             remainingDataPlanRule   = rules.get(RuleSetKeys.REMAINING_DATA_PLAN).getAsInt();
             hasRemainingDataPlanRule= true;
         }catch (Exception e ){
-            Log.v(RuleSetManager.LOG_TAG, "Unable to set remaining data plan rule rule because "+e.getMessage());
+            Log.v(RulesetManager.LOG_TAG, "Unable to set remaining data plan rule rule because "+e.getMessage());
         }
     }
 
@@ -164,7 +164,7 @@ public class Rule {
             overDataLimitRule       = rules.get(RuleSetKeys.OVER_DATA_LIMIT).getAsBoolean();
             hasOverDataPlanLimitRule= true;
         }catch (Exception e){
-            Log.v(RuleSetManager.LOG_TAG, "Unable to set over data plan rule rule because "+e.getMessage());
+            Log.v(RulesetManager.LOG_TAG, "Unable to set over data plan rule rule because "+e.getMessage());
         }
     }
 
@@ -173,7 +173,7 @@ public class Rule {
             scoutBudgetRule     = rules.get(RuleSetKeys.SCOUT_BUDGET).getAsBoolean();
             hasScoutBudgetRule  = true;
         }catch (Exception e){
-            Log.v(RuleSetManager.LOG_TAG, "Unable to set scout budget rule rule because "+e.getMessage());
+            Log.v(RulesetManager.LOG_TAG, "Unable to set scout budget rule rule because "+e.getMessage());
         }
     }
 

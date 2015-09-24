@@ -14,7 +14,7 @@ import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.exceptions.NoA
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.exceptions.NothingToOffloadException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.pipelines.StageProfiler;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.Rule;
-import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.RuleSetManager;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.RulesetManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.exceptions.InvalidRuleSetException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.exceptions.UnableToEnforceRuleException;
 
@@ -28,7 +28,7 @@ public class AdaptiveOffloadingManager implements Observer{
 
     private final DeviceStateProfiler   deviceState;
     private final PartitionEngine       partitionEngine;
-    private final RuleSetManager ruleSetFrameWork;
+    private final RulesetManager ruleSetFrameWork;
     private final StageProfiler         stageModel;
 
     private boolean isProfilingEnabled = false;
@@ -40,7 +40,7 @@ public class AdaptiveOffloadingManager implements Observer{
         stageModel      = StageProfiler.getInstance();
         deviceState     = new DeviceStateProfiler(context);
         partitionEngine = new PartitionEngine();
-        ruleSetFrameWork= new RuleSetManager(context, deviceState);
+        ruleSetFrameWork= new RulesetManager(context, deviceState);
 
         ruleSetFrameWork.addObserver(this);
         partitionEngine.updateEnforcedRule(ruleSetFrameWork.getEnforcedRule());

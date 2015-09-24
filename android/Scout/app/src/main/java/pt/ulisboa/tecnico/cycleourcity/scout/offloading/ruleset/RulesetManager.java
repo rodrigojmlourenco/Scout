@@ -21,7 +21,7 @@ import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.device.DeviceS
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.exceptions.InvalidRuleException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.exceptions.InvalidRuleSetException;
 
-public class RuleSetManager extends Observable{
+public class RulesetManager extends Observable{
 
     private boolean VERBOSE = true;
     public final static String LOG_TAG = "RuleSet";
@@ -37,7 +37,7 @@ public class RuleSetManager extends Observable{
     //Device State
     private final DeviceStateProfiler deviceState;
 
-    public RuleSetManager(Context context, DeviceStateProfiler deviceState)
+    public RulesetManager(Context context, DeviceStateProfiler deviceState)
             throws InvalidRuleSetException {
 
         appContext = context;
