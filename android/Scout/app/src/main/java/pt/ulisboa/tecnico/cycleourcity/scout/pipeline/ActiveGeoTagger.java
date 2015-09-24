@@ -6,7 +6,6 @@ import android.opengl.Matrix;
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.ideaimpl.patterns.pipeline.PipelineContext;
 import com.ideaimpl.patterns.pipeline.Stage;
@@ -28,7 +27,6 @@ import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.locat
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.stages.CommonStages;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.state.LocationState;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.state.data.Location;
-import pt.ulisboa.tecnico.cycleourcity.scout.storage.RouteStorage;
 
 /**
  * Created by rodrigo.jm.lourenco on 25/06/2015.
@@ -36,7 +34,8 @@ import pt.ulisboa.tecnico.cycleourcity.scout.storage.RouteStorage;
 public class ActiveGeoTagger {
 
     //Logging
-    private final String LOG_TAG = this.getClass().getSimpleName();
+    protected static final boolean VERBOSE = true;
+    protected static final String LOG_TAG = "ActiveGeoTagger";
 
     private final History geoHistory;
 
@@ -51,15 +50,9 @@ public class ActiveGeoTagger {
         this.geoHistory = new History();
 
         //Location Sensor Pipeline
-        //ConfigurationCaretaker locationCaretaker = new ConfigurationCaretaker();
-        //locationCaretaker.setOriginalPipelineConfiguration(geoTaggingLocationConfiguration());
-        //locationPipeline = new LocationSensorPipeline(locationCaretaker);
         locationPipeline = new LocationSensorPipeline(geoTaggingLocationConfiguration());
 
         //Orientation Sensor Pipeline
-        //ConfigurationCaretaker rotationVectorCaretaker = new ConfigurationCaretaker();
-        //rotationVectorCaretaker.setOriginalPipelineConfiguration(getRotationVectorConfiguration());
-        //rotationVectorPipeline = new RotationVectorSensorPipeline(rotationVectorCaretaker);
         rotationVectorPipeline = new RotationVectorSensorPipeline(getRotationVectorConfiguration());
     }
 
@@ -96,10 +89,8 @@ public class ActiveGeoTagger {
         locationConfiguration.addStage(new LocationStages.SortLocationsStage());
         locationConfiguration.addStage(new LocationStages.TrimStage());
         locationConfiguration.addStage(new LocationStages.CheckMovementStage());
-        locationConfiguration.addStage(new RouteStorage.RouteStorageStage("noisyGPS", RouteStorage.GPS_BASED_ALTITUDE));
         locationConfiguration.addStage(new LocationStages.AdmissionControlStage());
         locationConfiguration.addStage(new LocationStages.UpdateGeoTaggerStage(this.geoHistory));
-        locationConfiguration.addStage(new RouteStorage.RouteStorageStage("parsedGPS", RouteStorage.GPS_BASED_ALTITUDE));
 
         return locationConfiguration;
     }
@@ -205,6 +196,9 @@ public class ActiveGeoTagger {
         }
 
         public void registerLocation(JsonObject location){
+
+            if(ActiveGeoTagger.VERBOSE) Log.d(ActiveGeoTagger.LOG_TAG, "Location was accepted.");
+
             synchronized (lock) {
                 this.geoTags.add(location);
             }
@@ -248,7 +242,6 @@ public class ActiveGeoTagger {
         class SortLocationsStage implements Stage {
 
             //Logging
-            private final String LOG_TAG = "ActiveGeoTagger";
             private final String STAGE_TAG = "[SortLocationsStage]: ";
 
             @Override
@@ -284,7 +277,6 @@ public class ActiveGeoTagger {
         class TrimStage extends LocationSensorPipeline.TrimStage{
 
             //Logging
-            private final String LOG_TAG = "ActiveGeoTagger";
             private final String STAGE_TAG = "[TrimStage]: ";
 
             @Override
@@ -349,7 +341,6 @@ public class ActiveGeoTagger {
         class AdmissionControlStage implements Stage {
 
             //Logging
-            private final String LOG_TAG = "ActiveGeoTagger";
             private final String STAGE_TAG = "[TrimStage]: ";
 
             private PipelineConfiguration admissionPipeline;
@@ -441,7 +432,6 @@ public class ActiveGeoTagger {
         class UpdateGeoTaggerStage implements  Stage {
 
             //Logging
-            private final String LOG_TAG = "ActiveGeoTagger";
             private final String STAGE_TAG = "[UpdateGeoTaggerStage]: ";
 
             private final History geoHistory;
@@ -467,7 +457,6 @@ public class ActiveGeoTagger {
 
         class AdmissionControlStage implements Stage{
 
-            private final String LOG_TAG = "ActiveGeoTagger";
             private final String STAGE_TAG = "[AdmissionControlStage]: ";
 
             @Override
@@ -572,7 +561,6 @@ public class ActiveGeoTagger {
         class GenerateRotationMatrix implements Stage {
 
             //Logging
-            private final String LOG_TAG = "ActiveGeoTagger";
             private final String STAGE_TAG = "[GenerateRotationMatrix]: ";
 
             private final Gson gson = new Gson();

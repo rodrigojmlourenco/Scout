@@ -77,8 +77,8 @@ public class ScoutPipeline extends BasicPipeline {
         offloadingManager.validatePipeline(rPipeline);
         offloadingManager.validatePipeline(sPipeline);
 
-        mPipeline.addSensorProcessingPipeline(rPipeline);
-        mPipeline.addSensorProcessingPipeline(sPipeline);
+        //mPipeline.addSensorProcessingPipeline(rPipeline); TODO: DE-COMMENT
+        //mPipeline.addSensorProcessingPipeline(sPipeline); TODO: DE-COMMENT
 
         //offloadingManager.optimizePipelines();
 
