@@ -200,7 +200,11 @@ public class OffloadingWrapperStage implements Stage {
         for(DataProfileInfo info : dataSizes)
             total += info.getGeneratedDataSize();
 
-        return total / dataSizes.size();
+        try {
+            return total / dataSizes.size();
+        }catch (ArithmeticException e){
+            return -1;
+        }
     }
 
 
@@ -211,7 +215,11 @@ public class OffloadingWrapperStage implements Stage {
         for(DataProfileInfo info : dataSizes)
             total += info.getInputDataSize();
 
-        return total / dataSizes.size();
+        try {
+            return total / dataSizes.size();
+        }catch (ArithmeticException e){
+            return -1;
+        }
     }
 
     private long sampleMemSize(String sample){

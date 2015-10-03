@@ -27,8 +27,7 @@ public class CycleOurCityClient {
     private UploadingStrategy strategy;
 
     private CycleOurCityClient(){
-        //strategy = new EagerStrategy();
-        strategy = new BatchingStrategy(100000); //100KB buffer
+        strategy = new BatchingStrategy(100000); //100KB buffer as in Balasubramanian
     }
 
     static public CycleOurCityClient getInstance(){
@@ -42,5 +41,9 @@ public class CycleOurCityClient {
 
     public synchronized HttpResponse upload(JsonObject pipelineResult){
         return strategy.upload(pipelineResult);
+    }
+
+    public synchronized HttpResponse upload(){
+        return strategy.uploadRemaining();
     }
 }

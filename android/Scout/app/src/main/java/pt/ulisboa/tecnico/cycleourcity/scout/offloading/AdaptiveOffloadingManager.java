@@ -20,6 +20,8 @@ import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.exceptions.Unabl
 
 public class AdaptiveOffloadingManager implements Observer{
 
+    protected static final boolean EVALUATING = true;
+
     protected final static String LOG_TAG = "AdaptiveOffloading";
     private static final boolean VERBOSE = true;
     private final String NAME_TAG = this.getClass().getSimpleName();
@@ -90,6 +92,16 @@ public class AdaptiveOffloadingManager implements Observer{
 
         try {
             partitionEngine.optimizePipelines();
+        } catch (UnableToEnforceRuleException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //TESTING ONLY
+    public void optimizePipelines(int offloads){
+
+        try {
+            partitionEngine.optimizePipelines(offloads);
         } catch (UnableToEnforceRuleException e) {
             e.printStackTrace();
         }
@@ -193,5 +205,9 @@ public class AdaptiveOffloadingManager implements Observer{
 
     public void forceUpdateNetworkType(int net) {
         //TODO
+    }
+
+    public void clearState() {
+        partitionEngine.teardown();
     }
 }

@@ -74,6 +74,13 @@ public class PartitionEngine {
 
         StageProfiler profiler = StageProfiler.getInstance();
 
+
+        //TODO: Remove TESTING ONLY
+        if(AdaptiveOffloadingManager.EVALUATING) {
+            AdaptivePipelineTracker tracker = new AdaptivePipelineTracker(pipeline);
+            this.validatedPipelines.add(tracker);
+        }
+
         if(profiler.hasModel()) {
             AdaptivePipelineTracker tracker = new AdaptivePipelineTracker(pipeline);
             this.validatedPipelines.add(tracker);
@@ -127,6 +134,19 @@ public class PartitionEngine {
             }else if(VERBOSE)
                 Log.d(LOG_TAG, "The original configuration is ideal so nothing will be offloaded.");
 
+        }
+    }
+
+    /** TESTING ONLY
+     * When executed this method trims each validated pipeline as to
+     * employ the optimal configuration as enforced by the current Rule.
+     */
+
+    protected void optimizePipelines(int offloads) throws UnableToEnforceRuleException {
+
+        for (AdaptivePipelineTracker p : validatedPipelines) {
+            if(VERBOSE) Log.d(LOG_TAG, "Offloading "+offloads+" stages in pipeline "+p);
+            offloadStages(p, offloads);
         }
     }
 

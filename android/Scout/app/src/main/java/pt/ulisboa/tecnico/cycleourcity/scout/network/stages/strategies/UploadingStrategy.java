@@ -12,4 +12,6 @@ public interface UploadingStrategy {
     final String herokuURI = "https://quiet-beach-7008.herokuapp.com/myresource/post";
 
     public HttpResponse upload(JsonObject inference);
+
+    public HttpResponse uploadRemaining();
 }

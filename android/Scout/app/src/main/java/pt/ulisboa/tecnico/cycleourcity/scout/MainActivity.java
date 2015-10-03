@@ -40,6 +40,7 @@ import pt.ulisboa.tecnico.cycleourcity.scout.calibration.SensorCalibrator;
 import pt.ulisboa.tecnico.cycleourcity.scout.calibration.exceptions.NotYetCalibratedException;
 import pt.ulisboa.tecnico.cycleourcity.scout.config.ScoutConfigManager;
 import pt.ulisboa.tecnico.cycleourcity.scout.config.exceptions.NotInitializedException;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.pipelines.StageProfiler;
 import pt.ulisboa.tecnico.cycleourcity.scout.pipeline.stages.classification.PavementType;
 import pt.ulisboa.tecnico.cycleourcity.scout.logging.ScoutLogger;
 import pt.ulisboa.tecnico.cycleourcity.scout.network.CycleOurCityClient;
@@ -145,7 +146,18 @@ public class MainActivity extends ActionBarActivity {
 
                     Toast.makeText(MainActivity.this, "Stopping sensing session!", Toast.LENGTH_SHORT).show();
 
+                    final CycleOurCityClient client = CycleOurCityClient.getInstance();
+
                     if(pipeline.isEnabled()) {
+
+                        //Force last upload
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                client.upload();
+                            }
+                        }).start();
+
                         funfManager.disablePipeline(PIPELINE_NAME);
 
                         if(!pipeline.isEnabled()) {
@@ -493,6 +505,17 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void setupPortraitModeWidgets(){
+
+        offloadBtn = (Button) findViewById(R.id.offloadBtn);
+        offloadBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String tag = tagText.getText().toString();
+                StageProfiler profiler = StageProfiler.getInstance();
+                profiler.exportStageModel(tag);
+            }
+        });
 
         //BEGIN TESTING
         final CycleOurCityClient client = CycleOurCityClient.getInstance();

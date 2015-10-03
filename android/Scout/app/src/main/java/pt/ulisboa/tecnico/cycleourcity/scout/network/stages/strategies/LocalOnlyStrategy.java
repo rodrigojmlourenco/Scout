@@ -14,4 +14,9 @@ public class LocalOnlyStrategy implements UploadingStrategy{
         //Do nothing
         return null;
     }
+
+    @Override
+    public HttpResponse uploadRemaining() {
+        return null;
+    }
 }

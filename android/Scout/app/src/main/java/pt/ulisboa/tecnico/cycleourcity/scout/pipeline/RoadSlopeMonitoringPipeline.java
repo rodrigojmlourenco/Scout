@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.cycleourcity.scout.pipeline;
 
-import android.util.Log;
-
+import com.google.gson.JsonArray;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.ideaimpl.patterns.pipeline.PipelineContext;
@@ -13,7 +12,6 @@ import java.util.List;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.location.LocationUtils;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.timedomain.EnvelopeMetrics;
-import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.math.timedomain.StatisticalMetrics;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.PipelineConfiguration;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.SensorPipelineContext;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.sensor.SensorProcessingPipeline;
@@ -22,7 +20,6 @@ import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.ConfigurationTagg
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.OffloadingWrapperStage;
 import pt.ulisboa.tecnico.cycleourcity.scout.pipeline.stages.UploadResultStage;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.EvaluationSupportStorage;
-import pt.ulisboa.tecnico.cycleourcity.scout.storage.RouteStorage;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.ScoutStorageManager;
 
 /**
@@ -42,30 +39,34 @@ import pt.ulisboa.tecnico.cycleourcity.scout.storage.ScoutStorageManager;
  */
 public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
 
-    private RoadSlopeMonitoringState state;
+    protected static RoadSlopeMonitoringState state;
 
     public RoadSlopeMonitoringPipeline(PipelineConfiguration configuration) {
         super(SensingUtils.Sensors.PRESSURE, configuration);
-        this.state = new RoadSlopeMonitoringState();
+        state = new RoadSlopeMonitoringState();
     }
 
 
     @Override
     public void pushSample(JsonObject sensorSample) {
 
-        if(state.getPreviousState()!=null)
-            sensorSample.add(SensingUtils.PressureKeys.PREVIOUS_PRESSURE, state.getPreviousState());
+        JsonObject prevPressure = state.getPreviousState();
+
+        if(prevPressure!=null)
+            sensorSample.add(SensingUtils.PressureKeys.PREVIOUS_PRESSURE, prevPressure);
+
+        if(sensorSample.has(SensingUtils.MotionKeys.ROTATION)) //TODO: migrar isto para o SCOUTPIPELINE
+            sensorSample.remove(SensingUtils.MotionKeys.ROTATION);
 
         super.pushSample(sensorSample);
-
     }
 
     @Override
     public void run() {
         super.run();
 
-        if(!extractedFeaturesQueue.isEmpty())
-            state.update(extractedFeaturesQueue.remove());
+        //if(!extractedFeaturesQueue.isEmpty())
+        //    state.update(extractedFeaturesQueue.remove());
     }
 
     /**
@@ -228,21 +229,20 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
             public JsonObject mergeSamples(double[] pressures, JsonObject location, JsonObject prevPressure) {
 
                 JsonObject mergedSample = new JsonObject();
-                double medianPressure = 0, variance = 0, stdDev = 0;
+                double medianPressure = 0;//, variance = 0, stdDev = 0;
                 int samplingSize = pressures.length;
                 String locationTimestamp = location.get(SensingUtils.GeneralFields.TIMESTAMP).getAsString();
 
-                stdDev = StatisticalMetrics.calculateMean(pressures);
-                variance = StatisticalMetrics.calculateVariance(pressures);
+                //variance = StatisticalMetrics.calculateVariance(pressures);
                 medianPressure = EnvelopeMetrics.calculateMedian(pressures);
 
                 mergedSample.addProperty(SensingUtils.GeneralFields.SENSOR_TYPE, SensingUtils.Sensors.PRESSURE);
                 mergedSample.addProperty(SensingUtils.GeneralFields.TIMESTAMP, locationTimestamp);
                 mergedSample.addProperty(SensingUtils.GeneralFields.SCOUT_TIME, System.nanoTime());
                 mergedSample.addProperty(SensingUtils.PressureKeys.PRESSURE, medianPressure);
-                mergedSample.addProperty(SensingUtils.PressureKeys.VARIANCE, variance);
-                mergedSample.addProperty(SensingUtils.PressureKeys.STDEV, stdDev);
-                mergedSample.addProperty(SensingUtils.PressureKeys.SAMPLES, samplingSize);
+                //mergedSample.addProperty(SensingUtils.PressureKeys.VARIANCE, variance);
+                //mergedSample.addProperty(SensingUtils.PressureKeys.STDEV, stdDev);
+                //mergedSample.addProperty(SensingUtils.PressureKeys.SAMPLES, samplingSize);
                 mergedSample.add(SensingUtils.PressureKeys.PREVIOUS_PRESSURE, prevPressure);
                 mergedSample.add(SensingUtils.LocationKeys.LOCATION, location);
 
@@ -296,6 +296,7 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
                         input.get(SensingUtils.PressureKeys.PRESSURE).getAsFloat());
 
                 input.addProperty(SensingUtils.PressureKeys.ALTITUDE, altitude);
+                input.remove(SensingUtils.PressureKeys.PRESSURE);
 
                 //Validate sample, as to avoid slope derivation error's
                 if(!input.has(SensingUtils.PressureKeys.PREVIOUS_PRESSURE) ||
@@ -343,7 +344,7 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
                 slope = LocationUtils.calculateSlope(travelledDistance, fromAlt, toAlt);
 
                 currentSample.addProperty(SensingUtils.PressureKeys.SLOPE, slope);
-                currentSample.addProperty(SensingUtils.PressureKeys.TRAVELLED_DISTANCE, travelledDistance);
+                //currentSample.addProperty(SensingUtils.PressureKeys.TRAVELLED_DISTANCE, travelledDistance);
 
                 //OPTIONAL: reordering for readability (location at the tail)
                 currentSample.remove(SensingUtils.LocationKeys.LOCATION);
@@ -361,12 +362,24 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
             public void execute(PipelineContext pipelineContext) {
                 SensorPipelineContext ctx = (SensorPipelineContext) pipelineContext;
 
+
                 //Avoid NullPointer
                 JsonObject output;
                 if (ctx.getInput()==null || (output = ctx.getInput()[0])==null) return;
 
                 output.remove(SensingUtils.PressureKeys.PREVIOUS_PRESSURE);
                 ctx.setOutput(new JsonObject[]{output});
+
+                if(output.has("frames")){ //TODO: MTA PREDREIRO
+                    JsonArray frames = output.getAsJsonArray("frames");
+                    for(int i=0; i<frames.size(); i++)
+                        ((JsonObject)frames.get(i)).remove(SensingUtils.PressureKeys.PREVIOUS_PRESSURE);
+
+                    output.add("frames", frames);
+                }
+                //Testing
+                RoadSlopeMonitoringPipeline.state.update(output);
+
             }
         }
 
@@ -433,7 +446,7 @@ public class RoadSlopeMonitoringPipeline extends SensorProcessingPipeline {
 
             private void qualifySlope(JsonObject slope) {
 
-                float slopeDegree = slope.get(SensingUtils.PressureKeys.SLOPE).getAsFloat();
+                float slopeDegree = slope.remove(SensingUtils.PressureKeys.SLOPE).getAsFloat();
 
                 if (slopeDegree < -0.24) {
                     slope.addProperty("class", 1);

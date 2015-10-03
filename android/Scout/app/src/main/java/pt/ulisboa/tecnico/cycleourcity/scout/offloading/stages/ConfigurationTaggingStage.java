@@ -7,6 +7,8 @@ import com.google.gson.JsonObject;
 import com.ideaimpl.patterns.pipeline.PipelineContext;
 import com.ideaimpl.patterns.pipeline.Stage;
 
+import java.util.List;
+
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.pipeline.SensorPipelineContext;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.OffloadTracker;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.UnvalidatedPipelineException;
@@ -37,16 +39,40 @@ public class ConfigurationTaggingStage implements Stage {
 
         SensorPipelineContext ctx = (SensorPipelineContext)pipelineContext;
         JsonObject[] input = ctx.getInput();
+        List errors = ctx.getErrors();
 
-        if(input==null) return;
+        if(input==null || (errors != null && errors.size() > 0)) return;
 
-        //JsonParser parser = new JsonParser();
-        for(JsonObject sample : input){
+        if(input.length > 1){
+            JsonObject result = new JsonObject();
+            JsonArray batch = new JsonArray();
+            JsonArray config = new JsonArray();
+
             try {
-                sample.add(OffloadTracker.CONFIGURATION, offloadTracker.getConfiguration(this.pUID));
+                config = offloadTracker.getConfiguration(this.pUID);
             } catch (UnvalidatedPipelineException e) {
                 e.printStackTrace();
-                break;
+            }
+
+            for(JsonObject sample : input){
+                batch.add(sample);
+            }
+
+            result.add("frames", batch);
+            result.add(OffloadTracker.CONFIGURATION, config);
+
+            JsonObject[] output = new JsonObject[1];
+            output[0] = result;
+            ctx.setInput(output);
+
+        }else {
+            for (JsonObject sample : input) {
+                try {
+                    sample.add(OffloadTracker.CONFIGURATION, offloadTracker.getConfiguration(this.pUID));
+                } catch (UnvalidatedPipelineException e) {
+                    e.printStackTrace();
+                    break;
+                }
             }
         }
 

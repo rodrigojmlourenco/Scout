@@ -117,6 +117,25 @@ public class ActiveGeoTagger {
         rotationTagSample(sample);
     }
 
+    private JsonObject cleanRotation(JsonObject rotation){
+
+        if(rotation == null) return null;
+
+        JsonObject cleaned = new JsonObject();
+
+        try{
+            cleaned.addProperty(
+                    RotationVectorKeys.INV_ROTATION_MATRIX,
+                    rotation.get(SensingUtils.RotationVectorKeys.INV_ROTATION_MATRIX).getAsString());
+
+        }catch (NullPointerException | UnsupportedOperationException e){
+            e.printStackTrace();
+            return null;
+        }
+
+        return cleaned;
+    }
+
     private JsonObject cleanLocation(JsonObject location){
 
         if(location==null) return null;
@@ -168,7 +187,7 @@ public class ActiveGeoTagger {
     }
 
     public void rotationTagSample(JsonObject sample){
-        JsonObject rotation = geoHistory.getLastKnownRotation();
+        JsonObject rotation = cleanRotation(geoHistory.getLastKnownRotation());
         sample.add(SensingUtils.MotionKeys.ROTATION, rotation);
     }
     /*

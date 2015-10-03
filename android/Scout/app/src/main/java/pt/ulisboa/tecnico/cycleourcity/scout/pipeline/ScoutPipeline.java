@@ -13,6 +13,7 @@ import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.MobileSensing;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.SensingUtils;
 import pt.ulisboa.tecnico.cycleourcity.scout.mobilesensing.exceptions.MobileSensingException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.AdaptiveOffloadingManager;
+import pt.ulisboa.tecnico.cycleourcity.scout.offloading.PartitionEngine;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.exceptions.AdaptiveOffloadingException;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.ruleset.exceptions.InvalidRuleSetException;
 import pt.ulisboa.tecnico.cycleourcity.scout.storage.EvaluationSupportStorage;
@@ -70,15 +71,16 @@ public class ScoutPipeline extends BasicPipeline {
                 RoadConditionMonitoringPipeline.generateRoadConditionMonitoringPipelineConfiguration(true, true));
 
 
-        RoadSlopeMonitoringPipeline sPipeline = new RoadSlopeMonitoringPipeline(
-                RoadSlopeMonitoringPipeline.generateRoadSlopeMonitoringPipelineConfiguration(true, true));
+        //RoadSlopeMonitoringPipeline sPipeline = new RoadSlopeMonitoringPipeline(
+        //        RoadSlopeMonitoringPipeline.generateRoadSlopeMonitoringPipelineConfiguration(true, true));
 
         //Scout Profiling
+        offloadingManager.clearState();
         offloadingManager.validatePipeline(rPipeline);
-        offloadingManager.validatePipeline(sPipeline);
+        //offloadingManager.validatePipeline(sPipeline);
 
-        //mPipeline.addSensorProcessingPipeline(rPipeline); TODO: DE-COMMENT
-        //mPipeline.addSensorProcessingPipeline(sPipeline); TODO: DE-COMMENT
+        mPipeline.addSensorProcessingPipeline(rPipeline);
+        //mPipeline.addSensorProcessingPipeline(sPipeline);
 
         //offloadingManager.optimizePipelines();
 

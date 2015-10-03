@@ -156,7 +156,7 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
         //Final Stages
         configuration.addFinalStage(new ConfigurationTaggingStage());
         configuration.addFinalStage(new UploadResultStage());
-        configuration.addFinalStage(new RoadConditionMonitoringStages.FinalizeStage());
+        //configuration.addFinalStage(new RoadConditionMonitoringStages.FinalizeStage());
 
         return configuration;
     }
@@ -332,9 +332,10 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
             }
 
             private void appendProjectedValues(JsonObject sample, float[] projectValues){
-                sample.addProperty(SensingUtils.MotionKeys.PROJECTED_X, projectValues[0]);
-                sample.addProperty(SensingUtils.MotionKeys.PROJECTED_Y, projectValues[1]);
-                sample.addProperty(SensingUtils.MotionKeys.PROJECTED_Z, projectValues[2]);
+                sample.remove(SensingUtils.MotionKeys.X);
+                sample.remove(SensingUtils.MotionKeys.Y);
+                sample.addProperty(SensingUtils.MotionKeys.Z, projectValues[2]);
+
             }
 
             private JsonObject projectToAbsoluteCoordinates(JsonObject sample) {
@@ -487,7 +488,7 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
                 location = (JsonObject) input[0].get(SensingUtils.LocationKeys.LOCATION);
 
                 for (JsonObject sample : input)
-                    zValues[i++] = sample.get(SensingUtils.MotionKeys.PROJECTED_Z).getAsFloat();
+                    zValues[i++] = sample.get(SensingUtils.MotionKeys.Z).getAsFloat();
 
                 featureVector = constructFeatureVector(zValues, location);
 
@@ -576,7 +577,7 @@ public class RoadConditionMonitoringPipeline extends SensorProcessingPipeline {
                 location = (JsonObject) input[0].get(SensingUtils.LocationKeys.LOCATION);
 
                 for (JsonObject sample : input)
-                    zValues[i++] = sample.get(SensingUtils.MotionKeys.PROJECTED_Z).getAsFloat();
+                    zValues[i++] = sample.get(SensingUtils.MotionKeys.Z).getAsFloat();
 
                 featureVector = constructFeatureVector(zValues, location);
 

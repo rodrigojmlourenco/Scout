@@ -1,0 +1,34 @@
+{
+  "@version": 1,
+  "@model": [{
+    "@identifier": "rsmp0",
+    "@stage": "pt.ulisboa.tecnico.cycleourcity.scout.pipeline.RoadSlopeMonitoringPipeline.RoadSlopeMonitoringStages.ValidationStage",
+    "@execution_time": 35066044,
+    "@input_data_size": 96993,
+    "@output_data_size": 96986
+  }, {
+    "@identifier": "rsmp1",
+    "@stage": "pt.ulisboa.tecnico.cycleourcity.scout.pipeline.RoadSlopeMonitoringPipeline.RoadSlopeMonitoringStages.MergeSamplesStage",
+    "@execution_time": 36564313,
+    "@input_data_size": 96986,
+    "@output_data_size": 1056
+  }, {
+    "@identifier": "rsmp2",
+    "@stage": "pt.ulisboa.tecnico.cycleourcity.scout.pipeline.RoadSlopeMonitoringPipeline.RoadSlopeMonitoringStages.DeriveAltitudeStage",
+    "@execution_time": 256901,
+    "@input_data_size": 1056,
+    "@output_data_size": 1055
+  }, {
+    "@identifier": "rsmp3",
+    "@stage": "pt.ulisboa.tecnico.cycleourcity.scout.pipeline.RoadSlopeMonitoringPipeline.RoadSlopeMonitoringStages.DeriveSlopeStage",
+    "@execution_time": 317293,
+    "@input_data_size": 1056,
+    "@output_data_size": 1084
+  }, {
+    "@identifier": "rsmp4",
+    "@stage": "pt.ulisboa.tecnico.cycleourcity.scout.pipeline.RoadSlopeMonitoringPipeline.RoadSlopeMonitoringStages.QualificationStage",
+    "@execution_time": 243104,
+    "@input_data_size": 1084,
+    "@output_data_size": 1076
+  }]
+}

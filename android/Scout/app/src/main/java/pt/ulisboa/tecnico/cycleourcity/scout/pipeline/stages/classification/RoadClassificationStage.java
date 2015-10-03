@@ -58,6 +58,6 @@ public abstract class RoadClassificationStage implements Stage {
                 e.printStackTrace();
             }
 
-        ctx.setOutput(output);
+        ctx.setInput(output);
     }
 }

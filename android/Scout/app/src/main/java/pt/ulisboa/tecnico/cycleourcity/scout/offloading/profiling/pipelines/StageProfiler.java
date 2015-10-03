@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.cycleourcity.scout.offloading.profiling.pipelines;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Vibrator;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -11,17 +12,21 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.util.HashMap;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 import pt.ulisboa.tecnico.cycleourcity.scout.ScoutApplication;
 import pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages.OffloadingWrapperStage;
 import pt.ulisboa.tecnico.cycleourcity.scout.pipeline.ScoutPipeline;
+import pt.ulisboa.tecnico.cycleourcity.scout.storage.ConfigurationProfileStorage;
 
 /**
  * This is a singleton that is responsible for managing all information regarding
  * the characteristics of running stages, belonging to active pipelines.
  */
 public class StageProfiler {
+
+    private boolean IS_EVALUATING = true;
 
     //Logging
     public final static boolean VERBOSE = true;
@@ -62,7 +67,7 @@ public class StageProfiler {
      * Registers a stage
      * @param identifier the Stage unique identifier
      * @param stage The Stage wrapper
-     * TODO: search for a simple way of tracking this information, has maintaining the wrapper serves no purpose
+     * TODO: search for a simple way of tracking this information, as maintaining the wrapper serves no purpose
      */
     public void registerStage(String identifier,OffloadingWrapperStage stage){
         this.stages.put(identifier, stage);
@@ -222,16 +227,32 @@ public class StageProfiler {
         SharedPreferences prefs =
                 appContext.getSharedPreferences(ModelStorageKeys.STORAGE, Context.MODE_PRIVATE);
 
-        prefs.edit()
-                .putString(ModelStorageKeys.MODEL, gson.toJson(model))
-                .apply();
+        if(IS_EVALUATING) {
 
-        hasModel = true;
-        if(VERBOSE){
-            Log.d(LOG_TAG, "The complete model has been created and stored. Model: "+model);
-            Log.d(LOG_TAG, "MODEL: "+gson.toJson(model));
+            exportableStageModel = model;
+
+            Context ctx = ScoutApplication.getContext();
+            Vibrator v = (Vibrator) ctx.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
+            v.vibrate(1000);
+            v.vibrate(1000);
+
+            Random r = new Random();
+
+            exportStageModel(String.valueOf(r.nextInt()));
+
+            Log.e(LOG_TAG, "Evaluation mode, not storing the model.");
+            return;
+
+        }else {
+
+            prefs.edit()
+                    .putString(ModelStorageKeys.MODEL, gson.toJson(model))
+                    .apply();
+
+            hasModel = true;
+            if (VERBOSE)
+                Log.d(LOG_TAG, "The complete model has been created and stored. Model: " + model);
         }
-
     }
 
     /**
@@ -287,5 +308,16 @@ public class StageProfiler {
 
             return state;
         }
+    }
+
+    //FOR EVALUATION PURPOSES ONLY //TODO: remove once testing has been completed
+    private JsonObject exportableStageModel = null;
+    public void exportStageModel(String tag){
+
+        if(exportableStageModel == null) throw new NullPointerException();
+
+        ConfigurationProfileStorage storage = ConfigurationProfileStorage.getInstance();
+        storage.storeConfigurationProfile(exportableStageModel, tag);
+
     }
 }
