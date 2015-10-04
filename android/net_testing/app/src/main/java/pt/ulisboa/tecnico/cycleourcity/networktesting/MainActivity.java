@@ -1,5 +1,12 @@
 package pt.ulisboa.tecnico.cycleourcity.networktesting;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -7,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -17,9 +25,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -27,10 +38,11 @@ import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends ActionBarActivity {
 
-    private Button wifiBtn, bluetoothBtn, stopBtn;
+    private Button wifiBtn, stopBtn;
 
     private ExecutorService service = Executors.newSingleThreadExecutor();
     private Future terminator;
+
 
     protected boolean isRunning = false;
 
@@ -38,9 +50,9 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        
+
         wifiBtn = (Button) findViewById(R.id.wifiBtn);
-        bluetoothBtn = (Button) findViewById(R.id.btBtn);
+
         stopBtn = (Button) findViewById(R.id.stopBtn);
 
 
@@ -57,14 +69,6 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
-        bluetoothBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-
-                toggleButtons(false);
-            }
-        });
 
         stopBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,12 +90,13 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
+
+
     }
+
 
     private void toggleButtons(boolean enabled){
         wifiBtn.setEnabled(enabled);
-        bluetoothBtn.setEnabled(enabled);
-
         stopBtn.setEnabled(!enabled);
     }
 
@@ -115,6 +120,11 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     private abstract class TestTask {
@@ -184,6 +194,8 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private class BluetoothTestTask extends TestTask implements Runnable {
+
+
 
         @Override
         public void run() {
