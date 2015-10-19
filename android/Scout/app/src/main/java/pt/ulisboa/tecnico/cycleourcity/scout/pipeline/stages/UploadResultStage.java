@@ -23,6 +23,10 @@ public class UploadResultStage implements Stage {
 
         if((ctx.getErrors()!=null && !ctx.getErrors().isEmpty()) || output==null || output.length <= 0)
             return;
+        /*
+        Log.d("FAKEUPLOAD", "uploading data...");
+        return; //TODO: remover, apenas para fins de testes fakeUSB
+        }*/
 
         for (final JsonObject result : output)
             client.upload(result);

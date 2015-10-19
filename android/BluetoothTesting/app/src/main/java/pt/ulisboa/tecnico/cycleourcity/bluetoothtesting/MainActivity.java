@@ -13,12 +13,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;

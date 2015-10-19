@@ -20,13 +20,14 @@ import java.util.Date;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
 
 /**
  * Created by rodrigo.jm.lourenco on 18/09/2015.
  */
 public class EagerStrategy implements UploadingStrategy{
 
-    private ExecutorService executor = Executors.newFixedThreadPool(3);
+    private ExecutorService executor = Executors.newFixedThreadPool(5);
 
     @Override
     public HttpResponse upload(JsonObject inference) {
@@ -57,12 +58,14 @@ public class EagerStrategy implements UploadingStrategy{
                 DefaultHttpClient httpClient = new DefaultHttpClient();
 
                 String udata = gson.toJson(data);
+
                 StringEntity entity = new StringEntity(udata);
                 httpost.setEntity(entity);
                 httpost.setHeader("Accept", "application/json");
                 httpost.setHeader("Content-type", "application/json");
 
                 Log.e("EagerStrategy", "Attempting upload");
+
 
                 HttpResponse response = httpClient.execute(httpost);
                 HttpEntity httpEntity = response.getEntity();

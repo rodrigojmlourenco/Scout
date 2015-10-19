@@ -1,0 +1,34 @@
+{
+  "@version": 1,
+  "@model": [{
+    "@identifier": "rcmp4",
+    "@stage": "pt.ulisboa.tecnico.cycleourcity.scout.pipeline.stages.classification.PreciseRoadClassificationStage",
+    "@execution_time": 327186,
+    "@input_data_size": 899,
+    "@output_data_size": 511
+  }, {
+    "@identifier": "rcmp1",
+    "@stage": "pt.ulisboa.tecnico.cycleourcity.scout.pipeline.RoadConditionMonitoringPipeline.RoadConditionMonitoringStages.NormalizationStage",
+    "@execution_time": 464235986,
+    "@input_data_size": 658806,
+    "@output_data_size": 568987
+  }, {
+    "@identifier": "rcmp0",
+    "@stage": "pt.ulisboa.tecnico.cycleourcity.scout.pipeline.RoadConditionMonitoringPipeline.RoadConditionMonitoringStages.ValidationStage",
+    "@execution_time": 185959360,
+    "@input_data_size": 655179,
+    "@output_data_size": 654874
+  }, {
+    "@identifier": "rcmp3",
+    "@stage": "pt.ulisboa.tecnico.cycleourcity.scout.pipeline.RoadConditionMonitoringPipeline.RoadConditionMonitoringStages.FeatureExtractionStage",
+    "@execution_time": 68568070,
+    "@input_data_size": 316628,
+    "@output_data_size": 899
+  }, {
+    "@identifier": "rcmp2",
+    "@stage": "pt.ulisboa.tecnico.cycleourcity.scout.pipeline.RoadConditionMonitoringPipeline.RoadConditionMonitoringStages.ProjectionStage",
+    "@execution_time": 363578727,
+    "@input_data_size": 568987,
+    "@output_data_size": 316628
+  }]
+}

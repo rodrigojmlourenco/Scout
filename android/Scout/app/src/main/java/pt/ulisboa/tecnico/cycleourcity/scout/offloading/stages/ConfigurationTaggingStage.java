@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.cycleourcity.scout.offloading.stages;
 
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.ideaimpl.patterns.pipeline.PipelineContext;
@@ -49,7 +50,9 @@ public class ConfigurationTaggingStage implements Stage {
             JsonArray config = new JsonArray();
 
             try {
+                Gson gson = new Gson();
                 config = offloadTracker.getConfiguration(this.pUID);
+                Log.d("CONFIG", gson.toJson(config));
             } catch (UnvalidatedPipelineException e) {
                 e.printStackTrace();
             }

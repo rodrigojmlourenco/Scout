@@ -6,64 +6,81 @@
     </shared>
   </component>
   <component name="AndroidLogFilters">
+    <option name="TOOL_WINDOW_CUSTOM_FILTER" value="config" />
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1105ad85-9db5-4210-929d-2034672d0a16" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../net_testing/gradle/wrapper/gradle-wrapper.jar" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../net_testing/app/src/main/res/mipmap-hdpi/ic_launcher.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../net_testing/app/src/main/res/mipmap-mdpi/ic_launcher.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../net_testing/app/src/main/res/mipmap-xhdpi/ic_launcher.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../net_testing/app/src/main/res/mipmap-xxhdpi/ic_launcher.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../net_testing/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../net_testing/.gitignore" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../net_testing/app/.gitignore" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../net_testing/app/src/main/AndroidManifest.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../net_testing/app/src/androidTest/java/pt/ulisboa/tecnico/cycleourcity/networktesting/ApplicationTest.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/storage/ConfigurationProfileStorage.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../net_testing/app/src/test/java/pt/ulisboa/tecnico/cycleourcity/networktesting/ExampleUnitTest.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../net_testing/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/networktesting/MainActivity.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../net_testing/app/src/main/res/layout/activity_main.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../net_testing/app/app.iml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../net_testing/build.gradle" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../net_testing/app/build.gradle" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../net_testing/.idea/compiler.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../net_testing/app/src/main/res/values/dimens.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../net_testing/app/src/main/res/values-w820dp/dimens.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../net_testing/.idea/encodings.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../net_testing/gradle/wrapper/gradle-wrapper.properties" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../net_testing/gradle.properties" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../net_testing/.idea/gradle.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../net_testing/gradlew.bat" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../net_testing/gradlew" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../net_testing/app/src/main/res/menu/menu_main.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../net_testing/.idea/misc.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../net_testing/.idea/modules.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../net_testing/net_testing.iml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../net_testing/.idea/copyright/profiles_settings.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../net_testing/app/proguard-rules.pro" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../net_testing/.idea/runConfigurations.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../net_testing/settings.gradle" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../net_testing/app/src/main/res/values/strings.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../net_testing/app/src/main/res/values/styles.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../net_testing/.idea/vcs.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/ActiveGeoTagger.java" afterPath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/ActiveGeoTagger.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/offloading/AdaptiveOffloadingManager.java" afterPath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/offloading/AdaptiveOffloadingManager.java" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\coefficients\wifi1.html" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\coefficients\wifi1.txt" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rcmp\battery_profiling\rcmpc0r1.txt" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rcmp\battery_profiling\rcmpc0r2.txt" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rcmp\battery_profiling\rcmpc0r3.txt" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rcmp\battery_profiling\rcmpc1r1.txt" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rcmp\battery_profiling\rcmpc1r2.txt" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rcmp\battery_profiling\rcmpc1r3.txt" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rcmp\battery_profiling\rcmpc2r1.txt" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rcmp\battery_profiling\rcmpc2r2.txt" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rcmp\battery_profiling\rcmpc2r3.txt" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rcmp\battery_profiling\rcmpc3r1.txt" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rcmp\battery_profiling\rcmpc3r2.txt" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rcmp\battery_profiling\rcmpc3r3.txt" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rcmp\battery_profiling\rcmpc3r5.txt" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rcmpc0r6.txt" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmp\battery_profiling - bak\rsmpc0r1.txt" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmp\battery_profiling - bak\rsmpc0r2.txt" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmp\battery_profiling - bak\rsmpc0r3.txt" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmp\battery_profiling - bak\rsmpc1r0.txt" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmp\battery_profiling - bak\rsmpc1r1.txt" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmp\battery_profiling - bak\rsmpc2r0.txt" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmp\battery_profiling - bak\rsmpc2r1.txt" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmp\battery_profiling - bak\rsmpc3r0.txt" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmp\battery_profiling - bak\rsmpc3r1.txt" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmp\battery_profiling - bak\rsmpc4r0.txt" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmp\battery_profiling - bak\rsmpc4r1.txt" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmp\battery_profiling - bak\rsmpc5r0.txt" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmp\battery_profiling - bak\rsmpc5r1.txt" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmp\battery_profiling\rsmpc0r3.html" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmp\battery_profiling\rsmpc0r3.txt" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmp\battery_profiling\rsmpc1r0.html" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmp\battery_profiling\rsmpc1r0.txt" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmp\battery_profiling\rsmpc2r0.html" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmp\battery_profiling\rsmpc2r0.txt" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmp\battery_profiling\rsmpc3r0.html" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmp\battery_profiling\rsmpc3r0.txt" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmp\battery_profiling\rsmpc4r0.html" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmp\battery_profiling\rsmpc4r0.txt" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmp\battery_profiling\rsmpc5r0.html" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmp\battery_profiling\rsmpc5r0.txt" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmpc0r1.html" afterPath="" />
+      <change type="MOVED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rcmp\battery_profiling\rcmpc0r4.txt" afterPath="$PROJECT_DIR$/../../offloading_eval/rcmp/battery_profiling/rcmpC0R4.txt" />
+      <change type="MOVED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rcmp\battery_profiling\rcmpc0r5.txt" afterPath="$PROJECT_DIR$/../../offloading_eval/rcmp/battery_profiling/rcmpC0R5.txt" />
+      <change type="MOVED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rcmp\battery_profiling\rcmpc1r4.txt" afterPath="$PROJECT_DIR$/../../offloading_eval/rcmp/battery_profiling/rcmpC1R4.txt" />
+      <change type="MOVED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rcmp\battery_profiling\rcmpc1r5.txt" afterPath="$PROJECT_DIR$/../../offloading_eval/rcmp/battery_profiling/rcmpC1R5.txt" />
+      <change type="MOVED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rcmp\battery_profiling\rcmpc2r4.txt" afterPath="$PROJECT_DIR$/../../offloading_eval/rcmp/battery_profiling/rcmpC2R4.txt" />
+      <change type="MOVED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rcmp\battery_profiling\rcmpc2r5.txt" afterPath="$PROJECT_DIR$/../../offloading_eval/rcmp/battery_profiling/rcmpC2R5.txt" />
+      <change type="MOVED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rcmp\battery_profiling\rcmpc3r4.txt" afterPath="$PROJECT_DIR$/../../offloading_eval/rcmp/battery_profiling/rcmpC3R4.txt" />
+      <change type="MOVED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmp\battery_profiling\rsmpc0r1.html" afterPath="$PROJECT_DIR$/../../offloading_eval/rsmp/battery_profiling/rsmpC0R1.html" />
+      <change type="MOVED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmp\battery_profiling\rsmpc0r1.txt" afterPath="$PROJECT_DIR$/../../offloading_eval/rsmp/battery_profiling/rsmpC0R1.txt" />
+      <change type="MOVED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmp\battery_profiling\rsmpc0r2.html" afterPath="$PROJECT_DIR$/../../offloading_eval/rsmp/battery_profiling/rsmpC0R2.html" />
+      <change type="MOVED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmp\battery_profiling\rsmpc0r2.txt" afterPath="$PROJECT_DIR$/../../offloading_eval/rsmp/battery_profiling/rsmpC0R2.txt" />
+      <change type="MOVED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmp\battery_profiling\rsmpc1r1.html" afterPath="$PROJECT_DIR$/../../offloading_eval/rsmp/battery_profiling/rsmpC1R1.html" />
+      <change type="MOVED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmp\battery_profiling\rsmpc1r1.txt" afterPath="$PROJECT_DIR$/../../offloading_eval/rsmp/battery_profiling/rsmpC1R1.txt" />
+      <change type="MOVED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmp\battery_profiling\rsmpc2r1.html" afterPath="$PROJECT_DIR$/../../offloading_eval/rsmp/battery_profiling/rsmpC2R1.html" />
+      <change type="MOVED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmp\battery_profiling\rsmpc2r1.txt" afterPath="$PROJECT_DIR$/../../offloading_eval/rsmp/battery_profiling/rsmpC2R1.txt" />
+      <change type="MOVED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmp\battery_profiling\rsmpc3r1.html" afterPath="$PROJECT_DIR$/../../offloading_eval/rsmp/battery_profiling/rsmpC3R1.html" />
+      <change type="MOVED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmp\battery_profiling\rsmpc3r1.txt" afterPath="$PROJECT_DIR$/../../offloading_eval/rsmp/battery_profiling/rsmpC3R1.txt" />
+      <change type="MOVED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmp\battery_profiling\rsmpc4r1.html" afterPath="$PROJECT_DIR$/../../offloading_eval/rsmp/battery_profiling/rsmpC4R1.html" />
+      <change type="MOVED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmp\battery_profiling\rsmpc4r1.txt" afterPath="$PROJECT_DIR$/../../offloading_eval/rsmp/battery_profiling/rsmpC4R1.txt" />
+      <change type="MOVED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmp\battery_profiling\rsmpc5r1.html" afterPath="$PROJECT_DIR$/../../offloading_eval/rsmp/battery_profiling/rsmpC5R1.html" />
+      <change type="MOVED" beforePath="C:\Users\rodrigo.jm.lourenco\development\Scout\offloading_eval\rsmp\battery_profiling\rsmpc5r1.txt" afterPath="$PROJECT_DIR$/../../offloading_eval/rsmp/battery_profiling/rsmpC5R1.txt" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/network/stages/strategies/BatchingStrategy.java" afterPath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/network/stages/strategies/BatchingStrategy.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/offloading/stages/ConfigurationTaggingStage.java" afterPath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/offloading/stages/ConfigurationTaggingStage.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/network/CycleOurCityClient.java" afterPath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/network/CycleOurCityClient.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/network/stages/strategies/EagerStrategy.java" afterPath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/network/stages/strategies/EagerStrategy.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/network/stages/strategies/LocalOnlyStrategy.java" afterPath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/network/stages/strategies/LocalOnlyStrategy.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/MainActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/MainActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/offloading/stages/OffloadingWrapperStage.java" afterPath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/offloading/stages/OffloadingWrapperStage.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/offloading/PartitionEngine.java" afterPath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/offloading/PartitionEngine.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/stages/classification/RoadClassificationStage.java" afterPath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/stages/classification/RoadClassificationStage.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/RoadConditionMonitoringPipeline.java" afterPath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/RoadConditionMonitoringPipeline.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/RoadSlopeMonitoringPipeline.java" afterPath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/RoadSlopeMonitoringPipeline.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../BluetoothTesting/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/bluetoothtesting/MainActivity.java" afterPath="$PROJECT_DIR$/../BluetoothTesting/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/bluetoothtesting/MainActivity.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/ScoutPipeline.java" afterPath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/ScoutPipeline.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/offloading/profiling/pipelines/StageProfiler.java" afterPath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/offloading/profiling/pipelines/StageProfiler.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/stages/UploadResultStage.java" afterPath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/stages/UploadResultStage.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/network/stages/strategies/UploadingStrategy.java" afterPath="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/network/stages/strategies/UploadingStrategy.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="Scout.iws" />
@@ -92,11 +109,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="ScoutPipeline.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="ScoutPipeline.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/ScoutPipeline.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-7.034483">
-              <caret line="87" column="5" selection-start-line="87" selection-start-column="5" selection-end-line="87" selection-end-column="5" />
+            <state vertical-scroll-proportion="0.81005585">
+              <caret line="85" column="10" selection-start-line="85" selection-start-column="10" selection-end-line="85" selection-end-column="10" />
               <folding />
             </state>
           </provider>
@@ -106,30 +123,37 @@
         <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/offloading/stages/ConfigurationTaggingStage.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="61" column="0" selection-start-line="61" selection-start-column="0" selection-end-line="61" selection-end-column="0" />
-              <folding>
-                <element signature="e#1044#1045#0" expanded="true" />
-                <element signature="e#1076#1077#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="BatchingStrategy.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/network/stages/strategies/BatchingStrategy.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.59402984">
-              <caret line="75" column="0" selection-start-line="75" selection-start-column="0" selection-end-line="75" selection-end-column="0" />
+              <caret line="54" column="53" selection-start-line="54" selection-start-column="53" selection-end-line="54" selection-end-column="53" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="RoadSlopeMonitoringPipeline.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/RoadSlopeMonitoringPipeline.java">
+      <file leaf-file-name="BatchingStrategy.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/network/stages/strategies/BatchingStrategy.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-8.793103">
-              <caret line="117" column="53" selection-start-line="117" selection-start-column="53" selection-end-line="117" selection-end-column="53" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="93" column="26" selection-start-line="93" selection-start-column="26" selection-end-line="93" selection-end-column="26" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="EagerStrategy.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/network/stages/strategies/EagerStrategy.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="29" column="69" selection-start-line="29" selection-start-column="69" selection-end-line="29" selection-end-column="69" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="UploadResultStage.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/stages/UploadResultStage.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -1630,16 +1654,16 @@
         <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/offloading/PartitionEngine.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/offloading/AdaptiveOffloadingManager.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/stages/classification/RoadClassificationStage.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/stages/UploadResultStage.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/network/CycleOurCityClient.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/network/stages/strategies/EagerStrategy.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/ActiveGeoTagger.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/RoadConditionMonitoringPipeline.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/network/stages/strategies/BatchingStrategy.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/RoadSlopeMonitoringPipeline.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/storage/ConfigurationProfileStorage.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/offloading/stages/OffloadingWrapperStage.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/offloading/profiling/pipelines/StageProfiler.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/network/stages/strategies/BatchingStrategy.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/network/CycleOurCityClient.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/network/stages/strategies/EagerStrategy.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/stages/UploadResultStage.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/offloading/stages/ConfigurationTaggingStage.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/ScoutPipeline.java" />
       </list>
@@ -1678,8 +1702,6 @@
     </navigator>
     <panes>
       <pane id="Scope" />
-      <pane id="Scratches" />
-      <pane id="PackagesPane" />
       <pane id="AndroidView">
         <subPane>
           <PATH>
@@ -1748,7 +1770,7 @@
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="pipeline" />
+              <option name="myItemId" value="offloading" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -1770,63 +1792,11 @@
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="network" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Scout" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="scout" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="network" />
+              <option name="myItemId" value="offloading" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="stages" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Scout" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="scout" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="network" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="stages" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="strategies" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -1864,26 +1834,10 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Scout" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Scout" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="libs" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -2122,23 +2076,23 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
-    <editor active="true" />
+    <frame x="-8" y="-8" width="1382" height="744" extended-state="7" />
+    <editor active="false" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32879046" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32879046" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39863715" sideWeight="0.5030257" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.38160136" sideWeight="0.5045386" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.64735943" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
+      <window_info id="Android Monitor" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.64735943" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32879046" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32879046" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.38160136" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.38160136" sideWeight="0.49546143" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="12" side_tool="true" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26928896" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26626325" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Android Model" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
@@ -2196,19 +2150,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/network/stages/strategies/BatchingStrategy.java</url>
-          <line>166</line>
-          <properties />
-          <option name="timeStamp" value="92" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/network/stages/strategies/EagerStrategy.java</url>
-          <line>58</line>
-          <properties />
-          <option name="timeStamp" value="138" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/network/stages/strategies/BatchingStrategy.java</url>
-          <line>158</line>
+          <line>159</line>
           <properties />
           <option name="timeStamp" value="143" />
         </line-breakpoint>
@@ -2237,18 +2179,22 @@
           <option name="timeStamp" value="153" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/offloading/stages/ConfigurationTaggingStage.java</url>
+          <url>file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/network/stages/strategies/EagerStrategy.java</url>
           <line>61</line>
           <properties />
-          <option name="timeStamp" value="155" />
+          <option name="timeStamp" value="156" />
         </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="156" />
+      <option name="time" value="157" />
     </breakpoint-manager>
-    <watches-manager />
+    <watches-manager>
+      <configuration name="app">
+        <watch expression="value" />
+      </configuration>
+    </watches-manager>
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/ActiveGeoTagger.java">
@@ -2275,13 +2221,13 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_settings.xml">
-      <provider selected="true" editor-type-id="android-designer">
-        <state />
-      </provider>
       <provider editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
+      </provider>
+      <provider selected="true" editor-type-id="android-designer">
+        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/values/colors.xml">
@@ -2329,26 +2275,19 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout-land/activity_main.xml">
-      <provider selected="true" editor-type-id="android-designer">
-        <state />
-      </provider>
       <provider editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="139" column="17" selection-start-line="139" selection-start-column="17" selection-end-line="139" selection-end-column="17" />
         </state>
+      </provider>
+      <provider selected="true" editor-type-id="android-designer">
+        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/storage/ClassificationEvaluationStorage.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="103" column="0" selection-start-line="103" selection-start-column="0" selection-end-line="103" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/app/libs/scout-sensing-analytics-0.0.1-BETA.jar!/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/pipeline/stages/CommonStages.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.34962407">
-          <caret line="128" column="19" selection-start-line="128" selection-start-column="19" selection-end-line="128" selection-end-column="19" />
         </state>
       </provider>
     </entry>
@@ -2360,13 +2299,13 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml">
-      <provider selected="true" editor-type-id="android-designer">
-        <state />
-      </provider>
       <provider editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="47" column="25" selection-start-line="47" selection-start-column="25" selection-end-line="47" selection-end-column="25" />
         </state>
+      </provider>
+      <provider selected="true" editor-type-id="android-designer">
+        <state />
       </provider>
     </entry>
     <entry file="jar://$PROJECT_DIR$/app/libs/scout-sensing-analytics-0.0.1-BETA.jar!/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/pipeline/PipelineConfiguration.class">
@@ -2405,13 +2344,13 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/layout_calibration_input.xml">
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.3323442">
           <caret line="258" column="9" selection-start-line="258" selection-start-column="9" selection-end-line="258" selection-end-column="9" />
         </state>
+      </provider>
+      <provider editor-type-id="android-designer">
+        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/storage/RouteStorage.java">
@@ -2481,13 +2420,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/network/stages/UploadStage.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="24" column="16" selection-start-line="24" selection-start-column="16" selection-end-line="24" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/offloading/AdaptivePipelineTracker.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -2499,16 +2431,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="26" column="5" selection-start-line="26" selection-start-column="5" selection-end-line="26" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/RoadConditionMonitoringPipeline.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="334" column="0" selection-start-line="334" selection-start-column="0" selection-end-line="335" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -2534,47 +2456,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/ActiveGeoTagger.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="189" column="39" selection-start-line="189" selection-start-column="30" selection-end-line="189" selection-end-column="39" />
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="e#7787#7788#0" expanded="false" />
-            <element signature="e#7835#7836#0" expanded="false" />
-            <element signature="e#8719#8720#0" expanded="false" />
-            <element signature="e#8778#8779#0" expanded="false" />
-            <element signature="e#17897#17898#0" expanded="false" />
-            <element signature="e#17957#17958#0" expanded="false" />
-            <element signature="e#21448#21449#0" expanded="false" />
-            <element signature="e#21514#21515#0" expanded="false" />
-            <element signature="e#22109#22110#0" expanded="false" />
-            <element signature="e#22163#22164#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/stages/UploadResultStage.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.608229">
-          <caret line="27" column="0" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/network/stages/strategies/EagerStrategy.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.30053666">
-          <caret line="65" column="0" selection-start-line="65" selection-start-column="0" selection-end-line="65" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="e#1103#1104#0" expanded="false" />
-            <element signature="e#1130#1131#0" expanded="false" />
-            <element signature="e#1312#1313#0" expanded="false" />
-            <element signature="e#1352#1353#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/storage/ConfigurationProfileStorage.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.24329159">
@@ -2594,17 +2475,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="105" column="43" selection-start-line="105" selection-start-column="25" selection-end-line="105" selection-end-column="43" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/network/CycleOurCityClient.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="46" column="0" selection-start-line="46" selection-start-column="0" selection-end-line="46" selection-end-column="0" />
-          <folding>
-            <element signature="e#1441#1442#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -2620,26 +2490,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="67" column="8" selection-start-line="67" selection-start-column="8" selection-end-line="67" selection-end-column="8" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/offloading/stages/ConfigurationTaggingStage.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="61" column="0" selection-start-line="61" selection-start-column="0" selection-end-line="61" selection-end-column="0" />
-          <folding>
-            <element signature="e#1044#1045#0" expanded="true" />
-            <element signature="e#1076#1077#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/RoadSlopeMonitoringPipeline.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-8.793103">
-          <caret line="117" column="53" selection-start-line="117" selection-start-column="53" selection-end-line="117" selection-end-column="53" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2647,22 +2497,91 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.45671642">
           <caret line="11" column="86" selection-start-line="11" selection-start-column="4" selection-end-line="11" selection-end-column="86" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/app/libs/scout-sensing-analytics-0.0.1-BETA.jar!/pt/ulisboa/tecnico/cycleourcity/scout/mobilesensing/pipeline/stages/CommonStages.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.34962407">
+          <caret line="128" column="19" selection-start-line="128" selection-start-column="19" selection-end-line="128" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/ActiveGeoTagger.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="368" column="103" selection-start-line="368" selection-start-column="103" selection-end-line="368" selection-end-column="103" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/ScoutPipeline.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/network/CycleOurCityClient.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-7.034483">
-          <caret line="87" column="5" selection-start-line="87" selection-start-column="5" selection-end-line="87" selection-end-column="5" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="30" column="29" selection-start-line="30" selection-start-column="29" selection-end-line="30" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/RoadConditionMonitoringPipeline.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.030411448">
+          <caret line="406" column="39" selection-start-line="406" selection-start-column="39" selection-end-line="406" selection-end-column="39" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/network/stages/strategies/EagerStrategy.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="29" column="69" selection-start-line="29" selection-start-column="69" selection-end-line="29" selection-end-column="69" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/network/stages/UploadStage.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.30053666">
+          <caret line="24" column="16" selection-start-line="24" selection-start-column="16" selection-end-line="24" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/RoadSlopeMonitoringPipeline.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="121" column="49" selection-start-line="121" selection-start-column="49" selection-end-line="121" selection-end-column="49" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/network/stages/strategies/BatchingStrategy.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.59402984">
-          <caret line="75" column="0" selection-start-line="75" selection-start-column="0" selection-end-line="75" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="93" column="26" selection-start-line="93" selection-start-column="26" selection-end-line="93" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/stages/UploadResultStage.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/offloading/stages/ConfigurationTaggingStage.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="54" column="53" selection-start-line="54" selection-start-column="53" selection-end-line="54" selection-end-column="53" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/pt/ulisboa/tecnico/cycleourcity/scout/pipeline/ScoutPipeline.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.81005585">
+          <caret line="85" column="10" selection-start-line="85" selection-start-column="10" selection-end-line="85" selection-end-column="10" />
           <folding />
         </state>
       </provider>

@@ -156,7 +156,8 @@ public class BatchingStrategy implements UploadingStrategy{
                 JsonObject data = new JsonObject();
                 data.add("batch", batchData);
 
-                StringEntity entity = new StringEntity(gson.toJson(data));
+                String udata = gson.toJson(data);
+                StringEntity entity = new StringEntity(udata);
                 httpost.setEntity(entity);
                 httpost.setHeader("Accept", "application/json");
                 httpost.setHeader("Content-type", "application/json");

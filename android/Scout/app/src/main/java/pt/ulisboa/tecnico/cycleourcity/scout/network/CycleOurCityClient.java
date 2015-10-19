@@ -27,7 +27,8 @@ public class CycleOurCityClient {
     private UploadingStrategy strategy;
 
     private CycleOurCityClient(){
-        strategy = new BatchingStrategy(100000); //100KB buffer as in Balasubramanian
+        //strategy = new BatchingStrategy(100000); //100KB buffer as in Balasubramanian
+        strategy = new EagerStrategy();
     }
 
     static public CycleOurCityClient getInstance(){

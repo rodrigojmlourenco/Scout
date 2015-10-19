@@ -1,0 +1,140 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity"
+    android:id="@+id/main">
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/linearLayout">
+
+            <Button
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="@string/startSession"
+                android:id="@+id/startSession" />
+
+            <Button
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+
+                android:text="@string/stopSession"
+                android:id="@+id/stopSession" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tag"
+                android:id="@+id/tag"
+                android:layout_alignBottom="@+id/archive"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_toLeftOf="@+id/archive"
+                android:layout_toStartOf="@+id/archive"
+                android:autoText="false"
+                android:editable="true"
+                android:linksClickable="false"
+                android:longClickable="false"
+                android:lines="1"
+                android:nestedScrollingEnabled="false"
+                android:layout_weight="1" />
+
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/archive"
+                android:id="@+id/archive"
+                android:layout_below="@+id/linearLayout"
+                android:layout_alignRight="@+id/linearLayout"
+                android:layout_alignEnd="@+id/linearLayout" />
+        </LinearLayout>
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="70dp"
+                    android:text="@string/asphalt_good"
+                    android:id="@+id/goodAsphaltBtn"
+                    android:layout_weight="0.25"
+                    android:layout_marginLeft="6dp"
+                    android:layout_marginRight="6dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@android:drawable/btn_default" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="70dp"
+                    android:text="@string/asphalt_bad"
+                    android:id="@+id/badAsphaltBtn"
+                    android:layout_weight="0.25"
+                    android:layout_marginLeft="6dp"
+                    android:layout_marginRight="6dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@android:drawable/btn_default" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="70dp"
+                    android:text="@string/cobblestone_good"
+                    android:id="@+id/goodCobblestoneBtn"
+                    android:layout_weight="0.33"
+                    android:layout_marginLeft="6dp"
+                    android:layout_marginRight="6dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@android:drawable/btn_default" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="70dp"
+                    android:text="@string/cobblestone_bad"
+                    android:id="@+id/badCobblestoneBtn"
+                    android:layout_weight="0.25"
+                    android:layout_marginLeft="6dp"
+                    android:layout_marginRight="6dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@android:drawable/btn_default" />
+
+            </TableRow>
+
+        </TableLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

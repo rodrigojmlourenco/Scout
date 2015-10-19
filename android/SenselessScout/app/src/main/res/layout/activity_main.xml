@@ -1,0 +1,190 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity"
+    android:id="@+id/main">
+
+
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout">
+
+        <Button
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="@string/startSession"
+            android:id="@+id/startSession" />
+
+        <Button
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+
+            android:text="@string/stopSession"
+            android:id="@+id/stopSession" />
+    </LinearLayout>
+
+    <EditText
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:text="Tag"
+        android:id="@+id/tag"
+        android:layout_alignBottom="@+id/archive"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_toLeftOf="@+id/archive"
+        android:layout_toStartOf="@+id/archive"
+        android:autoText="false"
+        android:editable="true"
+        android:linksClickable="false"
+        android:longClickable="false"
+        android:lines="1"
+        android:nestedScrollingEnabled="false" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/archive"
+        android:id="@+id/archive"
+        android:layout_below="@+id/linearLayout"
+        android:layout_alignRight="@+id/linearLayout"
+        android:layout_alignEnd="@+id/linearLayout" />
+
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tag"
+        android:layout_alignParentStart="true"
+        android:id="@+id/pavementTypeGroup">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Pavement Type"
+            android:id="@+id/textView" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="None"
+            android:id="@+id/isNone"
+            android:checked="true" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Asphalt"
+            android:id="@+id/isAsphalt"
+            android:checked="false" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cobblestone"
+            android:id="@+id/isCobblestone"
+            android:checked="false" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gravel"
+            android:id="@+id/isGravel"
+            android:checked="false" />
+    </RadioGroup>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Offload"
+        android:id="@+id/offloadBtn"
+        android:layout_alignTop="@+id/netTestBtn"
+        android:layout_alignEnd="@+id/pavementTypeGroup" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Test Net"
+        android:id="@+id/netTestBtn"
+        android:layout_below="@+id/pavementTypeGroup"
+        android:layout_toEndOf="@+id/tag" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/offloadBtn"
+        android:layout_alignParentStart="true"
+        android:id="@+id/mockUpBattery"
+        android:layout_marginTop="15dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Mockup Battery"
+            android:id="@+id/textView16"
+            android:gravity="center" />
+
+        <SeekBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/mockupBattBar"
+            android:layout_weight="1"
+            android:max="100"
+            android:progress="100"
+            android:indeterminate="false" />
+
+        <TextView
+            android:layout_width="40dp"
+            android:layout_height="fill_parent"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="100%"
+            android:id="@+id/mockupBattText"
+            android:gravity="center" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/mockUpBattery"
+        android:layout_alignParentStart="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Mockup Network"
+            android:id="@+id/textView17"
+            android:gravity="center" />
+
+        <SeekBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/mockupNetBar"
+            android:layout_weight="1"
+            android:max="5"
+            android:progress="5"
+            android:indeterminate="false" />
+
+        <TextView
+            android:layout_width="40dp"
+            android:layout_height="fill_parent"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:id="@+id/mockupNetText"
+            android:gravity="center"
+            android:text="Wifi" />
+    </LinearLayout>
+
+
+</RelativeLayout>
